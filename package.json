@@ -1,0 +1,44 @@
+{
+  "name": "prettify-bot",
+  "description": "A Github bot that automatically formats commits via Prettier",
+  "version": "0.0.1",
+  "author": "Kevin Goslar <kevin.goslar@gmail.com>",
+  "dependencies": {
+    "ignore": "5.0.4",
+    "js-yaml": "3.12.0",
+    "prettier": "1.15.2",
+    "probot": "7.4.0",
+    "probot-kit": "0.0.8",
+    "rollbar": "2.5.1",
+    "typescript": "3.1.6"
+  },
+  "devDependencies": {
+    "@types/bunyan": "1.8.5",
+    "@types/chai": "4.1.7",
+    "@types/js-yaml": "3.11.2",
+    "@types/mocha": "5.2.5",
+    "@types/node": "10.12.10",
+    "@types/prettier": "1.15.1",
+    "chai": "4.2.0",
+    "mocha": "5.2.0",
+    "ts-node": "7.0.1",
+    "tslint": "5.11.0"
+  },
+  "engines": {
+    "node": ">= 8.3.0",
+    "yarn": ">= 1.5"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/prettify-bot.git",
+  "homepage": "https://github.com/prettify-bot",
+  "bugs": "https://github.com/prettify-bot/issues",
+  "keywords": [
+    "probot",
+    "github",
+    "prettier"
+  ],
+  "scripts": {
+    "start": "probot run ./dist/index.js",
+    "postinstall": "make"
+  }
+}

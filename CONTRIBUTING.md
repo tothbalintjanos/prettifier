@@ -1,0 +1,21 @@
+## Contributing
+
+### Developer machine setup
+
+- install [Node.js](https://nodejs.org) version 8 or later
+- install [Yarn](https://yarnpkg.com): `npm i -g yarn`
+
+### Set up the code base
+
+- dependencies are bundled with the code base, no installation necessary
+
+### Running the tests
+
+- transpile TypeScript sources: `make build` or `make`
+- run all tests: `make spec`
+- run the linters: `make lint`
+- run the unit tests: `make test`
+
+### Getting help
+
+- run `make help` to see all available make commands
