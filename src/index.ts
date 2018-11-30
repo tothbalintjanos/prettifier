@@ -71,8 +71,12 @@ async function onPush(context: Context) {
       console.log(`${filePath}: ALREADY FORMATTED`)
       return
     }
-    console.log(`${filePath}: PRETTIFYING`)
-    updateFile(file.filename, formatted, sha, context)
+    try {
+      updateFile(file.filename, formatted, sha, context)
+      console.log(`${filePath}: PRETTIFYING`)
+    } catch (e) {
+      console.log(`${filePath}: PRETTIFYING FAILED: ${e.msg}`)
+    }
   })
   console.log(`${repoName}: DONE`)
 }
