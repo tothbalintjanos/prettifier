@@ -3,7 +3,7 @@
 ### Developer machine setup
 
 - install [Node.js](https://nodejs.org) version 8 or later
-- install [Yarn](https://yarnpkg.com): `npm i -g yarn`
+- install [Yarn](https://yarnpkg.com/en/docs/install)
 
 ### Set up the code base
 
