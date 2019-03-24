@@ -1,6 +1,6 @@
 # Prettifier
 
-[![CircleCI](https://circleci.com/gh/Originate/prettifier.svg?style=shield&circle-token=cb8a7c802da38fdfc7a2bc3f7503854978f607fe)](https://circleci.com/gh/Originate/prettifier)
+[![CircleCI](https://circleci.com/gh/kevgo/prettifier.svg?style=shield)](https://circleci.com/gh/kevgo/prettifier)
 
 _A Github bot that automatically formats commits via Prettier._
 
