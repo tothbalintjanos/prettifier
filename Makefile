@@ -23,6 +23,8 @@ lint:  # lints the code base
 	node_modules$/.bin$/prettier -l '*.yml'
 	node_modules$/.bin$/prettier -l '*.json'
 	node_modules$/.bin$/prettier -l 'src/**'
+	node_modules$/.bin$/prettier -l 'test/*.ts'
+	node_modules$/.bin$/prettier -l '.github/**'
 
 log:   # shows the log output from the production server
 	heroku logs --tail --app prettifier-prod
