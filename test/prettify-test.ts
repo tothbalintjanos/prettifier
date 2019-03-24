@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import prettify from '../src/prettify'
+import { prettify } from '../src/prettify'
 
 describe('prettify', () => {
   it('prettifies text', () => {

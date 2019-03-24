@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import isDifferentText from '../src/is-different-text'
+import { isDifferentText } from '../src/is-different-text'
 
 describe('isDifferentText', function() {
   it('returns false for identical text', () => {

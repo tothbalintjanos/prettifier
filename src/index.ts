@@ -9,10 +9,10 @@ import {
   updateFile
 } from 'probot-kit'
 import Rollbar from 'rollbar'
-import isDifferentText from './is-different-text'
+import { isDifferentText } from './is-different-text'
 import loadPrettierConfig from './load-prettier-config'
 import { PrettifierConfiguration } from './prettifier-configuration'
-import prettify from './prettify'
+import { prettify } from './prettify'
 
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
   new Rollbar({
