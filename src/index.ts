@@ -52,7 +52,7 @@ async function onPush(context: Context) {
     return
   }
   const branchName = getBranchName(context)
-  const botConfig = await loadBotConfig('prettifier.yml', context)
+  const botConfig = await loadBotConfig('.github/prettifier.yml', context)
   if (shouldIgnoreBranch(branchName, botConfig)) {
     console.log(`${repoName}: IGNORING THIS BRANCH PER BOT CONFIG`)
     return

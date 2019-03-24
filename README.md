@@ -14,7 +14,8 @@ To set it up for your code base:
 
 ## Configuration
 
-The bot can be configured via a `prettifier.yml` file in your code base.
+The bot can be configured via a `.github/prettifier.yml` file
+in your code base.
 The configuration options are:
 
 - **exclude-files:** a list of globs that describe files to ignore,
