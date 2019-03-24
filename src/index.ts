@@ -5,16 +5,14 @@ import {
   getRepoName,
   getSha,
   iterateCurrentCommitFiles,
-  loadBotConfig,
   loadFile,
   updateFile
 } from 'probot-kit'
 import Rollbar from 'rollbar'
 import isDifferentText from './is-different-text'
 import loadPrettierConfig from './load-prettier-config'
+import { PrettifierConfiguration } from './prettifier-configuration'
 import prettify from './prettify'
-import shouldIgnoreBranch from './should-ignore-branch'
-import shouldPrettify from './should-prettify'
 
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
   new Rollbar({
@@ -52,15 +50,15 @@ async function onPush(context: Context) {
     return
   }
   const branchName = getBranchName(context)
-  const botConfig = await loadBotConfig('.github/prettifier.yml', context)
-  if (shouldIgnoreBranch(branchName, botConfig)) {
+  const prettifierConfig = await PrettifierConfiguration.load(context)
+  if (prettifierConfig.shouldIgnoreBranch(branchName)) {
     console.log(`${repoName}: IGNORING THIS BRANCH PER BOT CONFIG`)
     return
   }
   const prettierConfig = await loadPrettierConfig(context)
   await iterateCurrentCommitFiles(context, async file => {
     const filePath = `${repoName}|${file.filename}`
-    const allowed = await shouldPrettify(file.filename, botConfig)
+    const allowed = await prettifierConfig.shouldPrettify(file.filename)
     if (!allowed) {
       console.log(`${filePath}: NON-PRETTIFYABLE`)
       return
