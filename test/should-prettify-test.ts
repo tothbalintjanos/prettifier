@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import shouldPrettify from './should-prettify'
+import shouldPrettify from '../src/should-prettify'
 
 describe('shouldPrettify', function() {
   it('ignores node_modules out of the box', async function() {

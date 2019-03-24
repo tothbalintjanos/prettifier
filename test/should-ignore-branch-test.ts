@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import shouldIgnoreBranch from './should-ignore-branch'
+import shouldIgnoreBranch from '../src/should-ignore-branch'
 
 describe('shouldIgnoreBranch', function() {
   it('botConfig match', function() {
