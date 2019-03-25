@@ -13,6 +13,9 @@ build: clean  # builds the production version
 clean:  # removes all build artifacts
 	@rm -rf dist
 
+doc:  # verifies the documentation
+	node_modules$/.bin$/text-run --format dot --offline
+
 help:   # prints all make targets
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
@@ -29,7 +32,7 @@ lint:  # lints the code base
 log:   # shows the log output from the production server
 	heroku logs --tail --app prettifier-prod
 
-spec: lint test   # runs all tests
+spec: lint test doc   # runs all tests
 
 start:   # starts the server
 	yarn start

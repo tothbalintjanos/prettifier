@@ -18,14 +18,23 @@ The bot can be configured via a `.github/prettifier.yml` file
 in your code base.
 The configuration options are:
 
-- **exclude-files:** a list of globs that describe files to ignore,
+<a textrun="config-options">
+
+- **excludeFiles:**
+  a list of globs that describe files to ignore,
   similar to [.gitignore](https://git-scm.com/docs/gitignore)
-- **exclude-branches:** a list of branch names to ignore
+- **excludeBranches:**
+  a list of branch names to ignore
+  </a>
 
 Here is an example configuration file showing the built-in default settings for the bot:
 
+<a textrun="config-example">
+
 ```yml
-exclude-files:
+excludeBranches: []
+excludeFiles:
   - node_modules
-exclude-branches:
 ```
+
+</a>
