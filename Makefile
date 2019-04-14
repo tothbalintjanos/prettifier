@@ -32,14 +32,14 @@ lint:  # lints the code base
 log:   # shows the log output from the production server
 	heroku logs --tail --app prettifier-prod
 
-spec: lint test doc   # runs all tests
+test: lint unit doc   # runs all tests
+.PHONY: test
 
 start:   # starts the server
 	yarn start
 
-test:  # runs the unit tests
+unit:  # runs the unit tests
 	@node_modules$/.bin$/mocha
-.PHONY: test
 
 update:  # updates the dependencies
 	yarn upgrade --latest

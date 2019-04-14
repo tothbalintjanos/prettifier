@@ -12,9 +12,9 @@
 ### Running the tests
 
 - transpile TypeScript sources: `make build` or `make`
-- run all tests: `make spec`
+- run all tests: `make test`
 - run the linters: `make lint`
-- run the unit tests: `make test`
+- run the unit tests: `make unit`
 
 ### Getting help
 
