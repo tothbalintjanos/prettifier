@@ -25,7 +25,7 @@ The configuration options are:
 <a textrun="config-options">
 
 - **excludeFiles:**
-  a list of globs that describe files to ignore,
+  a list of file and directory paths to ignore,
   similar to [.gitignore](https://git-scm.com/docs/gitignore)
 - **excludeBranches:**
   a list of branch names to ignore
