@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/kevgo/prettifier.svg?style=shield)](https://circleci.com/gh/kevgo/prettifier)
 
-_A GitHub bot that keeps your code base prettier._
+_A GitHub bot that makes your code base prettier._
 
 Every time someone pushes a commit that contains unformatted code or Markdown to GitHub,
 Prettifier adds a commit fixing the formatting issues to the same branch.
