@@ -2,7 +2,10 @@
 
 [![CircleCI](https://circleci.com/gh/kevgo/prettifier.svg?style=shield)](https://circleci.com/gh/kevgo/prettifier)
 
-_A Github bot that automatically formats commits via Prettier._
+_A GitHub bot that keeps your code base prettier._
+
+Every time someone pushes a commit that contains unformatted code or Markdown to GitHub,
+Prettifier adds a commit fixing the formatting issues to the same branch.
 
 ## Setup
 
@@ -14,8 +17,9 @@ To set it up for your code base:
 
 ## Configuration
 
-The bot can be configured via a `.github/prettifier.yml` file
-in your code base.
+Prettifier honors `.prettierrc` files in the root of your code base.
+
+You can configured Prettifier via a `.github/prettifier.yml` file in your code base.
 The configuration options are:
 
 <a textrun="config-options">
