@@ -16,6 +16,14 @@ clean:  # removes all build artifacts
 doc:  # verifies the documentation
 	node_modules$/.bin$/text-run --format dot --offline
 
+fix:  # fixes the auto-fixable formatting issues
+	node_modules$/.bin$/prettier --write '*.md'
+	node_modules$/.bin$/prettier --write '*.yml'
+	node_modules$/.bin$/prettier --write '*.json'
+	node_modules$/.bin$/prettier --write 'src/**'
+	node_modules$/.bin$/prettier --write 'test/*.ts'
+	node_modules$/.bin$/prettier --write '.github/**'
+
 help:   # prints all make targets
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 

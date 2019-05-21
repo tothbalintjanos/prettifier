@@ -15,6 +15,7 @@
 - run all tests: `make test`
 - run the linters: `make lint`
 - run the unit tests: `make unit`
+- fix the auto-fixable formatting issues: `make fix`
 
 ### Getting help
 
