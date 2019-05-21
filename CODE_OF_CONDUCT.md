@@ -1,8 +1,5 @@
 Everybody is welcome to contribute to this project.
-
-Let's keep the conversation focused around Prettifier,
-the tone business casual,
-and leave everything else (politics etc) out.
-
-Project leadership reserves the right to remove contributions or members
+Let's keep the conversation focused around Prettifier and 
+the tone business casual.
+Project leadership reserves the right to remove members or contributions
 who don't conform to these guidelines.
