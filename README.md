@@ -17,7 +17,7 @@ To set it up for your code base:
 
 ## Configuration
 
-Prettifier honors `.prettierrc` files in the root of your code base.
+Prettifier honors [.prettierrc](https://prettier.io/docs/en/configuration.html) files in the root of your code base.
 
 You can configured Prettifier via a `.github/prettifier.yml` file in your code base.
 The configuration options are:
