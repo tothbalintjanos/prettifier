@@ -13,7 +13,7 @@ build: clean  # builds the production version
 clean:  # removes all build artifacts
 	@rm -rf dist
 
-doc:  # verifies the documentation
+doc: build  # verifies the documentation
 	node_modules$/.bin$/text-run --format dot --offline
 
 fix:  # fixes the auto-fixable formatting issues
