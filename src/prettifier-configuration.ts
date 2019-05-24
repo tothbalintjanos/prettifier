@@ -11,6 +11,7 @@ interface ConfigOptions {
   excludeFiles: string[]
 }
 
+/** Type for user-provided config options (the user doesn't have to provide all options). */
 type ConfigParams = Partial<ConfigOptions>
 
 /** Encapsulates logic around configuration of Prettifier. */
