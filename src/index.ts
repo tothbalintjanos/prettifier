@@ -1,3 +1,4 @@
+import { WebhookPayloadPush } from '@octokit/webhooks'
 import { Application, Context } from 'probot'
 import {
   getBranchName,
@@ -28,7 +29,7 @@ export = (app: Application) => {
 }
 
 // Called when this bot gets notified about a push on Github
-async function onPush(context: Context) {
+async function onPush(context: Context<WebhookPayloadPush>) {
   if (getSha(context) === '0000000000000000000000000000000000000000') {
     console.log(
       getRepoName(context) +
