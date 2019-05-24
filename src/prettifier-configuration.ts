@@ -1,8 +1,8 @@
 import webhooks from '@octokit/webhooks'
 import ignore from 'ignore'
 import prettier from 'prettier'
-import probot from 'probot'
-import probotKit from 'probot-kit'
+import * as probot from 'probot'
+import * as probotKit from 'probot-kit'
 import { Partial } from './partial-type'
 
 /** The Prettifier configuration options and their values. */

@@ -1,5 +1,5 @@
 import webhooks from '@octokit/webhooks'
-import probot from 'probot'
+import * as probot from 'probot'
 
 /** Returns the name of the author who made the push described by the given context. */
 export function getAuthorName(

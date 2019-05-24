@@ -1,7 +1,7 @@
 import webhooks from '@octokit/webhooks'
 import yml from 'js-yaml'
-import probot from 'probot'
-import probotKit from 'probot-kit'
+import * as probot from 'probot'
+import * as probotKit from 'probot-kit'
 
 /** Loads the .prettierrc file for the code base we are evaluating. */
 export default async function loadPrettierConfig(

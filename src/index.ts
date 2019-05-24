@@ -1,6 +1,6 @@
 import webhooks from '@octokit/webhooks'
-import probot from 'probot'
-import probotKit from 'probot-kit'
+import * as probot from 'probot'
+import * as probotKit from 'probot-kit'
 import Rollbar from 'rollbar'
 import { isDifferentText } from './is-different-text'
 import loadPrettierConfig from './load-prettier-config'
