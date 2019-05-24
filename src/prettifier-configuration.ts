@@ -3,10 +3,19 @@ import ignore from 'ignore'
 import prettier from 'prettier'
 import probot from 'probot'
 import probotKit from 'probot-kit'
+import { Partial } from './partial-type'
+
+/** The Prettifier configuration options and their values. */
+interface ConfigOptions {
+  excludeBranches: string[]
+  excludeFiles: string[]
+}
+
+type ConfigParams = Partial<ConfigOptions>
 
 /** Encapsulates logic around configuration of Prettifier. */
 export class PrettifierConfiguration {
-  static defaults = {
+  static defaults: ConfigOptions = {
     excludeBranches: [],
     excludeFiles: ['node_modules']
   }
@@ -32,7 +41,7 @@ export class PrettifierConfiguration {
    * Creates a new configuration based on the given config object.
    * Missing values are backfilled with default values.
    */
-  constructor(actualConfig: any) {
+  constructor(actualConfig: ConfigParams) {
     this.excludeBranches =
       actualConfig.excludeBranches ||
       PrettifierConfiguration.defaults.excludeBranches
