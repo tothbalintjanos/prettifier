@@ -1,7 +1,8 @@
+import webhooks from '@octokit/webhooks'
 import ignore from 'ignore'
 import prettier from 'prettier'
-import { Context } from 'probot'
-import { loadBotConfig } from 'probot-kit'
+import probot from 'probot'
+import probotKit from 'probot-kit'
 
 // Encapsulates logic around configuration of Prettifier
 export class PrettifierConfiguration {
@@ -11,8 +12,13 @@ export class PrettifierConfiguration {
   }
 
   // Loads the configuration for the current session from the server
-  static async load(context: Context): Promise<PrettifierConfiguration> {
-    const actualConfig = await loadBotConfig('.github/prettifier.yml', context)
+  static async load(
+    context: probot.Context<webhooks.WebhookPayloadPush>
+  ): Promise<PrettifierConfiguration> {
+    const actualConfig = await probotKit.loadBotConfig(
+      '.github/prettifier.yml',
+      context
+    )
     return new PrettifierConfiguration(actualConfig)
   }
 
