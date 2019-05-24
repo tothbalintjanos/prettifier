@@ -4,14 +4,14 @@ import prettier from 'prettier'
 import probot from 'probot'
 import probotKit from 'probot-kit'
 
-// Encapsulates logic around configuration of Prettifier
+/** Encapsulates logic around configuration of Prettifier. */
 export class PrettifierConfiguration {
   static defaults = {
     excludeBranches: [],
     excludeFiles: ['node_modules']
   }
 
-  // Loads the configuration for the current session from the server
+  /** Loads the configuration for the current session from the server. */
   static async load(
     context: probot.Context<webhooks.WebhookPayloadPush>
   ): Promise<PrettifierConfiguration> {
@@ -22,14 +22,16 @@ export class PrettifierConfiguration {
     return new PrettifierConfiguration(actualConfig)
   }
 
-  // names of the branches that should not be prettified
+  /** names of the branches that should not be prettified */
   excludeBranches: string[]
 
-  // names of files that should not be prettified
+  /** names of files that should not be prettified */
   excludeFiles: string[]
 
-  // Creates a new configuration based on the given config object.
-  // Missing values are backfilled with default values.
+  /**
+   * Creates a new configuration based on the given config object.
+   * Missing values are backfilled with default values.
+   */
   constructor(actualConfig: any) {
     this.excludeBranches =
       actualConfig.excludeBranches ||
@@ -38,12 +40,12 @@ export class PrettifierConfiguration {
       actualConfig.excludeFiles || PrettifierConfiguration.defaults.excludeFiles
   }
 
-  // Indicates whether the given branch should be ignored
+  /** Indicates whether the given branch should be ignored. */
   shouldIgnoreBranch(branchName: string): boolean {
     return this.excludeBranches.includes(branchName)
   }
 
-  // Indicates whether the given file should be prettified
+  /** Indicates whether the given file should be prettified. */
   async shouldPrettify(filename: string) {
     // check whether the filename is listed as ignored
     if (

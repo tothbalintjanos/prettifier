@@ -2,7 +2,7 @@ import yml from 'js-yaml'
 import { Context } from 'probot'
 import { getRepoName, loadFile } from 'probot-kit'
 
-// Loads the .prettierrc file for the code base we are evaluating
+/** Loads the .prettierrc file for the code base we are evaluating. */
 export default async function loadPrettierConfig(context: Context) {
   const repoName = getRepoName(context)
   let configText = ''
