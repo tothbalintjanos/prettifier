@@ -1,9 +1,12 @@
+import webhooks from '@octokit/webhooks'
 import yml from 'js-yaml'
 import probot from 'probot'
 import probotKit from 'probot-kit'
 
 /** Loads the .prettierrc file for the code base we are evaluating. */
-export default async function loadPrettierConfig(context: probot.Context) {
+export default async function loadPrettierConfig(
+  context: probot.Context<webhooks.WebhookPayloadPush>
+) {
   const repoName = probotKit.getRepoName(context)
   let configText = ''
   try {
