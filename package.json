@@ -9,7 +9,7 @@
     "js-yaml": "3.13.1",
     "prettier": "1.17.1",
     "probot": "9.2.12",
-    "probot-kit": "0.1.2",
+    "probot-kit": "0.2.0",
     "rollbar": "2.7.1"
   },
   "devDependencies": {
