@@ -1,15 +1,15 @@
 import yml from 'js-yaml'
-import { Context } from 'probot'
-import { getRepoName, loadFile } from 'probot-kit'
+import probot from 'probot'
+import probotKit from 'probot-kit'
 
 /** Loads the .prettierrc file for the code base we are evaluating. */
-export default async function loadPrettierConfig(context: Context) {
-  const repoName = getRepoName(context)
+export default async function loadPrettierConfig(context: probot.Context) {
+  const repoName = probotKit.getRepoName(context)
   let configText = ''
   try {
     // NOTE: Prettier and TSLint disagree on placing a semicolon on the next line
     // tslint:disable-next-line:whitespace semicolon
-    ;[configText] = await loadFile('.prettierrc', context)
+    ;[configText] = await probotKit.loadFile('.prettierrc', context)
   } catch (e) {
     console.log(`${repoName}: NO .prettierrc FOUND`)
     return {}
