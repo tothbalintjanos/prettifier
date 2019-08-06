@@ -1,9 +1,9 @@
-import webhooks from '@octokit/webhooks'
-import ignore from 'ignore'
-import prettier from 'prettier'
-import * as probot from 'probot'
-import * as probotKit from 'probot-kit'
-import { Partial } from './partial-type'
+import webhooks from "@octokit/webhooks"
+import ignore from "ignore"
+import prettier from "prettier"
+import * as probot from "probot"
+import * as probotKit from "probot-kit"
+import { Partial } from "./partial-type"
 
 /** The Prettifier configuration options and their values. */
 interface ConfigOptions {
@@ -18,7 +18,7 @@ type ConfigParams = Partial<ConfigOptions>
 export class PrettifierConfiguration {
   static defaults: ConfigOptions = {
     excludeBranches: [],
-    excludeFiles: ['node_modules']
+    excludeFiles: ["node_modules"]
   }
 
   /** Loads the configuration for the current session from the server. */
@@ -26,7 +26,7 @@ export class PrettifierConfiguration {
     context: probot.Context<webhooks.WebhookPayloadPush>
   ): Promise<PrettifierConfiguration> {
     const actualConfig = await probotKit.loadBotConfig(
-      '.github/prettifier.yml',
+      ".github/prettifier.yml",
       context
     )
     return new PrettifierConfiguration(actualConfig)

@@ -1,8 +1,8 @@
-import { expect } from 'chai'
-import { prettify } from '../src/prettify'
+import { expect } from "chai"
+import { prettify } from "../src/prettify"
 
-describe('prettify', () => {
-  it('prettifies text', () => {
-    expect(prettify('a  =1', 'filename.ts', {})).to.equal('a = 1;\n')
+describe("prettify", () => {
+  it("prettifies text", () => {
+    expect(prettify("a  =1", "filename.ts", {})).to.equal("a = 1;\n")
   })
 })

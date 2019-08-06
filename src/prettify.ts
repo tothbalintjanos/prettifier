@@ -1,4 +1,4 @@
-import prettier from 'prettier'
+import prettier from "prettier"
 
 /** Formats the given content for the given file using the given Prettier configuration. */
 export function prettify(

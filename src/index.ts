@@ -1,11 +1,11 @@
-import webhooks from '@octokit/webhooks'
-import * as probot from 'probot'
-import * as probotKit from 'probot-kit'
-import Rollbar from 'rollbar'
-import { isDifferentText } from './is-different-text'
-import loadPrettierConfig from './load-prettier-config'
-import { PrettifierConfiguration } from './prettifier-configuration'
-import { prettify } from './prettify'
+import webhooks from "@octokit/webhooks"
+import * as probot from "probot"
+import * as probotKit from "probot-kit"
+import Rollbar from "rollbar"
+import { isDifferentText } from "./is-different-text"
+import loadPrettierConfig from "./load-prettier-config"
+import { PrettifierConfiguration } from "./prettifier-configuration"
+import { prettify } from "./prettify"
 
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
   new Rollbar({
@@ -16,31 +16,31 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
 }
 
 export = (app: probot.Application) => {
-  app.on('push', onPush)
-  console.log('PRETTIFIER BOT STARTED')
+  app.on("push", onPush)
+  console.log("PRETTIFIER BOT STARTED")
 }
 
 // Called when this bot gets notified about a push on Github
 async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   if (
-    probotKit.getSha(context) === '0000000000000000000000000000000000000000'
+    probotKit.getSha(context) === "0000000000000000000000000000000000000000"
   ) {
     console.log(
       probotKit.getRepoName(context) +
-        '|' +
+        "|" +
         probotKit.getBranchName(context) +
-        ': IGNORING BRANCH DELETION'
+        ": IGNORING BRANCH DELETION"
     )
     return
   }
   const repoName =
     probotKit.getRepoName(context) +
-    '|' +
+    "|" +
     probotKit.getBranchName(context) +
-    '|' +
+    "|" +
     probotKit.getSha(context).substring(0, 7)
   console.log(`${repoName}: PUSH DETECTED`)
-  if (probotKit.getCommitAuthorName(context) === 'prettifier[bot]') {
+  if (probotKit.getCommitAuthorName(context) === "prettifier[bot]") {
     console.log(`${repoName}: IGNORING COMMIT BY PRETTIFIER`)
     return
   }
