@@ -40,7 +40,17 @@ lint:  # lints the code base
 log:   # shows the log output from the production server
 	heroku logs --tail --app prettifier-prod
 
-test: lint unit doc   # runs all tests
+test:  # runs all tests
+	@node_modules$/.bin$/tsc --noEmit &
+	@node_modules$/.bin$/tslint --project tsconfig.json &
+	@node_modules$/.bin$/prettier -l '*.md' &
+	@node_modules$/.bin$/prettier -l '*.yml' &
+	@node_modules$/.bin$/prettier -l '*.json' &
+	@node_modules$/.bin$/prettier -l 'src/**' &
+	@node_modules$/.bin$/prettier -l 'test/*.ts' &
+	@node_modules$/.bin$/prettier -l '.github/**' &
+	@node_modules$/.bin$/text-run --format dot --offline &
+	@node_modules$/.bin$/mocha
 .PHONY: test
 
 start:   # starts the server
