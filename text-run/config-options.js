@@ -1,4 +1,4 @@
-const jsDiffConsole = require('jsdiff-console')
+const diff = require('assert-no-diff')
 const PrettifierConfiguration = require('../dist/prettifier-configuration.js')
   .PrettifierConfiguration
 
@@ -7,6 +7,9 @@ module.exports = async function(activity) {
     .textInNodesOfType('strong')
     .map(s => s.substr(0, s.length - 1))
     .sort()
-  const actualOptions = Object.keys(PrettifierConfiguration.defaults).sort()
-  jsDiffConsole(documentedOptions, actualOptions)
+    .join('\n')
+  const actualOptions = Object.keys(PrettifierConfiguration.defaults)
+    .sort()
+    .join('\n')
+  diff.trimmedLines(documentedOptions, actualOptions)
 }
