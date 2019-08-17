@@ -18,9 +18,10 @@ This bot runs as a Github application. To set it up for your code base:
 
 ## Configuration
 
-Prettifier honors [.prettierrc](https://prettier.io/docs/en/configuration.html)
-files in the root of your code base. You can configure Prettifier via a
-`.github/prettifier.yml` file in your code base. The configuration options are:
+To configure _Prettier_, put a
+[.prettierrc](https://prettier.io/docs/en/configuration.html) file in the root
+directory of your code base. To configure the Prettifier bot itself, add a
+`.github/prettifier.yml` file to your code base. The configuration options are:
 
 <a textrun="config-options">
 
