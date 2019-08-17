@@ -17,7 +17,7 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
 
 export = (app: probot.Application) => {
   app.on("push", onPush)
-  console.log("PRETTIFIER BOT STARTED")
+  console.log("PRETTIFIER STARTED")
 }
 
 // Called when this bot gets notified about a push on Github
