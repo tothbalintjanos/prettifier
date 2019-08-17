@@ -3,7 +3,6 @@ import ignore from "ignore"
 import prettier from "prettier"
 import * as probot from "probot"
 import * as probotKit from "probot-kit"
-import { Partial } from "./partial-type"
 
 /** The Prettifier configuration options and their values. */
 interface ConfigOptions {
