@@ -4,12 +4,12 @@ import prettier from "prettier"
 export function prettify(
   text: string,
   filename: string,
-  config: prettier.Options
+  prettierConfig: prettier.Options
 ) {
-  const options = { filepath: filename }
-  const merged = { ...config, ...options }
+  const options = { ...prettierConfig }
+  options.filepath = filename
   try {
-    return prettier.format(text, merged)
+    return prettier.format(text, options)
   } catch (e) {
     return text
   }
