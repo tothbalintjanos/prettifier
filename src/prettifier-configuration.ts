@@ -1,8 +1,5 @@
-import webhooks from "@octokit/webhooks"
 import ignore, { Ignore } from "ignore"
 import prettier from "prettier"
-import * as probot from "probot"
-import * as probotKit from "probot-kit"
 
 /** The Prettifier configuration options and their values. */
 interface ConfigOptions {
@@ -19,17 +16,6 @@ export class PrettifierConfiguration {
   static defaults: ConfigOptions = {
     excludeBranches: [],
     excludeFiles: ["node_modules"]
-  }
-
-  /** Loads the configuration for the current session from the server. */
-  static async load(
-    context: probot.Context<webhooks.WebhookPayloadPush>
-  ): Promise<PrettifierConfiguration> {
-    const actualConfig = await probotKit.loadBotConfig(
-      ".github/prettifier.yml",
-      context
-    )
-    return new PrettifierConfiguration(actualConfig)
   }
 
   /** names of the branches that should not be prettified */

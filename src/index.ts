@@ -4,7 +4,7 @@ import * as probotKit from "probot-kit"
 import Rollbar from "rollbar"
 import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
-import { PrettifierConfiguration } from "./prettifier-configuration"
+import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
 
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
@@ -45,7 +45,7 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     return
   }
   const branchName = probotKit.getBranchName(context)
-  const prettifierConfig = await PrettifierConfiguration.load(context)
+  const prettifierConfig = await loadPrettifierConfiguration(context)
   if (prettifierConfig.shouldIgnoreBranch(branchName)) {
     console.log(`${repoName}: IGNORING THIS BRANCH PER BOT CONFIG`)
     return
