@@ -2257,10 +2257,10 @@ private@^0.1.8:
   resolved "https://registry.yarnpkg.com/private/-/private-0.1.8.tgz#2381edb3689f7a53d653190060fcf822d2f368ff"
   integrity sha512-VvivMrbvd2nKkiG38qjULzlc+4Vx4wm/whI9pQD35YrARNnhxeiRktSOhSukRLFNlzg6Br/cJPet5J/u19r/mg==
 
-probot-kit@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/probot-kit/-/probot-kit-0.3.0.tgz#866376b1f6103fe0e6142212591ca67c949b1e3a"
-  integrity sha512-9pJggkyuXphmBS13XcW7yJZKHMfQuDWOuo76h3ljAQidKLZ4RTWHtVizH8uJPZUnRnYseF7yOJc4Fm4yyatraQ==
+probot-kit@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/probot-kit/-/probot-kit-0.4.0.tgz#155c500fd9262875127fefd176ef3ea12af99f89"
+  integrity sha512-AgEu6b1O17tKudzuYmMtGmQMxqIkLhyIRQVlQz/6qeV/USuiEoeVL9jS70hON0Jw1gXOCwf2E4XYo33u1wn6BQ==
   dependencies:
     "@octokit/webhooks" ">=6.0.0"
     got "9.6.0"

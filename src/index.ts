@@ -65,7 +65,7 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   const prettierConfig = await loadPrettierConfig(context)
 
   // check all files in the commit
-  await probotKit.iterateCurrentCommitFiles(context, async file => {
+  for (const file of await probotKit.currentCommitFiles(context)) {
     const filePath = `${repoName}|${file.filename}`
 
     // check if the file is prettifiable
@@ -94,6 +94,6 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     } catch (e) {
       console.log(`${filePath}: PRETTIFYING FAILED: ${e.msg}`)
     }
-  })
+  }
   console.log(`${repoName}: DONE`)
 }
