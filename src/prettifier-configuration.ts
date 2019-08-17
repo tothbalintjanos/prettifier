@@ -1,5 +1,5 @@
 import webhooks from "@octokit/webhooks"
-import ignore from "ignore"
+import ignore, { Ignore } from "ignore"
 import prettier from "prettier"
 import * as probot from "probot"
 import * as probotKit from "probot-kit"
@@ -38,6 +38,8 @@ export class PrettifierConfiguration {
   /** names of files that should not be prettified */
   excludeFiles: string[]
 
+  ignore: Ignore
+
   /**
    * Creates a new configuration based on the given config object.
    * Missing values are backfilled with default values.
@@ -48,6 +50,7 @@ export class PrettifierConfiguration {
       PrettifierConfiguration.defaults.excludeBranches
     this.excludeFiles =
       actualConfig.excludeFiles || PrettifierConfiguration.defaults.excludeFiles
+    this.ignore = ignore().add(this.excludeFiles)
   }
 
   /** Indicates whether the given branch should be ignored. */
@@ -58,11 +61,7 @@ export class PrettifierConfiguration {
   /** Indicates whether the given file should be prettified. */
   async shouldPrettify(filename: string) {
     // check whether the filename is listed as ignored
-    if (
-      ignore()
-        .add(this.excludeFiles)
-        .ignores(filename)
-    ) {
+    if (this.ignore.ignores(filename)) {
       return false
     }
 
