@@ -8,17 +8,15 @@ export async function loadPrettierConfig(
   context: probot.Context<webhooks.WebhookPayloadPush>
 ) {
   const repoName = probotKit.getRepoName(context)
-  let configText = ""
+  let configFileData: probotKit.LoadFileResult
   try {
-    // NOTE: Prettier and TSLint disagree on placing a semicolon on the next line
-    // tslint:disable-next-line:whitespace semicolon
-    ;[configText] = await probotKit.loadFile(".prettierrc", context)
+    configFileData = await probotKit.loadFile(".prettierrc", context)
   } catch (e) {
     console.log(`${repoName}: NO .prettierrc FOUND`)
     return {}
   }
   try {
-    const result = yml.safeLoad(configText)
+    const result = yml.safeLoad(configFileData.content)
     console.log(`${repoName}: PRETTIER CONFIG: ${JSON.stringify(result)}`)
     return result
   } catch (e) {

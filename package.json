@@ -5,20 +5,20 @@
   "author": "Kevin Goslar <kevin.goslar@gmail.com>",
   "dependencies": {
     "@octokit/webhooks": "6.2.2",
-    "ignore": "5.1.2",
+    "ignore": "5.1.4",
     "js-yaml": "3.13.1",
     "prettier": "1.18.2",
-    "probot": "9.3.0",
-    "probot-kit": "0.2.2",
-    "rollbar": "2.11.0"
+    "probot": "9.3.1",
+    "probot-kit": "0.3.0",
+    "rollbar": "2.12.0"
   },
   "devDependencies": {
     "@types/bunyan": "1.8.6",
-    "@types/chai": "4.1.7",
+    "@types/chai": "4.2.0",
     "@types/js-yaml": "3.12.1",
     "@types/mocha": "5.2.7",
-    "@types/node": "12.6.9",
-    "@types/prettier": "1.18.1",
+    "@types/node": "12.7.2",
+    "@types/prettier": "1.18.2",
     "chai": "4.2.0",
     "mocha": "6.2.0",
     "text-runner": "4.0.0-beta.1",

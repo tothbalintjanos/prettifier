@@ -58,14 +58,14 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
       console.log(`${filePath}: NON-PRETTIFYABLE`)
       return
     }
-    const [fileContent, sha] = await probotKit.loadFile(file.filename, context)
-    const formatted = prettify(fileContent, file.filename, prettierConfig)
-    if (!isDifferentText(formatted, fileContent)) {
+    const fileData = await probotKit.loadFile(file.filename, context)
+    const formatted = prettify(fileData.content, file.filename, prettierConfig)
+    if (!isDifferentText(formatted, fileData.content)) {
       console.log(`${filePath}: ALREADY FORMATTED`)
       return
     }
     try {
-      probotKit.updateFile(file.filename, formatted, sha, context)
+      probotKit.updateFile(file.filename, formatted, fileData.sha, context)
       console.log(`${filePath}: PRETTIFYING`)
     } catch (e) {
       console.log(`${filePath}: PRETTIFYING FAILED: ${e.msg}`)
