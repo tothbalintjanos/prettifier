@@ -7,8 +7,10 @@ import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
 
+let rollbar: Rollbar
+
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
-  new Rollbar({
+  rollbar = new Rollbar({
     accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
     captureUncaught: true,
     captureUnhandledRejections: true
@@ -35,29 +37,26 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     )
     return
   }
+  const repoName = probotKit.getRepoName(context)
+  const branchName = probotKit.getBranchName(context)
+  const commitSha = probotKit.getSha(context).substring(0, 7)
 
   // log push detected
-  const repoName =
-    probotKit.getRepoName(context) +
-    "|" +
-    probotKit.getBranchName(context) +
-    "|" +
-    probotKit.getSha(context).substring(0, 7)
-  console.log(`${repoName}: PUSH DETECTED`)
+  const repoPrefix = `${repoName}|${branchName}|${commitSha}`
+  console.log(`${repoPrefix}: PUSH DETECTED`)
 
   // ignore commits by Prettifier
   if (probotKit.getCommitAuthorName(context) === "prettifier[bot]") {
-    console.log(`${repoName}: IGNORING COMMIT BY PRETTIFIER`)
+    console.log(`${repoPrefix}: IGNORING COMMIT BY PRETTIFIER`)
     return
   }
 
   // load Prettifier configuration
-  const branchName = probotKit.getBranchName(context)
   const prettifierConfig = await loadPrettifierConfiguration(context)
 
   // check whether this branch should be ignored
   if (prettifierConfig.shouldIgnoreBranch(branchName)) {
-    console.log(`${repoName}: IGNORING THIS BRANCH PER BOT CONFIG`)
+    console.log(`${repoPrefix}: IGNORING THIS BRANCH PER BOT CONFIG`)
     return
   }
 
@@ -65,9 +64,8 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   const prettierConfig = await loadPrettierConfig(context)
 
   // check all files in the commit
-  const updateOperations: Array<Promise<void>> = []
   for (const file of await probotKit.currentCommitFiles(context)) {
-    const filePath = `${repoName}|${file.filename}`
+    const filePath = `${repoPrefix}|${file.filename}`
 
     // check if the file is prettifiable
     const allowed = await prettifierConfig.shouldPrettify(file.filename)
@@ -89,16 +87,31 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     }
 
     // send the updated file content back to GitHub
-    console.log(`${filePath}: PRETTIFYING`)
-    updateOperations.push(
-      probotKit.updateFile(file.filename, formatted, fileData.sha, context)
-    )
-  }
-  try {
-    await Promise.all(updateOperations)
-  } catch (e) {
-    console.log(`PRETTIFYING FAILED: ${e.msg}`)
+    try {
+      await probotKit.updateFile(
+        file.filename,
+        formatted,
+        fileData.sha,
+        context
+      )
+      console.log(`${filePath}: PRETTIFYING`)
+      rollbar.info("prettifying", {
+        branch: branchName,
+        commit: commitSha,
+        file: filePath,
+        repo: repoName
+      })
+    } catch (e) {
+      console.log(`FILE UPLOAD FAILED: ${e.msg}`)
+      rollbar.warn("file upload failed", {
+        branch: branchName,
+        commit: commitSha,
+        error: e.msg,
+        file: filePath,
+        repo: repoName
+      })
+    }
   }
 
-  console.log(`${repoName}: DONE`)
+  console.log(`${repoPrefix}: DONE`)
 }
