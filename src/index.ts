@@ -15,10 +15,11 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
   })
 }
 
-export function startPrettifier(app: probot.Application) {
+function startBot(app: probot.Application) {
   app.on("push", onPush)
   console.log("PRETTIFIER STARTED")
 }
+export = startBot
 
 // Called when this bot gets notified about a push on Github
 async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
