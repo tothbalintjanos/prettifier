@@ -15,7 +15,7 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
   })
 }
 
-export = (app: probot.Application) => {
+export function startPrettifier(app: probot.Application) {
   app.on("push", onPush)
   console.log("PRETTIFIER STARTED")
 }
