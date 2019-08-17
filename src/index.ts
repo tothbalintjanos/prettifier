@@ -64,12 +64,16 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   const prettierConfig = await loadPrettierConfig(context)
 
   // check all files in the commit
+  const alreadyPrettyFiles: string[] = []
+  const ignoredFiles: string[] = []
+  const prettifiedFiles: string[] = []
   for (const file of await probotKit.currentCommitFiles(context)) {
     const filePath = `${repoPrefix}|${file.filename}`
 
     // check if the file is prettifiable
     const allowed = await prettifierConfig.shouldPrettify(file.filename)
     if (!allowed) {
+      ignoredFiles.push(filePath)
       console.log(`${filePath}: NON-PRETTIFYABLE`)
       return
     }
@@ -82,11 +86,13 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
 
     // ignore if there are no changes
     if (!isDifferentText(formatted, fileData.content)) {
+      alreadyPrettyFiles.push(filePath)
       console.log(`${filePath}: ALREADY FORMATTED`)
       return
     }
 
     // send the updated file content back to GitHub
+    prettifiedFiles.push(filePath)
     try {
       await probotKit.updateFile(
         file.filename,
@@ -114,4 +120,16 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   }
 
   console.log(`${repoPrefix}: DONE`)
+  // write the canonical log
+  rollbar.info("commit prettified", {
+    alreadyPrettyFiles,
+    alreadyPrettyFilesCount: alreadyPrettyFiles.length,
+    branch: branchName,
+    commit: commitSha,
+    ignoredFiles,
+    ignoredFilesCount: ignoredFiles.length,
+    prettifiedFiles,
+    prettifiedFilesCount: prettifiedFiles.length,
+    repo: repoName
+  })
 }
