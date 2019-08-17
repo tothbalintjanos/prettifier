@@ -3,7 +3,7 @@ import * as probot from "probot"
 import * as probotKit from "probot-kit"
 import Rollbar from "rollbar"
 import { isDifferentText } from "./is-different-text"
-import loadPrettierConfig from "./load-prettier-config"
+import { loadPrettierConfig } from "./load-prettier-config"
 import { PrettifierConfiguration } from "./prettifier-configuration"
 import { prettify } from "./prettify"
 
