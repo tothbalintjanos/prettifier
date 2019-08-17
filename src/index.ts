@@ -65,6 +65,7 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   const prettierConfig = await loadPrettierConfig(context)
 
   // check all files in the commit
+  const updateOperations: Array<Promise<void>> = []
   for (const file of await probotKit.currentCommitFiles(context)) {
     const filePath = `${repoName}|${file.filename}`
 
@@ -88,12 +89,16 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     }
 
     // send the updated file content back to GitHub
-    try {
+    console.log(`${filePath}: PRETTIFYING`)
+    updateOperations.push(
       probotKit.updateFile(file.filename, formatted, fileData.sha, context)
-      console.log(`${filePath}: PRETTIFYING`)
-    } catch (e) {
-      console.log(`${filePath}: PRETTIFYING FAILED: ${e.msg}`)
-    }
+    )
   }
+  try {
+    await Promise.all(updateOperations)
+  } catch (e) {
+    console.log(`PRETTIFYING FAILED: ${e.msg}`)
+  }
+
   console.log(`${repoName}: DONE`)
 }
