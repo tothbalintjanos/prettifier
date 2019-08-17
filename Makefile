@@ -22,6 +22,7 @@ fix:  # fixes the auto-fixable formatting issues
 	node_modules$/.bin$/prettier --write '*.json'
 	node_modules$/.bin$/prettier --write 'src/**'
 	node_modules$/.bin$/prettier --write 'test/*.ts'
+	node_modules$/.bin$/prettier --write 'text-run/*.js'
 	node_modules$/.bin$/prettier --write '.github/**'
 
 help:   # prints all make targets
@@ -35,6 +36,7 @@ lint:  # lints the code base
 	node_modules$/.bin$/prettier -l '*.json'
 	node_modules$/.bin$/prettier -l 'src/**'
 	node_modules$/.bin$/prettier -l 'test/*.ts'
+	node_modules$/.bin$/prettier -l 'text-run/*.js'
 	node_modules$/.bin$/prettier -l '.github/**'
 
 log:   # shows the log output from the production server

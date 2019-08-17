@@ -1,7 +1,7 @@
-const PrettifierConfiguration = require('../dist/prettifier-configuration.js')
+const PrettifierConfiguration = require("../dist/prettifier-configuration.js")
   .PrettifierConfiguration
-const yaml = require('js-yaml')
-const diff = require('assert-no-diff')
+const yaml = require("js-yaml")
+const diff = require("assert-no-diff")
 
 module.exports = async function(activity) {
   const documented = activity.nodes.text().trim()

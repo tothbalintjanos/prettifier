@@ -1,15 +1,15 @@
-const diff = require('assert-no-diff')
-const PrettifierConfiguration = require('../dist/prettifier-configuration.js')
+const diff = require("assert-no-diff")
+const PrettifierConfiguration = require("../dist/prettifier-configuration.js")
   .PrettifierConfiguration
 
 module.exports = async function(activity) {
   const documentedOptions = activity.nodes
-    .textInNodesOfType('strong')
+    .textInNodesOfType("strong")
     .map(s => s.substr(0, s.length - 1))
     .sort()
-    .join('\n')
+    .join("\n")
   const actualOptions = Object.keys(PrettifierConfiguration.defaults)
     .sort()
-    .join('\n')
+    .join("\n")
   diff.trimmedLines(documentedOptions, actualOptions)
 }
