@@ -1,6 +1,7 @@
 const diff = require("assert-no-diff")
-const PrettifierConfiguration = require("../dist/prettifier-configuration.js")
-  .PrettifierConfiguration
+const {
+  PrettifierConfiguration
+} = require("../dist/prettifier-configuration.js")
 
 module.exports = async function(activity) {
   const documentedOptions = activity.nodes
