@@ -15,6 +15,7 @@ type ConfigParams = Partial<ConfigOptions>
 
 /** Encapsulates logic around configuration of Prettifier. */
 export class PrettifierConfiguration {
+  /** Default values for the configuration options. */
   static defaults: ConfigOptions = {
     excludeBranches: [],
     excludeFiles: ["node_modules"]
