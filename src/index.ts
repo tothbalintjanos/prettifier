@@ -22,6 +22,7 @@ export function startPrettifier(app: probot.Application) {
 
 // Called when this bot gets notified about a push on Github
 async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
+  // ignore deleted branches
   if (
     probotKit.getSha(context) === "0000000000000000000000000000000000000000"
   ) {
@@ -33,6 +34,8 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     )
     return
   }
+
+  // log push detected
   const repoName =
     probotKit.getRepoName(context) +
     "|" +
@@ -40,30 +43,50 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     "|" +
     probotKit.getSha(context).substring(0, 7)
   console.log(`${repoName}: PUSH DETECTED`)
+
+  // ignore commits by Prettifier
   if (probotKit.getCommitAuthorName(context) === "prettifier[bot]") {
     console.log(`${repoName}: IGNORING COMMIT BY PRETTIFIER`)
     return
   }
+
+  // load Prettifier configuration
   const branchName = probotKit.getBranchName(context)
   const prettifierConfig = await loadPrettifierConfiguration(context)
+
+  // check whether this branch should be ignored
   if (prettifierConfig.shouldIgnoreBranch(branchName)) {
     console.log(`${repoName}: IGNORING THIS BRANCH PER BOT CONFIG`)
     return
   }
+
+  // load Prettier configuration
   const prettierConfig = await loadPrettierConfig(context)
+
+  // check all files in the commit
   await probotKit.iterateCurrentCommitFiles(context, async file => {
     const filePath = `${repoName}|${file.filename}`
+
+    // check if the file is prettifiable
     const allowed = await prettifierConfig.shouldPrettify(file.filename)
     if (!allowed) {
       console.log(`${filePath}: NON-PRETTIFYABLE`)
       return
     }
+
+    // load the file content
     const fileData = await probotKit.loadFile(file.filename, context)
+
+    // prettify the file
     const formatted = prettify(fileData.content, file.filename, prettierConfig)
+
+    // ignore if there are no changes
     if (!isDifferentText(formatted, fileData.content)) {
       console.log(`${filePath}: ALREADY FORMATTED`)
       return
     }
+
+    // send the updated file content back to GitHub
     try {
       probotKit.updateFile(file.filename, formatted, fileData.sha, context)
       console.log(`${filePath}: PRETTIFYING`)
