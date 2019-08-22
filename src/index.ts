@@ -7,10 +7,8 @@ import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
 
-let rollbar: Rollbar
-
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
-  rollbar = new Rollbar({
+  new Rollbar({
     accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
     captureUncaught: true,
     captureUnhandledRejections: true
@@ -101,35 +99,10 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
         context
       )
       console.log(`${filePath}: PRETTIFYING`)
-      rollbar.info("prettifying", {
-        branch: branchName,
-        commit: commitSha,
-        file: filePath,
-        repo: repoName
-      })
     } catch (e) {
       console.log(`FILE UPLOAD FAILED: ${e.msg}`)
-      rollbar.warn("file upload failed", {
-        branch: branchName,
-        commit: commitSha,
-        error: e.msg,
-        file: filePath,
-        repo: repoName
-      })
     }
   }
 
-  console.log(`${repoPrefix}: DONE`)
-  // write the canonical log
-  rollbar.info("commit prettified", {
-    alreadyPrettyFiles,
-    alreadyPrettyFilesCount: alreadyPrettyFiles.length,
-    branch: branchName,
-    commit: commitSha,
-    ignoredFiles,
-    ignoredFilesCount: ignoredFiles.length,
-    prettifiedFiles,
-    prettifiedFilesCount: prettifiedFiles.length,
-    repo: repoName
-  })
+  console.log(`${repoPrefix}: COMMIT PRETTIFIED`)
 }
