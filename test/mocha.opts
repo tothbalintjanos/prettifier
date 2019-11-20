@@ -1,3 +1,4 @@
 --require ts-node/register
 --slow 1000
+--ui qunit
 test/*-test.ts
