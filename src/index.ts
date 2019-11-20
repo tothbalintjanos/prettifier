@@ -24,15 +24,8 @@ export = startBot
 // Called when this bot gets notified about a push on Github
 async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   // ignore deleted branches
-  if (
-    probotKit.getSha(context) === "0000000000000000000000000000000000000000"
-  ) {
-    console.log(
-      probotKit.getRepoName(context) +
-        "|" +
-        probotKit.getBranchName(context) +
-        ": IGNORING BRANCH DELETION"
-    )
+  if (probotKit.getSha(context) === "0000000000000000000000000000000000000000") {
+    console.log(probotKit.getRepoName(context) + "|" + probotKit.getBranchName(context) + ": IGNORING BRANCH DELETION")
     return
   }
   const repoName = probotKit.getRepoName(context)
@@ -92,12 +85,7 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     // send the updated file content back to GitHub
     prettifiedFiles.push(filePath)
     try {
-      await probotKit.updateFile(
-        file.filename,
-        formatted,
-        fileData.sha,
-        context
-      )
+      await probotKit.updateFile(file.filename, formatted, fileData.sha, context)
       console.log(`${filePath}: PRETTIFYING`)
     } catch (e) {
       console.log(`FILE UPLOAD FAILED: ${e.msg}`)

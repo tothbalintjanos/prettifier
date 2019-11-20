@@ -1,6 +1,4 @@
-const {
-  PrettifierConfiguration
-} = require("../dist/prettifier-configuration.js")
+const { PrettifierConfiguration } = require("../dist/prettifier-configuration.js")
 const yaml = require("js-yaml")
 const diff = require("assert-no-diff")
 

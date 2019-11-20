@@ -31,11 +31,8 @@ export class PrettifierConfiguration {
    * Missing values are backfilled with default values.
    */
   constructor(actualConfig: ConfigParams) {
-    this.excludeBranches =
-      actualConfig.excludeBranches ||
-      PrettifierConfiguration.defaults.excludeBranches
-    this.excludeFiles =
-      actualConfig.excludeFiles || PrettifierConfiguration.defaults.excludeFiles
+    this.excludeBranches = actualConfig.excludeBranches || PrettifierConfiguration.defaults.excludeBranches
+    this.excludeFiles = actualConfig.excludeFiles || PrettifierConfiguration.defaults.excludeFiles
     this.ignore = ignore().add(this.excludeFiles)
   }
 

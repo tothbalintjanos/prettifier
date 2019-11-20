@@ -7,9 +7,6 @@ import { PrettifierConfiguration } from "./prettifier-configuration"
 export async function loadPrettifierConfiguration(
   context: probot.Context<webhooks.WebhookPayloadPush>
 ): Promise<PrettifierConfiguration> {
-  const actualConfig = await probotKit.loadBotConfig(
-    ".github/prettifier.yml",
-    context
-  )
+  const actualConfig = await probotKit.loadBotConfig(".github/prettifier.yml", context)
   return new PrettifierConfiguration(actualConfig)
 }
