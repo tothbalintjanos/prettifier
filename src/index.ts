@@ -24,21 +24,24 @@ export = startBot
 
 // Called when this bot gets notified about a push on Github
 async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
+  const orgName = context.payload.repository.owner.login
+  const repoName = context.payload.repository.name
+  const branchName = probotKit.getBranchName(context)
+  const authorName = context.payload.pusher.name
+  const commitSha = probotKit.getSha(context).substring(0, 7)
+  const repoPrefix = `${orgName}/${repoName}|${branchName}|${commitSha}`
+
   // ignore deleted branches
   if (probotKit.getSha(context) === "0000000000000000000000000000000000000000") {
     console.log(probotKit.getRepoName(context) + "|" + probotKit.getBranchName(context) + ": IGNORING BRANCH DELETION")
     return
   }
-  const repoName = probotKit.getRepoName(context)
-  const branchName = probotKit.getBranchName(context)
-  const commitSha = probotKit.getSha(context).substring(0, 7)
 
   // log push detected
-  const repoPrefix = `${repoName}|${branchName}|${commitSha}`
   console.log(`${repoPrefix}: PUSH DETECTED`)
 
   // ignore commits by Prettifier
-  if (probotKit.getCommitAuthorName(context) === "prettifier[bot]") {
+  if (authorName === "prettifier[bot]") {
     console.log(`${repoPrefix}: IGNORING COMMIT BY PRETTIFIER`)
     return
   }
