@@ -3,6 +3,7 @@ import * as probot from "probot"
 import * as probotKit from "probot-kit"
 import Rollbar from "rollbar"
 import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
+import { createCommit } from "./create-commit"
 import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
@@ -32,8 +33,8 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   const repoPrefix = `${orgName}/${repoName}|${branchName}|${commitSha}`
 
   // ignore deleted branches
-  if (probotKit.getSha(context) === "0000000000000000000000000000000000000000") {
-    console.log(probotKit.getRepoName(context) + "|" + probotKit.getBranchName(context) + ": IGNORING BRANCH DELETION")
+  if (commitSha === "0000000") {
+    console.log(`${repoPrefix}: IGNORING BRANCH DELETION`)
     return
   }
 
@@ -59,10 +60,8 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   const prettierConfig = await loadPrettierConfig(context)
 
   // check all files in the commit
-  const alreadyPrettyFiles: string[] = []
-  const ignoredFiles: string[] = []
-  const prettifiedFiles: string[] = []
   let changedFiles: string[] = []
+  const prettifiedFiles = []
   for (const commit of context.payload.commits) {
     changedFiles = changedFiles.concat(commit.added)
     changedFiles = changedFiles.concat(commit.modified)
@@ -73,7 +72,6 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     // check if the file is prettifiable
     const allowed = await prettifierConfig.shouldPrettify(file)
     if (!allowed) {
-      ignoredFiles.push(filePath)
       console.log(`${filePath}: NON-PRETTIFYABLE`)
       return
     }
@@ -87,20 +85,24 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
 
     // ignore if there are no changes
     if (!isDifferentText(formatted, fileData.content)) {
-      alreadyPrettyFiles.push(filePath)
       console.log(`${filePath}: ALREADY FORMATTED`)
-      return
+      continue
     }
 
     // send the updated file content back to GitHub
-    prettifiedFiles.push(filePath)
+    prettifiedFiles.push({ path: file, content: formatted })
+  }
+
+  if (prettifiedFiles.length > 0) {
     try {
-      await probotKit.updateFile(file, formatted, fileData.sha, context)
-      console.log(`${filePath}: PRETTIFYING`)
+      await createCommit(orgName, repoName, branchName, `Format ${commitSha}`, prettifiedFiles, context)
     } catch (e) {
-      console.log(`FILE UPLOAD FAILED: ${e.msg}`)
+      console.log(`${repoPrefix}: CANNOT COMMIT CHANGES!`)
+      console.log(e)
     }
   }
 
-  console.log(`${repoPrefix}: COMMIT PRETTIFIED`)
+  console.log(
+    `${repoPrefix}: PRETTIFIED ${prettifiedFiles.length} FILES: ${prettifiedFiles.map(f => f.path).join(", ")}`
+  )
 }
