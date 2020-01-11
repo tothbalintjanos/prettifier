@@ -39,7 +39,7 @@ lint:  # lints the code base
 	node_modules$/.bin$/prettier -l 'text-run/*.js'
 	node_modules$/.bin$/prettier -l '.github/**'
 
-log:   # shows the log output from the production server
+logs:   # shows the log output from the production server
 	heroku logs --tail --app prettifier-prod
 
 test:  # runs all tests
