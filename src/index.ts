@@ -6,6 +6,7 @@ import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
+import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
   new Rollbar({
@@ -73,7 +74,8 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     const fileData = await probotKit.loadFile(file.filename, context)
 
     // prettify the file
-    const formatted = prettify(fileData.content, file.filename, prettierConfig)
+    const prettierConfigForFile = applyPrettierConfigOverrides(prettierConfig, file.filename)
+    const formatted = prettify(fileData.content, file.filename, prettierConfigForFile)
 
     // ignore if there are no changes
     if (!isDifferentText(formatted, fileData.content)) {
