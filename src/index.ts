@@ -2,11 +2,11 @@ import webhooks from "@octokit/webhooks"
 import * as probot from "probot"
 import * as probotKit from "probot-kit"
 import Rollbar from "rollbar"
+import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
-import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
   new Rollbar({
@@ -59,11 +59,16 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   const alreadyPrettyFiles: string[] = []
   const ignoredFiles: string[] = []
   const prettifiedFiles: string[] = []
-  for (const file of await probotKit.currentCommitFiles(context)) {
-    const filePath = `${repoPrefix}|${file.filename}`
+  let changedFiles: string[] = []
+  for (const commit of context.payload.commits) {
+    changedFiles = changedFiles.concat(commit.added)
+    changedFiles = changedFiles.concat(commit.modified)
+  }
+  for (const file of changedFiles) {
+    const filePath = `${repoPrefix}|${file}`
 
     // check if the file is prettifiable
-    const allowed = await prettifierConfig.shouldPrettify(file.filename)
+    const allowed = await prettifierConfig.shouldPrettify(file)
     if (!allowed) {
       ignoredFiles.push(filePath)
       console.log(`${filePath}: NON-PRETTIFYABLE`)
@@ -71,11 +76,11 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     }
 
     // load the file content
-    const fileData = await probotKit.loadFile(file.filename, context)
+    const fileData = await probotKit.loadFile(file, context)
 
     // prettify the file
-    const prettierConfigForFile = applyPrettierConfigOverrides(prettierConfig, file.filename)
-    const formatted = prettify(fileData.content, file.filename, prettierConfigForFile)
+    const prettierConfigForFile = applyPrettierConfigOverrides(prettierConfig, file)
+    const formatted = prettify(fileData.content, file, prettierConfigForFile)
 
     // ignore if there are no changes
     if (!isDifferentText(formatted, fileData.content)) {
@@ -87,7 +92,7 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     // send the updated file content back to GitHub
     prettifiedFiles.push(filePath)
     try {
-      await probotKit.updateFile(file.filename, formatted, fileData.sha, context)
+      await probotKit.updateFile(file, formatted, fileData.sha, context)
       console.log(`${filePath}: PRETTIFYING`)
     } catch (e) {
       console.log(`FILE UPLOAD FAILED: ${e.msg}`)
