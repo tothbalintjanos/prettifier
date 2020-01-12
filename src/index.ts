@@ -95,7 +95,14 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
 
   if (prettifiedFiles.length > 0) {
     try {
-      await createCommit(orgName, repoName, branchName, `Format ${commitSha}`, prettifiedFiles, context)
+      await createCommit({
+        branch: branchName,
+        context,
+        files: prettifiedFiles,
+        message: `Format ${commitSha}`,
+        org: orgName,
+        repo: repoName
+      })
     } catch (e) {
       console.log(`${repoPrefix}: CANNOT COMMIT CHANGES!`)
       console.log(e)
