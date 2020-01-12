@@ -1,4 +1,4 @@
-# Prettifier
+# Prettifier <img src="documentation/logo_400.jpg" width="33" height="23">
 
 [![CircleCI](https://circleci.com/gh/kevgo/prettifier.svg?style=shield)](https://circleci.com/gh/kevgo/prettifier)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/kevgo/prettifier.svg)](https://lgtm.com/projects/g/kevgo/prettifier/context:javascript)
