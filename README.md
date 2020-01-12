@@ -9,6 +9,8 @@ Every time someone pushes a commit that contains unformatted code or Markdown to
 GitHub, Prettifier adds a commit fixing the formatting issues to the same
 branch.
 
+<img src="documentation/screenshot_annotated.png" width="810" height="413" align="center">
+
 ## Setup
 
 This bot runs as a Github application. To set it up for your code base:
