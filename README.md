@@ -3,17 +3,39 @@
 [![CircleCI](https://circleci.com/gh/kevgo/prettifier.svg?style=shield)](https://circleci.com/gh/kevgo/prettifier)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/kevgo/prettifier.svg)](https://lgtm.com/projects/g/kevgo/prettifier/context:javascript)
 
-_A GitHub bot that makes your code base prettier._
+_A GitHub bot that keeps your code base consistently formatted._
 
-Every time someone pushes a commit that contains unformatted code or Markdown to
-GitHub, Prettifier adds a commit fixing the formatting issues to the same
-branch.
+Every time someone pushes a commit that contains unformatted content to GitHub,
+Prettifier fixes that.
 
-<img src="documentation/screenshot_annotated.png" width="810" height="413" align="center">
+- **in unprotected branches:** Prettier commits the formatting fixes right into
+  it
+- **in protected branches:** Prettifier opens a pull request with the fixes
+
+## Screenshots
+
+<table>
+  <tr>
+    <th>direct commit</th>
+    <th>pull request</th>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://raw.githubusercontent.com/kevgo/prettifier/master/documentation/screenshot_annotated.png" target="_blank">
+        <img src="documentation/screenshot_annotated_small.png" width="273" height="53">
+      </a>
+    </td>
+    <td>
+      <a href="https://raw.githubusercontent.com/kevgo/prettifier/kg-pull-requests/documentation/screenshot_pull_request.png" target="_blank">
+        <img src="documentation/screenshot_pull_request.png" width="288"" height="226">
+      </a>
+    </td>
+  </tr>
+</table>
 
 ## Setup
 
-This bot runs as a Github application. To set it up for your code base:
+This bot runs as a GitHub application. To set it up for your code base:
 
 - go to https://github.com/apps/prettifier
 - click on `Configure`

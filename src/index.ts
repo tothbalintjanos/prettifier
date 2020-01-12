@@ -1,9 +1,11 @@
+import { RequestError } from "@octokit/request-error"
 import webhooks from "@octokit/webhooks"
 import * as probot from "probot"
 import * as probotKit from "probot-kit"
 import Rollbar from "rollbar"
 import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 import { createCommit } from "./create-commit"
+import { createPullRequest } from "./create-pull-request"
 import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
@@ -93,23 +95,67 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     prettifiedFiles.push({ path: file, content: formatted })
   }
 
-  if (prettifiedFiles.length > 0) {
-    try {
-      await createCommit({
-        branch: branchName,
-        context,
-        files: prettifiedFiles,
-        message: `Format ${commitSha}`,
-        org: orgName,
-        repo: repoName
-      })
-    } catch (e) {
-      console.log(`${repoPrefix}: CANNOT COMMIT CHANGES!`)
-      console.log(e)
-    }
+  if (prettifiedFiles.length === 0) {
+    // no changed files --> nothing else to do here
+    return
   }
 
-  console.log(
-    `${repoPrefix}: PRETTIFIED ${prettifiedFiles.length} FILES: ${prettifiedFiles.map(f => f.path).join(", ")}`
-  )
+  // try creating a commit
+  let err: Error
+  try {
+    await createCommit({
+      branch: branchName,
+      context,
+      files: prettifiedFiles,
+      message: `Format ${commitSha}`,
+      org: orgName,
+      repo: repoName
+    })
+    console.log(
+      `${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES: ${prettifiedFiles
+        .map(f => f.path)
+        .join(", ")}`
+    )
+    return
+  } catch (e) {
+    err = e
+  }
+
+  // When reaching this, the pull request has failed.
+  // Analyze the error to see if we should try creating a pull request.
+  let tryPullRequest = false
+  if (err.constructor.name === "RequestError") {
+    const requestError = err as RequestError
+    if (requestError.status === 422 && requestError.message.includes("Required status check")) {
+      tryPullRequest = true
+    }
+  }
+  if (!tryPullRequest) {
+    console.log(`${repoPrefix}: CANNOT COMMIT CHANGES WITH UNKNOWN ERROR:`)
+    console.log(err)
+    return
+  }
+
+  // try creating a pull request
+  try {
+    await createPullRequest({
+      body: "Formats recently committed files. No content changes.",
+      branch: `prettifier-${commitSha}`,
+      context,
+      files: prettifiedFiles,
+      message: `Format ${commitSha}`,
+      org: orgName,
+      parentBranch: "master",
+      repo: repoName
+    })
+    console.log(
+      `${repoPrefix}: CREATED PULL REQUEST FOR ${prettifiedFiles.length} PRETTIFIED FILES: ${prettifiedFiles
+        .map(f => f.path)
+        .join(", ")}`
+    )
+    return
+  } catch (e) {
+    console.log(`${repoPrefix}: CANNOT CREATE PULL REQUEST:`)
+    console.log(e)
+  }
 }
