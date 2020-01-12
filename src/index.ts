@@ -89,7 +89,7 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
       continue
     }
 
-    // send the updated file content back to GitHub
+    // store the prettified content
     prettifiedFiles.push({ path: file, content: formatted })
   }
 
