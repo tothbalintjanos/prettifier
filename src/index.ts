@@ -4,6 +4,7 @@ import * as probot from "probot"
 import * as probotKit from "probot-kit"
 import Rollbar from "rollbar"
 import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
+import { concatToSet } from "./concat-to-set"
 import { createCommit } from "./create-commit"
 import { createPullRequest } from "./create-pull-request"
 import { isDifferentText } from "./is-different-text"
@@ -62,12 +63,12 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
   const prettierConfig = await loadPrettierConfig(context)
 
   // check all files in the commit
-  let changedFiles: string[] = []
-  const prettifiedFiles = []
+  const changedFiles = new Set<string>()
   for (const commit of context.payload.commits) {
-    changedFiles = changedFiles.concat(commit.added)
-    changedFiles = changedFiles.concat(commit.modified)
+    concatToSet(changedFiles, commit.added)
+    concatToSet(changedFiles, commit.modified)
   }
+  const prettifiedFiles = []
   for (const file of changedFiles) {
     const filePath = `${repoPrefix}|${file}`
 
