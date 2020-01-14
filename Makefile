@@ -7,59 +7,35 @@ else
 	/ := /
 endif
 
-build: clean  # builds the production version
-	@node_modules$/.bin$/tsc -p .
+build: clean  # builds all code bases
+	@(cd bot && make --no-print-directory build)
 
 clean:  # removes all build artifacts
-	@rm -rf dist
+	@(cd bot && make --no-print-directory clean)
 
-doc: build  # verifies the documentation
-	node_modules$/.bin$/text-run --format dot --offline
+doc:  # verifies the documentation
+	@(cd bot && make --no-print-directory build)
+	@tools/text-runner/node_modules$/.bin$/text-run --format dot --offline
 
 fix:  # fixes the auto-fixable formatting issues
-	node_modules$/.bin$/prettier --write '*.md'
-	node_modules$/.bin$/prettier --write '*.yml'
-	node_modules$/.bin$/prettier --write '*.json'
-	node_modules$/.bin$/prettier --write 'src/**'
-	node_modules$/.bin$/prettier --write 'test/*.ts'
-	node_modules$/.bin$/prettier --write 'text-run/*.js'
-	node_modules$/.bin$/prettier --write '.github/**'
+	@tools/prettier/prettify --write
 
-help:   # prints all make targets
+help:   # shows all available Make commands
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
 lint:  # lints the code base
-	node_modules$/.bin$/tsc --noEmit
-	node_modules$/.bin$/tslint --project tsconfig.json
-	node_modules$/.bin$/prettier -l '*.md'
-	node_modules$/.bin$/prettier -l '*.yml'
-	node_modules$/.bin$/prettier -l '*.json'
-	node_modules$/.bin$/prettier -l 'src/**'
-	node_modules$/.bin$/prettier -l 'test/*.ts'
-	node_modules$/.bin$/prettier -l 'text-run/*.js'
-	node_modules$/.bin$/prettier -l '.github/**'
-
-logs:   # shows the log output from the production server
-	heroku logs --tail --app prettifier-prod
+	@tools/prettier/prettify -l
 
 test:  # runs all tests
-	@node_modules$/.bin$/tsc --noEmit &
-	@node_modules$/.bin$/tslint --project tsconfig.json &
-	@node_modules$/.bin$/prettier -l '*.md' &
-	@node_modules$/.bin$/prettier -l '*.yml' &
-	@node_modules$/.bin$/prettier -l '*.json' &
-	@node_modules$/.bin$/prettier -l 'src/**' &
-	@node_modules$/.bin$/prettier -l 'test/*.ts' &
-	@node_modules$/.bin$/prettier -l '.github/**' &
-	@node_modules$/.bin$/text-run --format dot --offline &
-	@node_modules$/.bin$/mocha
-.PHONY: test
+	@make --no-print-directory lint
+	@(cd bot && make --no-print-directory test)
+	@make --no-print-directory doc
 
-start:   # starts the server
-	yarn start
+setup:  # prepares the code base for working after being cloned
+	@(cd bot && make --no-print-directory setup)
+	@(cd tools && make --no-print-directory setup)
+	@(cd text-run && yarn)
 
-unit:  # runs the unit tests
-	@node_modules$/.bin$/mocha
-
-update:  # updates the dependencies
-	yarn upgrade --latest
+update:  # updates dependencies to the latest version
+	@(cd bot && make --no-print-directory update)
+	@(cd tools && make --no-print-directory update)

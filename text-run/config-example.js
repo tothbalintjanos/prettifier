@@ -1,5 +1,5 @@
-const { PrettifierConfiguration } = require("../dist/prettifier-configuration.js")
-const yaml = require("js-yaml")
+const { PrettifierConfiguration } = require("../bot/dist/prettifier-configuration.js")
+const yaml = require("../bot/node_modules/js-yaml")
 const diff = require("assert-no-diff")
 
 module.exports = async function(activity) {

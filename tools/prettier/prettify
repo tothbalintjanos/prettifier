@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+	find . \
+			-type f \( \
+			-name '*.ts' -o \
+			-name '*.js' -o \
+			-name '*.json' -o \
+			-name '*.yml' \) | \
+		grep -v node_modules | \
+		grep -v '/dist/' | \
+		xargs $(dirname $0)/node_modules/.bin/prettier "$@"
