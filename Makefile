@@ -9,6 +9,7 @@ endif
 
 build: clean  # builds all code bases
 	@(cd bot && make --no-print-directory build)
+	@(cd website && make --no-print-directory build)
 
 clean:  # removes all build artifacts
 	@(cd bot && make --no-print-directory clean)
