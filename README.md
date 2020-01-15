@@ -8,9 +8,8 @@ _A GitHub bot that keeps your code base consistently formatted._
 Every time someone pushes a commit that contains unformatted content to GitHub,
 Prettifier fixes that.
 
-- **in unprotected branches:** Prettier commits the formatting fixes right into
-  it
-- **in protected branches:** Prettifier opens a pull request with the fixes
+- **in unprotected branches:** commits the formatting fixes right into it
+- **in protected branches:** opens a pull request with the fixes
 
 ## Setup
 
