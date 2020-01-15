@@ -7,4 +7,5 @@
 			-name '*.yml' \) | \
 		grep -v node_modules | \
 		grep -v '/dist/' | \
+		grep -v '/docs/' | \
 		xargs $(dirname $0)/node_modules/.bin/prettier "$@"
