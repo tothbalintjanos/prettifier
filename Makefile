@@ -36,7 +36,7 @@ setup:  # prepares the code base for working after being cloned
 	@(cd bot && make --no-print-directory setup)
 	@(cd tools && make --no-print-directory setup)
 	@(cd text-run && yarn)
-	@(cd website && yarn)
+	@(cd website && make --no-print-directory setup)
 
 update:  # updates dependencies to the latest version
 	@(cd bot && make --no-print-directory update)
