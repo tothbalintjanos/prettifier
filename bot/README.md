@@ -24,3 +24,7 @@ yarn install
 ### Getting help
 
 - run `make help` to see all available make commands
+
+### Deployment
+
+To deploy this bot to Heroku, run `make deploy`.

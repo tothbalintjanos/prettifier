@@ -13,6 +13,9 @@ build: clean  # builds the production version
 clean:  # removes all build artifacts
 	@rm -rf dist
 
+deploy:  # deploys the bot to Heroku
+	@(cd .. && git push heroku `git subtree split --prefix bot master`:master --force)
+
 doc: build  # verifies the documentation
 	@../tools/text-runner/node_modules$/.bin$/text-run --format dot --offline
 
