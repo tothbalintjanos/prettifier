@@ -5,43 +5,17 @@
 
 _A GitHub bot that keeps your code base consistently formatted._
 
-Every time someone pushes a commit that contains unformatted content to GitHub,
-Prettifier fixes that.
+Please see the [documentation](https://kevgo.github.io/prettifier) for how to
+use it.
 
-- **in unprotected branches:** commits the formatting fixes right into it
-- **in protected branches:** opens a pull request with the fixes
+This is the source code of Prettifier. It is organized as a monorepository. Each
+top-level directory contains some aspect of the code base:
 
-## Setup
-
-This bot runs as a GitHub application. To set it up for your code base:
-
-- go to https://github.com/apps/prettifier
-- click on `Configure`
-
-## Configuration
-
-To configure _Prettier_, put a
-[.prettierrc](https://prettier.io/docs/en/configuration.html) file in the root
-directory of your code base. To configure the Prettifier bot itself, add a
-`.github/prettifier.yml` file to your code base. The configuration options are:
-
-<a textrun="config-options">
-
-- **excludeFiles:** a list of file and directory paths to ignore, similar to
-  [.gitignore](https://git-scm.com/docs/gitignore)
-- **excludeBranches:** a list of branch names to ignore
-
-</a>
-
-Here is an example configuration file showing the built-in default settings for
-the bot:
-
-<a textrun="config-example">
-
-```yml
-excludeBranches: []
-excludeFiles:
-  - node_modules
-```
-
-</a>
+- [.circleci](.circleci/): CI configuration
+- [.github](.github/): configuration for the Prettifier instance keeping this
+  repository formatted
+- [bot](bot/): source code for the GitHub bot
+- [docs](docs/): rendered website
+- [text-run](text-run/): documentation test scripts
+- [tools](tools/): development tools
+- [website](website/): source code for the documentation website
