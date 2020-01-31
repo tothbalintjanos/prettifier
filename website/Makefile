@@ -1,5 +1,5 @@
 build:  # compiles the static HTML files
-	@rm -rf docs
+	@rm -rf ../docs
 	@(cd website && yarn run build)
 	@mv website/build/prettifier ../docs
 	@echo "This directory contains the source code for the https://kevgo.github.io/prettifier website." > ../docs/README.md
