@@ -4,8 +4,10 @@
 			-name '*.ts' -o \
 			-name '*.js' -o \
 			-name '*.json' -o \
+			-name '*.md' -o \
 			-name '*.yml' \) | \
 		grep -v node_modules | \
 		grep -v '/dist/' | \
 		grep -v '/docs/' | \
+		grep -v 'website/website/' | \
 		xargs $(dirname $0)/node_modules/.bin/prettier "$@"
