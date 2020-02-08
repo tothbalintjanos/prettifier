@@ -1,3 +1,4 @@
+commitMessage: hello {{commitSha}}
 excludeFiles:
   - dist
   - docs

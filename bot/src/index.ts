@@ -11,6 +11,7 @@ import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
+import { formatCommitMessage } from "./format-commit-message"
 
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
   new Rollbar({
@@ -101,6 +102,7 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
     return
   }
 
+  console.log("COMMIT MESSAGE:", prettifierConfig.commitMessage)
   // try creating a commit
   let err: Error
   try {
@@ -108,7 +110,7 @@ async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
       branch: branchName,
       context,
       files: prettifiedFiles,
-      message: `Format ${commitSha}`,
+      message: formatCommitMessage(prettifierConfig.commitMessage, commitSha),
       org: orgName,
       repo: repoName
     })

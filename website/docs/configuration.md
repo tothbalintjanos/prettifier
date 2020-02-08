@@ -19,6 +19,9 @@ your code base. The configuration options are:
 
 <a textrun="config-options">
 
+- **commitMessage:** the message for the prettification commits, possible
+  placeholders are:
+  - `{{commitSha}}` for the SHA of the prettified commit
 - **excludeFiles:** a list of file and directory paths to ignore, similar to
   [.gitignore](https://git-scm.com/docs/gitignore)
 - **excludeBranches:** a list of branch names to ignore
@@ -31,6 +34,7 @@ the bot:
 <a textrun="config-example">
 
 ```yml
+commitMessage: "Format {{commitSha}}",
 excludeBranches: []
 excludeFiles:
   - node_modules

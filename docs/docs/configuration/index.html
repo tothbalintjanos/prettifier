@@ -65,6 +65,11 @@ directory of your code base.</p>
 your code base. The configuration options are:</p>
 <p><a textrun="config-options"></p>
 <ul>
+<li><strong>commitMessage:</strong> the message for the prettification commits, possible
+placeholders are:
+<ul>
+<li><code>{{commitSha}}</code> for the SHA of the prettified commit</li>
+</ul></li>
 <li><strong>excludeFiles:</strong> a list of file and directory paths to ignore, similar to
 <a href="https://git-scm.com/docs/gitignore">.gitignore</a></li>
 <li><strong>excludeBranches:</strong> a list of branch names to ignore</li>
@@ -73,7 +78,8 @@ your code base. The configuration options are:</p>
 <p>Here is an example configuration file showing the built-in default settings for
 the bot:</p>
 <p><a textrun="config-example"></p>
-<pre><code class="hljs css language-yml"><span class="hljs-attr">excludeBranches:</span> <span class="hljs-string">[]</span>
+<pre><code class="hljs css language-yml"><span class="hljs-attr">commitMessage:</span> <span class="hljs-string">"Format <span class="hljs-template-variable">{{commitSha}}</span>"</span><span class="hljs-string">,</span>
+<span class="hljs-attr">excludeBranches:</span> <span class="hljs-string">[]</span>
 <span class="hljs-attr">excludeFiles:</span>
   <span class="hljs-bullet">-</span> <span class="hljs-string">node_modules</span>
 </code></pre>
