@@ -1,25 +1,15 @@
 import ignore, { Ignore } from "ignore"
 import prettier from "prettier"
 
-/** The Prettifier configuration options and their values. */
+/** ConfigOptions defines the Prettifier configuration options */
 interface ConfigOptions {
   commitMessage: string
   excludeBranches: string[]
   excludeFiles: string[]
 }
 
-/** Type for user-provided config options (the user doesn't have to provide all options). */
-type ConfigParams = Partial<ConfigOptions>
-
-/** Encapsulates logic around configuration of Prettifier. */
-export class PrettifierConfiguration {
-  /** Default values for the configuration options. */
-  static defaults: ConfigOptions = {
-    commitMessage: "Format {{commitSha}}",
-    excludeBranches: [],
-    excludeFiles: ["node_modules"]
-  }
-
+/** PrettifierConfiguration provides the configuration of Prettifier. */
+export class PrettifierConfiguration implements ConfigOptions {
   commitMessage: string
 
   /** names of the branches that should not be prettified */
@@ -34,10 +24,10 @@ export class PrettifierConfiguration {
    * Creates a new configuration based on the given config object.
    * Missing values are backfilled with default values.
    */
-  constructor(actualConfig: ConfigParams) {
-    this.commitMessage = actualConfig.commitMessage || PrettifierConfiguration.defaults.commitMessage
-    this.excludeBranches = actualConfig.excludeBranches || PrettifierConfiguration.defaults.excludeBranches
-    this.excludeFiles = actualConfig.excludeFiles || PrettifierConfiguration.defaults.excludeFiles
+  constructor(actualConfig: Partial<ConfigOptions>) {
+    this.commitMessage = actualConfig.commitMessage || "Format {{commitSha}}"
+    this.excludeBranches = actualConfig.excludeBranches || []
+    this.excludeFiles = actualConfig.excludeFiles || ["node_modules"]
     this.ignore = ignore().add(this.excludeFiles)
   }
 
