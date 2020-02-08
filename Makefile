@@ -20,12 +20,14 @@ doc:  # verifies the documentation
 
 fix:  # fixes the auto-fixable formatting issues
 	@tools/prettier/prettify --write
+	@(cd bot && make --no-print-directory fix)
 
 help:   # shows all available Make commands
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
 lint:  # lints the code base
 	@tools/prettier/prettify -l
+	@(cd bot && make --no-print-directory lint)
 
 test:  # runs all tests
 	@make --no-print-directory lint

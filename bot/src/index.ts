@@ -7,11 +7,11 @@ import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 import { concatToSet } from "./concat-to-set"
 import { createCommit } from "./create-commit"
 import { createPullRequest } from "./create-pull-request"
+import { formatCommitMessage } from "./format-commit-message"
 import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
-import { formatCommitMessage } from "./format-commit-message"
 
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
   new Rollbar({
