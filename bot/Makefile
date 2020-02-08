@@ -37,8 +37,8 @@ logs:   # shows the log output from the production server
 test:  # runs all tests
 	@node_modules$/.bin$/tsc --noEmit &
 	@node_modules$/.bin$/tslint --project tsconfig.json &
-	@make lint &
-	@node_modules$/.bin$/mocha
+	@node_modules$/.bin$/mocha &
+	@make --no-print-directory lint
 .PHONY: test
 
 setup:
