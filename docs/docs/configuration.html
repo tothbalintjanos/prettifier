@@ -65,7 +65,7 @@ directory of your code base.</p>
 your code base. The configuration options are:</p>
 <p><a textrun="config-options"></p>
 <ul>
-<li><strong>commitMessage:</strong> the message for the prettification commits, possible
+<li><strong>commitMessage:</strong> the message for the prettification commits. Possible
 placeholders are:
 <ul>
 <li><code>{{commitSha}}</code> for the SHA of the prettified commit</li>
@@ -73,6 +73,8 @@ placeholders are:
 <li><strong>excludeFiles:</strong> a list of file and directory paths to ignore, similar to
 <a href="https://git-scm.com/docs/gitignore">.gitignore</a></li>
 <li><strong>excludeBranches:</strong> a list of branch names to ignore</li>
+<li><strong>pullsOnly:</strong> when <code>true</code>, prettifies only branches that have open pull
+requests</li>
 </ul>
 <p></a></p>
 <p>Here is an example configuration file showing the built-in default settings for
@@ -82,6 +84,7 @@ the bot:</p>
 <span class="hljs-attr">excludeBranches:</span> <span class="hljs-string">[]</span>
 <span class="hljs-attr">excludeFiles:</span>
   <span class="hljs-bullet">-</span> <span class="hljs-string">node_modules</span>
+<span class="hljs-attr">pullsOnly:</span> <span class="hljs-literal">false</span>
 </code></pre>
 <p></a></p>
 </span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/prettifier/docs/installation"><span class="arrow-prev">← </span><span>Installation</span></a><a class="docs-next button" href="/prettifier/docs/best_practices"><span>Best Practices</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="copyright">Copyright © 2020 Kevin Goslar</section></footer></div></body></html>

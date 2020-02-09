@@ -1,5 +1,5 @@
-import webhooks from "@octokit/webhooks"
 import * as probot from "probot"
+import { GitHubAPI } from "probot/lib/github"
 
 export interface FileToCreate {
   path: string
@@ -12,10 +12,10 @@ export async function createCommit(args: {
   branch: string
   message: string
   files: FileToCreate[]
-  context: probot.Context<webhooks.WebhookPayloadPush>
+  github: GitHubAPI
 }) {
   // get the SHA of the latest commit in the branch
-  const getRefResult = await args.context.github.git.getRef({
+  const getRefResult = await args.github.git.getRef({
     owner: args.org,
     ref: `heads/${args.branch}`,
     repo: args.repo
@@ -23,7 +23,7 @@ export async function createCommit(args: {
   const currentCommitSha = getRefResult.data.object.sha
 
   // get the SHA of the tree of the commit
-  const getCommitResult = await args.context.github.git.getCommit({
+  const getCommitResult = await args.github.git.getCommit({
     commit_sha: currentCommitSha,
     owner: args.org,
     repo: args.repo
@@ -33,7 +33,7 @@ export async function createCommit(args: {
   // upload the file contents
   const fileBlobs: probot.Octokit.GitCreateBlobResponse[] = []
   for (const file of args.files) {
-    const response = await args.context.github.git.createBlob({
+    const response = await args.github.git.createBlob({
       content: file.content,
       encoding: "utf-8",
       owner: args.org,
@@ -52,7 +52,7 @@ export async function createCommit(args: {
       type: "blob"
     })
   }
-  const createTreeResult = await args.context.github.git.createTree({
+  const createTreeResult = await args.github.git.createTree({
     base_tree: treeSha,
     owner: args.org,
     repo: args.repo,
@@ -60,7 +60,7 @@ export async function createCommit(args: {
   })
 
   // create the new commit
-  const newCommitResult = await args.context.github.git.createCommit({
+  const newCommitResult = await args.github.git.createCommit({
     message: args.message,
     owner: args.org,
     parents: [currentCommitSha],
@@ -70,7 +70,7 @@ export async function createCommit(args: {
   const newCommitSha = newCommitResult.data.sha
 
   // update the branch to point to the new commit
-  await args.context.github.git.updateRef({
+  await args.github.git.updateRef({
     owner: args.org,
     ref: `heads/${args.branch}`,
     repo: args.repo,

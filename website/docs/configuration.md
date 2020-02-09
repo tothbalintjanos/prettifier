@@ -19,12 +19,14 @@ your code base. The configuration options are:
 
 <a textrun="config-options">
 
-- **commitMessage:** the message for the prettification commits, possible
+- **commitMessage:** the message for the prettification commits. Possible
   placeholders are:
   - `{{commitSha}}` for the SHA of the prettified commit
 - **excludeFiles:** a list of file and directory paths to ignore, similar to
   [.gitignore](https://git-scm.com/docs/gitignore)
 - **excludeBranches:** a list of branch names to ignore
+- **pullsOnly:** when `true`, prettifies only branches that have open pull
+  requests
 
 </a>
 
@@ -38,6 +40,7 @@ commitMessage: "Format {{commitSha}}",
 excludeBranches: []
 excludeFiles:
   - node_modules
+pullsOnly: false
 ```
 
 </a>

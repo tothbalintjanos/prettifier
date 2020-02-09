@@ -6,6 +6,7 @@ interface ConfigOptions {
   commitMessage: string
   excludeBranches: string[]
   excludeFiles: string[]
+  pullsOnly: boolean
 }
 
 /** PrettifierConfiguration provides the configuration of Prettifier. */
@@ -18,6 +19,10 @@ export class PrettifierConfiguration implements ConfigOptions {
   /** names of files that should not be prettified */
   excludeFiles: string[]
 
+  /** whether to only prettify branches that are under code review */
+  pullsOnly: boolean
+
+  /** helps check whether a file path should be ignored */
   ignore: Ignore
 
   /**
@@ -29,6 +34,7 @@ export class PrettifierConfiguration implements ConfigOptions {
     this.excludeBranches = actualConfig.excludeBranches || []
     this.excludeFiles = actualConfig.excludeFiles || ["node_modules"]
     this.ignore = ignore().add(this.excludeFiles)
+    this.pullsOnly = actualConfig.pullsOnly || false
   }
 
   /** Indicates whether the given branch should be ignored. */

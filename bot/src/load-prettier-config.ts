@@ -1,23 +1,21 @@
-import webhooks from "@octokit/webhooks"
 import yml from "js-yaml"
-import * as probot from "probot"
-import * as probotKit from "probot-kit"
+import { loadFile } from "./load-file"
+import { GitHubAPI } from "probot/lib/github"
 
 /** Loads the .prettierrc file for the code base we are evaluating. */
-export async function loadPrettierConfig(context: probot.Context<webhooks.WebhookPayloadPush>) {
-  const repoName = probotKit.getRepoName(context)
-  let configFileData: probotKit.LoadFileResult
+export async function loadPrettierConfig(org: string, repo: string, branch: string, github: GitHubAPI) {
+  let configText = ""
   try {
-    configFileData = await probotKit.loadFile(".prettierrc", context)
+    configText = await loadFile(org, repo, branch, ".prettierrc", github)
   } catch (e) {
-    console.log(`${repoName}: NO .prettierrc FOUND`)
+    console.log(`${org}|${repo}|${branch}: NO .prettierrc FOUND`)
     return {}
   }
   try {
-    const result = yml.safeLoad(configFileData.content)
-    console.log(`${repoName}: PRETTIER CONFIG: ${JSON.stringify(result)}`)
+    const result = yml.safeLoad(configText)
+    console.log(`${org}|${repo}|${branch}: PRETTIER CONFIG: ${JSON.stringify(result)}`)
     return result
   } catch (e) {
-    console.log(`${repoName}: ERROR PARSING .prettierrc:`, e.message)
+    console.log(`${org}|${repo}|${branch}: ERROR PARSING .prettierrc:`, e.message)
   }
 }
