@@ -21,7 +21,7 @@ test("with override", function() {
   const config = {
     overrides: [
       {
-        files: "*.md",
+        files: "**/*.md",
         options: { printWidth: 80 }
       }
     ],
@@ -29,7 +29,16 @@ test("with override", function() {
     proseWrap: "always",
     semi: false
   }
-  const overridden = applyPrettierConfigOverrides(config, "README.md")
+  let overridden = applyPrettierConfigOverrides(config, "README.md")
+  assert.deepEqual(
+    {
+      printWidth: 80,
+      proseWrap: "always",
+      semi: false
+    },
+    overridden
+  )
+  overridden = applyPrettierConfigOverrides(config, "bot/README.md")
   assert.deepEqual(
     {
       printWidth: 80,
