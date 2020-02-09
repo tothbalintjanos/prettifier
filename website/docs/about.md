@@ -4,8 +4,8 @@ title: About
 ---
 
 Prettifier is a GitHub bot that keeps your code base consistently formatted in
-all situations. It works this fully automatically. Everytime someone pushes a
-commit that contains unformatted content to GitHub, Prettifier fixes it.
+all situations. It works fully automatically. Everytime someone pushes a commit
+that contains unformatted content to GitHub, Prettifier fixes it.
 
 ## Unprotected branches
 

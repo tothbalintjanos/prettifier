@@ -3,8 +3,8 @@ id: hosting
 title: Hosting
 ---
 
-This bot runs at https://github.com/apps/prettifier. You can use it for free.
-Here is how you can run this bot yourself:
+This bot runs at https://github.com/apps/prettifier. You can use this instance
+for free. Here is how you can run this bot yourself:
 
 - create a new GitHub application
   ([detailed instructions](https://developer.github.com/apps/building-github-apps/creating-a-github-app))
