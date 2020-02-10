@@ -29,6 +29,9 @@ lint:  # lints the code base
 	@tools/prettier/prettify -l
 	@(cd bot && make --no-print-directory lint)
 
+log:   # shows the log output from the production server
+	heroku logs --tail --app prettifier-prod
+
 test:  # runs all tests
 	@make --no-print-directory lint
 	@(cd bot && make --no-print-directory test)
