@@ -17,14 +17,15 @@ your code base. The configuration options are:
 
 <a textrun="config-options">
 
-- **commentTemplate:** when set to non-empty text, Prettifier comments with the
-  given text in the open pull request when it fixes something.
-- **commitMessage:** message template for the prettification commits. Possible
-  placeholders are:
-  - `{{commitSha}}` for the SHA of the prettified commit
-- **excludeFiles:** a list of file and directory paths to ignore, similar to
-  [.gitignore](https://git-scm.com/docs/gitignore)
-- **excludeBranches:** a list of branch names to ignore
+- **commentTemplate:** [text template](#text-templates) for a comment Prettifier
+  can add to pull requests when making changes to them. Prettifier adds only one
+  comment per pull request. Set to an empty string or omit this option to
+  disable pull request comments.
+- **commitMessage:** [text template](#text-templates) for the commit message of
+  formatting fixes
+- **excludeFiles:** file and directory paths to ignore, in a similar format as
+  [.gitignore files](https://git-scm.com/docs/gitignore)
+- **excludeBranches:** branch names that Prettifier should ignore
 - **pullsOnly:** when set to `true`, Prettifier only formats branches that are
   ready for review, i.e. have open pull requests. This limits interference of
   Prettifier into ongoing development.
@@ -45,3 +46,9 @@ pullsOnly: false
 ```
 
 </a>
+
+### Text templates
+
+Prettifier replaces these placeholders in text templates:
+
+- `{{commitSha}}` for the SHA of the prettified commit

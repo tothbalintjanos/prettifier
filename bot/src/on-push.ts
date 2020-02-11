@@ -13,6 +13,7 @@ import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
 import { getPullRequestForBranch } from "./get-pull-request-for-branch"
 import { addComment } from "./create-comment"
+import { hasCommentFromPrettifier } from "./has-comment-from-prettifier"
 
 // called when this bot gets notified about a push on Github
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
@@ -126,13 +127,18 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
   if (!err && prettifierConfig.commentTemplate !== "") {
     const pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
     if (pullRequestNumber > 0) {
-      addComment(
-        orgName,
-        repoName,
-        pullRequestNumber,
-        formatCommitMessage(prettifierConfig.commentTemplate, commitSha),
-        context.github
-      )
+      const hasComment = await hasCommentFromPrettifier(orgName, repoName, pullRequestNumber, context.github)
+      if (!hasComment) {
+        addComment(
+          orgName,
+          repoName,
+          pullRequestNumber,
+          formatCommitMessage(prettifierConfig.commentTemplate, commitSha),
+          context.github
+        )
+      } else {
+        console.log(`${repoPrefix}: PULL REQUEST ALREADY HAS COMMENT, SKIPPING`)
+      }
     }
   }
 
