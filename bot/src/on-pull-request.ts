@@ -9,6 +9,7 @@ import { loadPrettierConfig } from "./load-prettier-config"
 import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 import { prettify } from "./prettify"
 import { isDifferentText } from "./is-different-text"
+import { addComment } from "./create-comment"
 
 // called when this bot gets notified about a new pull request
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>) {
@@ -86,8 +87,14 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       repo: repoName
     })
     console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
-    return
   } catch (e) {
     console.log(`${repoPrefix}: Cannot create commit:`, e)
+    return
+  }
+
+  // add comment
+  if (prettifierConfig.commentTemplate !== "") {
+    await addComment(orgName, repoName, pullRequestNumber, prettifierConfig.commentTemplate, context.github)
+    console.log(`${repoPrefix}: ADDED COMMENT`)
   }
 }

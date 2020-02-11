@@ -3,6 +3,7 @@ import prettier from "prettier"
 
 /** ConfigOptions defines the Prettifier configuration options */
 interface ConfigOptions {
+  commentTemplate: string
   commitMessage: string
   excludeBranches: string[]
   excludeFiles: string[]
@@ -11,6 +12,9 @@ interface ConfigOptions {
 
 /** PrettifierConfiguration provides the configuration of Prettifier. */
 export class PrettifierConfiguration implements ConfigOptions {
+  /** template for comments on the pull request */
+  commentTemplate: string
+
   commitMessage: string
 
   /** names of the branches that should not be prettified */
@@ -30,6 +34,7 @@ export class PrettifierConfiguration implements ConfigOptions {
    * Missing values are backfilled with default values.
    */
   constructor(actualConfig: Partial<ConfigOptions>) {
+    this.commentTemplate = actualConfig.commentTemplate || ""
     this.commitMessage = actualConfig.commitMessage || "Format {{commitSha}}"
     this.excludeBranches = actualConfig.excludeBranches || []
     this.excludeFiles = actualConfig.excludeFiles || ["node_modules"]

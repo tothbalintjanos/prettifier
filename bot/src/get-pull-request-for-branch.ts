@@ -4,7 +4,7 @@ import { GitHubAPI } from "probot/lib/github"
  * Returns the pull request number for this branch.
  * If this branch has no pull request, returns 0.
  */
-export async function pullRequestForBranch(
+export async function getPullRequestForBranch(
   org: string,
   repo: string,
   branch: string,

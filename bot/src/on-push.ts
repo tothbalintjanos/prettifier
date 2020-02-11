@@ -11,7 +11,8 @@ import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
-import { pullRequestForBranch } from "./pull-request-for-branch"
+import { getPullRequestForBranch } from "./get-pull-request-for-branch"
+import { addComment } from "./create-comment"
 
 // called when this bot gets notified about a push on Github
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
@@ -49,7 +50,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
 
   // check pull requests
   if (prettifierConfig.pullsOnly) {
-    const pullRequestNumber = pullRequestForBranch(orgName, repoName, branchName, context.github)
+    const pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
     if (!pullRequestNumber) {
       console.log(`${repoPrefix}: IGNORING THIS BRANCH BECAUSE IT HAS NO OPEN PULL REQUEST`)
       return
@@ -107,7 +108,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
   }
 
   // try creating a commit
-  let err: Error
+  let err = null
   try {
     await createCommit({
       branch: branchName,
@@ -118,9 +119,25 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       repo: repoName
     })
     console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
-    return
   } catch (e) {
     err = e
+  }
+
+  if (!err && prettifierConfig.commentTemplate !== "") {
+    const pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
+    if (pullRequestNumber > 0) {
+      addComment(
+        orgName,
+        repoName,
+        pullRequestNumber,
+        formatCommitMessage(prettifierConfig.commentTemplate, commitSha),
+        context.github
+      )
+    }
+  }
+
+  if (!err) {
+    return
   }
 
   // When reaching this, the pull request has failed.
@@ -151,7 +168,6 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       repo: repoName
     })
     console.log(`${repoPrefix}: CREATED PULL REQUEST FOR ${prettifiedFiles.length} PRETTIFIED FILES`)
-    return
   } catch (e) {
     console.log(`${repoPrefix}: CANNOT CREATE PULL REQUEST:`)
     console.log(e)
