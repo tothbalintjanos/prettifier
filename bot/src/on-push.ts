@@ -11,6 +11,7 @@ import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
+import { pullRequestForBranch } from "./pull-request-for-branch"
 
 // called when this bot gets notified about a push on Github
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
@@ -48,18 +49,12 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
 
   // check pull requests
   if (prettifierConfig.pullsOnly) {
-    const params: probot.Octokit.PullsListParams = {
-      head: `${orgName}:${branchName}`, // request only the pull request for this branch
-      owner: orgName,
-      repo: repoName,
-      state: "open"
-    }
-    const pullRequests = await context.github.pulls.list(params)
-    if (pullRequests.data.length === 0) {
+    const pullRequestNumber = pullRequestForBranch(orgName, repoName, branchName, context.github)
+    if (!pullRequestNumber) {
       console.log(`${repoPrefix}: IGNORING THIS BRANCH BECAUSE IT HAS NO OPEN PULL REQUEST`)
       return
     }
-    console.log(`${repoPrefix}: THIS BRANCH HAS PULL REQUEST #${pullRequests.data[0].number}`)
+    console.log(`${repoPrefix}: THIS BRANCH HAS PULL REQUEST #${pullRequestNumber}`)
   }
 
   // load Prettier configuration
