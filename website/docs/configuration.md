@@ -3,7 +3,7 @@ id: configuration
 title: Configuration
 ---
 
-Many behaviors of Prettifier are configurable.
+Prettifier's behavior can be customized in a variety of ways.
 
 ### Prettier configuration
 
@@ -49,6 +49,8 @@ pullsOnly: false
 
 ### Text templates
 
-Prettifier replaces these placeholders in text templates:
+Text templates can contain text or
+[GitHub-flavored Markdown](https://guides.github.com/features/mastering-markdown).
+Prettifier replaces these placeholders in them:
 
 - `{{commitSha}}` for the SHA of the prettified commit
