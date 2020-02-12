@@ -6,7 +6,7 @@
 _A GitHub bot that keeps your code base consistently formatted._
 
 Please see the [documentation](https://kevgo.github.io/prettifier) for how to
-use it.
+use Prettifier.
 
 This is the source code of Prettifier. It is organized as a monorepository. Each
 top-level directory contains some aspect of the code base:
