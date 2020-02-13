@@ -1,5 +1,5 @@
 import { assert } from "chai"
-import { formatCommitMessage } from "../src/template/format-commit-message"
+import { formatCommitMessage } from "./format-commit-message"
 
 suite("formatCommitMessage")
 

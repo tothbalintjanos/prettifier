@@ -1,5 +1,5 @@
 import { assert } from "chai"
-import { PrettifierConfiguration } from "../src/config/prettifier-configuration"
+import { PrettifierConfiguration } from "./prettifier-configuration"
 
 suite("PrettifierConfiguration.shouldIgnoreBranch")
 

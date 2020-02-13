@@ -1,5 +1,5 @@
 import { assert } from "chai"
-import { removeAllFromSet } from "../src/set/remove-all-from-set"
+import { removeAllFromSet } from "./remove-all-from-set"
 
 suite("removeAllFromSet")
 

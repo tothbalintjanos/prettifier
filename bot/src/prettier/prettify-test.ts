@@ -1,5 +1,5 @@
 import { assert } from "chai"
-import { prettify } from "../src/prettier/prettify"
+import { prettify } from "./prettify"
 
 suite("prettify")
 

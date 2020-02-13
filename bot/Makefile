@@ -37,7 +37,7 @@ logs:   # shows the log output from the production server
 test:  # runs all tests
 	@node_modules$/.bin$/tsc --noEmit &
 	@node_modules$/.bin$/tslint --project tsconfig.json &
-	@node_modules$/.bin$/mocha &
+	@node_modules$/.bin$/mocha src/**/*-test.ts &
 	@make --no-print-directory lint
 .PHONY: test
 
@@ -48,7 +48,7 @@ start:   # starts the server
 	yarn start
 
 unit:  # runs the unit tests
-	@node_modules$/.bin$/mocha
+	@node_modules$/.bin$/mocha src/**/*-test.ts
 
 update:  # updates the dependencies
 	yarn upgrade --latest
