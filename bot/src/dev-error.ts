@@ -11,13 +11,18 @@ import { LoggedError } from "./logged-error"
  */
 export function devError(err: Error, activity: string, context: object, github: GitHubAPI): never {
   // NOTE: not async since we are already logging an error here, no point in waiting for the result
-  github.issues.create({
+  logDevError(err, activity, context, github)
+  throw new LoggedError()
+}
+
+/** logs the given developer error as a GitHub issue */
+export async function logDevError(err: Error, activity: string, context: object, github: GitHubAPI) {
+  await github.issues.create({
     owner: "kevgo",
     repo: "prettifier",
     title: `Error ${activity}: ${err.message}`,
     body: body(err, context)
   })
-  throw new LoggedError()
 }
 
 export function body(err: Error, context: object) {

@@ -10,8 +10,9 @@ import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 import { prettify } from "./prettify"
 import { isDifferentText } from "./is-different-text"
 import { addComment } from "./create-comment"
-import { devError } from "./dev-error"
+import { devError, logDevError } from "./dev-error"
 import { LoggedError } from "./logged-error"
+import util from "util"
 
 /** called when this bot gets notified about a new pull request */
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>) {
@@ -105,9 +106,8 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       console.log(`${repoPrefix}: ADDED COMMENT`)
     }
   } catch (e) {
-    // stop already logged errors here
     if (!(e instanceof LoggedError)) {
-      throw e
+      logDevError(e, "unknown dev error", { payload: util.inspect(context.payload) }, context.github)
     }
   }
 }

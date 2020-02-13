@@ -15,7 +15,8 @@ import { addComment } from "./create-comment"
 import { hasCommentFromPrettifier } from "./has-comment-from-prettifier"
 import { LoggedError } from "./logged-error"
 import { loadFile } from "./load-file"
-import { devError } from "./dev-error"
+import { devError, logDevError } from "./dev-error"
+import util from "util"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
@@ -184,9 +185,8 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     })
     console.log(`${repoPrefix}: CREATED PULL REQUEST FOR ${prettifiedFiles.length} PRETTIFIED FILES`)
   } catch (e) {
-    // stop already logged errors here
     if (!(e instanceof LoggedError)) {
-      throw e
+      logDevError(e, "unknown dev error", { payload: util.inspect(context.payload) }, context.github)
     }
   }
 }
