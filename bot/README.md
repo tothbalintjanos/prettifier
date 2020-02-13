@@ -22,8 +22,8 @@ This is the source code for the Prettifier bot.
 
 ### Deployment
 
-To deploy this bot to Heroku, run `make deploy` inside the [bot](bot/)
-directory.
+To deploy this bot to Heroku, run <code textrun="verify-make-command">make
+deploy</code> inside this directory.
 
 ### DevOps
 
