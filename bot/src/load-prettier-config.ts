@@ -1,9 +1,15 @@
 import yml from "js-yaml"
 import { loadFile } from "./load-file"
 import { GitHubAPI } from "probot/lib/github"
+import { userError } from "./user-error"
 
 /** Loads the .prettierrc file for the code base we are evaluating. */
-export async function loadPrettierConfig(org: string, repo: string, branch: string, github: GitHubAPI) {
+export async function loadPrettierConfig(
+  org: string,
+  repo: string,
+  branch: string,
+  github: GitHubAPI
+): Promise<object> {
   let configText = ""
   try {
     configText = await loadFile(org, repo, branch, ".prettierrc", github)
@@ -16,6 +22,6 @@ export async function loadPrettierConfig(org: string, repo: string, branch: stri
     console.log(`${org}|${repo}|${branch}: PRETTIER CONFIG: ${JSON.stringify(result)}`)
     return result
   } catch (e) {
-    console.log(`${org}|${repo}|${branch}: ERROR PARSING .prettierrc:`, e.message)
+    userError(e, "parsing .prettierrc:", { org, repo, branch }, github)
   }
 }

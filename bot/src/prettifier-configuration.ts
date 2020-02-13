@@ -48,18 +48,14 @@ export class PrettifierConfiguration implements ConfigOptions {
   }
 
   /** Indicates whether the given file should be prettified. */
-  async shouldPrettify(filename: string) {
+  async shouldPrettify(filename: string): Promise<boolean> {
     // check whether the filename is listed as ignored
     if (this.ignore.ignores(filename)) {
       return false
     }
 
     // check whether Prettifier thinks it can handle the file
-    try {
-      const result = await prettier.getFileInfo(filename)
-      return !result.ignored
-    } catch (e) {
-      return false
-    }
+    const result = await prettier.getFileInfo(filename)
+    return !result.ignored
   }
 }

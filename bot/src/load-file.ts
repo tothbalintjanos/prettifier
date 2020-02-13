@@ -1,4 +1,5 @@
 import { GitHubAPI } from "probot/lib/github"
+import { devError } from "./dev-error"
 
 /** Loads the content of the given file in the given branch from GitHub. */
 export async function loadFile(
@@ -15,7 +16,18 @@ export async function loadFile(
     repo
   })
   if (result.data instanceof Array) {
-    throw new Error("Received unexpected array while loading a single file from GitHub, expected single entry")
+    devError(
+      new Error(),
+      "loading the content of a file from GitHub",
+      {
+        org,
+        repo,
+        branchName,
+        filePath,
+        message: "Received unexpected array while loading a single file from GitHub, expected single entry"
+      },
+      github
+    )
   }
   return Buffer.from(result.data.content || "", "base64").toString()
 }

@@ -14,6 +14,10 @@ export async function createCommit(args: {
   files: FileToCreate[]
   github: GitHubAPI
 }) {
+  // NOTE: we don't automatically catch errors here
+  //       since this can legitimately fail
+  //       when trying to create a commit in a protected branch.
+
   // get the SHA of the latest commit in the branch
   const getRefResult = await args.github.git.getRef({
     owner: args.org,
