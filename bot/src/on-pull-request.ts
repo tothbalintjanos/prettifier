@@ -107,7 +107,12 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     }
   } catch (e) {
     if (!(e instanceof LoggedError)) {
-      logDevError(e, "unknown dev error", { payload: util.inspect(context.payload) }, context.github)
+      logDevError(
+        e,
+        "unknown dev error",
+        { event: "on-pull-request", payload: util.inspect(context.payload) },
+        context.github
+      )
     }
   }
 }

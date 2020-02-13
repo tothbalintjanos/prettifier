@@ -186,7 +186,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     console.log(`${repoPrefix}: CREATED PULL REQUEST FOR ${prettifiedFiles.length} PRETTIFIED FILES`)
   } catch (e) {
     if (!(e instanceof LoggedError)) {
-      logDevError(e, "unknown dev error", { payload: util.inspect(context.payload) }, context.github)
+      logDevError(e, "unknown dev error", { event: "on-push", payload: util.inspect(context.payload) }, context.github)
     }
   }
 }
