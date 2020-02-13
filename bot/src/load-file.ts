@@ -15,7 +15,7 @@ export async function loadFile(
     repo
   })
   if (result.data instanceof Array) {
-    throw new Error("Received unexpected array here, expected single entry")
+    throw new Error("Received unexpected array while loading a single file from GitHub, expected single entry")
   }
   return Buffer.from(result.data.content || "", "base64").toString()
 }
