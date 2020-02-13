@@ -103,7 +103,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       const formatted = prettify(fileContent, file, prettierConfigForFile)
 
       // ignore if there are no changes
-      if (formatted !== fileContent) {
+      if (formatted === fileContent) {
         console.log(`${filePrefix} - ALREADY FORMATTED`)
         continue
       }

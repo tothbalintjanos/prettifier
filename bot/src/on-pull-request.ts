@@ -63,7 +63,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       const formatted = prettify(fileContent, filePath, prettierConfigForFile)
 
       // ignore if there are no changes
-      if (formatted !== fileContent) {
+      if (formatted === fileContent) {
         console.log(`${filePrefix} - ALREADY FORMATTED`)
         continue
       }
