@@ -1,5 +1,5 @@
 import { GitHubAPI } from "probot/lib/github"
-import { devError } from "./dev-error"
+import { devError } from "../errors/dev-error"
 import { Octokit } from "probot"
 
 /**

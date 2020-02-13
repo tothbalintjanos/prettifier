@@ -1,5 +1,5 @@
 import { GitHubAPI } from "probot/lib/github"
-import { devError } from "./dev-error"
+import { devError } from "../errors/dev-error"
 
 /** Loads the content of the given file in the given branch from GitHub. */
 export async function loadFile(

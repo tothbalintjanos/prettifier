@@ -1,5 +1,5 @@
 import { assert } from "chai"
-import { concatToSet } from "../src/concat-to-set"
+import { concatToSet } from "../src/set/concat-to-set"
 
 suite("concatToSet")
 
