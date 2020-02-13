@@ -17,6 +17,7 @@ import { LoggedError } from "./logged-error"
 import { loadFile } from "./load-file"
 import { devError, logDevError } from "./dev-error"
 import util from "util"
+import { removeAllFromSet } from "./remove-all-from-set"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
@@ -71,7 +72,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     for (const commit of context.payload.commits) {
       concatToSet(changedFiles, commit.added)
       concatToSet(changedFiles, commit.modified)
-      // TODO: remove deleted files here
+      removeAllFromSet(changedFiles, commit.removed)
     }
 
     // prettify all changed files
