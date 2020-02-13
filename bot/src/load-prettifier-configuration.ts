@@ -4,6 +4,7 @@ import { loadFile } from "./load-file"
 import yml from "js-yaml"
 import { devError } from "./dev-error"
 import { userError } from "./user-error"
+import { RequestError } from "@octokit/request-error"
 
 /** Loads the configuration for the current session from the server. */
 export async function loadPrettifierConfiguration(
@@ -16,7 +17,13 @@ export async function loadPrettifierConfiguration(
   try {
     configText = await loadFile(org, repo, branch, ".github/prettifier.yml", github)
   } catch (e) {
-    devError(e, "loading Prettifier configuration", { org, repo, branch, comment: "can we ignore this error?" }, github)
+    if (e.constructor.name === "RequestError") {
+      const requestError = e as RequestError
+      if (requestError.code === 404) {
+        return new PrettifierConfiguration({})
+      }
+    }
+    devError(e, "loading Prettifier configuration", { org, repo, branch }, github)
   }
   let parsed = {}
   try {
