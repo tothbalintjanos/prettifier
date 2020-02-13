@@ -6,7 +6,6 @@ import { concatToSet } from "./concat-to-set"
 import { createCommit } from "./create-commit"
 import { createPullRequest } from "./create-pull-request"
 import { formatCommitMessage } from "./format-commit-message"
-import { isDifferentText } from "./is-different-text"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { prettify } from "./prettify"
@@ -105,7 +104,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       const formatted = prettify(fileContent, file, prettierConfigForFile)
 
       // ignore if there are no changes
-      if (!isDifferentText(formatted, fileContent)) {
+      if (formatted !== fileContent) {
         console.log(`${filePrefix} - ALREADY FORMATTED`)
         continue
       }

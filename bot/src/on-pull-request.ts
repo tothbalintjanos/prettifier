@@ -8,7 +8,6 @@ import { loadPrettifierConfiguration } from "./load-prettifier-configuration"
 import { loadPrettierConfig } from "./load-prettier-config"
 import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 import { prettify } from "./prettify"
-import { isDifferentText } from "./is-different-text"
 import { addComment } from "./create-comment"
 import { devError, logDevError } from "./dev-error"
 import { LoggedError } from "./logged-error"
@@ -64,7 +63,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       const formatted = prettify(fileContent, filePath, prettierConfigForFile)
 
       // ignore if there are no changes
-      if (!isDifferentText(formatted, fileContent)) {
+      if (formatted !== fileContent) {
         console.log(`${filePrefix} - ALREADY FORMATTED`)
         continue
       }
