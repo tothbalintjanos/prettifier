@@ -9,8 +9,8 @@ import { loadPrettierConfig } from "./prettier/load-prettier-config"
 import { applyPrettierConfigOverrides } from "./prettier/apply-prettier-config-overrides"
 import { prettify } from "./prettier/prettify"
 import { addComment } from "./github/create-comment"
-import { devError, logDevError } from "./errors/dev-error"
-import { LoggedError } from "./errors/logged-error"
+import { devError, logDevError } from "./logging/dev-error"
+import { LoggedError } from "./logging/logged-error"
 import util from "util"
 
 /** called when this bot gets notified about a new pull request */

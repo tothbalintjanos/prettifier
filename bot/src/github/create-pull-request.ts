@@ -1,6 +1,6 @@
 import { createCommit, FileToCreate } from "./create-commit"
 import { GitHubAPI } from "probot/lib/github"
-import { devError } from "../errors/dev-error"
+import { devError } from "../logging/dev-error"
 
 export async function createPullRequest(args: {
   org: string

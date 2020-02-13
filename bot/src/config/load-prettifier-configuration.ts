@@ -2,8 +2,8 @@ import { PrettifierConfiguration } from "./prettifier-configuration"
 import { GitHubAPI } from "probot/lib/github"
 import { loadFile } from "../github/load-file"
 import yml from "js-yaml"
-import { devError } from "../errors/dev-error"
-import { userError } from "../errors/user-error"
+import { devError } from "../logging/dev-error"
+import { userError } from "../logging/user-error"
 import { RequestError } from "@octokit/request-error"
 
 /** Loads the configuration for the current session from the server. */

@@ -1,5 +1,5 @@
 import { GitHubAPI } from "probot/lib/github"
-import { devError } from "../errors/dev-error"
+import { devError } from "../logging/dev-error"
 import { Octokit } from "probot"
 
 /** returns whether the given pull request already has a comment from PrettifierBot */

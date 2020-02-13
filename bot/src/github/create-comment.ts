@@ -1,5 +1,5 @@
 import { GitHubAPI } from "probot/lib/github"
-import { devError } from "../errors/dev-error"
+import { devError } from "../logging/dev-error"
 
 export async function addComment(org: string, repo: string, issue: number, text: string, github: GitHubAPI) {
   try {
