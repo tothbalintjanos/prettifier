@@ -2,7 +2,6 @@ import { RequestError } from "@octokit/request-error"
 import webhooks from "@octokit/webhooks"
 import * as probot from "probot"
 import { applyPrettierConfigOverrides } from "./prettier/apply-prettier-config-overrides"
-import { concatToSet } from "./set/concat-to-set"
 import { createCommit } from "./github/create-commit"
 import { createPullRequest } from "./github/create-pull-request"
 import { formatCommitMessage } from "./template/format-commit-message"
@@ -16,7 +15,7 @@ import { LoggedError } from "./logging/logged-error"
 import { loadFile } from "./github/load-file"
 import { devError, logDevError } from "./logging/dev-error"
 import util from "util"
-import { removeAllFromSet } from "./set/remove-all-from-set"
+import { concatToSet, removeAllFromSet } from "./helpers/set-tools"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
