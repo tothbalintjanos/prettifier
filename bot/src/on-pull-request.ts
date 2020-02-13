@@ -12,6 +12,7 @@ import { addComment } from "./github/create-comment"
 import { devError, logDevError } from "./logging/dev-error"
 import { LoggedError } from "./logging/logged-error"
 import util from "util"
+import { RequestError } from "@octokit/request-error"
 
 /** called when this bot gets notified about a new pull request */
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>) {
@@ -91,6 +92,13 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       })
       console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
     } catch (e) {
+      if (e.constructor.name === "RequestError") {
+        const requestError = e as RequestError
+        if (requestError.status === 422 && requestError.message.includes("Required status check")) {
+          // pull request of a protected branch
+          return
+        }
+      }
       devError(
         e,
         "creating a commit on a freshly opened pull request",
