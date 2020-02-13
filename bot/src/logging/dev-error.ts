@@ -16,7 +16,8 @@ export function devError(err: Error, activity: string, context: object, github: 
 }
 
 /** logs the given developer error as a GitHub issue */
-export async function logDevError(err: Error, activity: string, context: object, github: GitHubAPI) {
+export async function logDevError(err: Error, activity: string, context: any, github: GitHubAPI) {
+  console.log(`${context.org}|${context.repo}|${context.branch}: Error ${activity}`)
   await github.issues.create({
     owner: "kevgo",
     repo: "prettifier",
