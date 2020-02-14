@@ -1,6 +1,7 @@
 import util from "util"
 import { GitHubAPI } from "probot/lib/github"
 import { LoggedError } from "./logged-error"
+import { Context } from "./context"
 
 /**
  * Logs a bug in Prettifier.
@@ -9,14 +10,14 @@ import { LoggedError } from "./logged-error"
  * @param context additional context (content of local variables when the error happened)
  * @param github GitHubAPI object
  */
-export function devError(err: Error, activity: string, context: object, github: GitHubAPI): never {
+export function devError(err: Error, activity: string, context: Context, github: GitHubAPI): never {
   // NOTE: not async since we are already logging an error here, no point in waiting for the result
   logDevError(err, activity, context, github)
   throw new LoggedError()
 }
 
 /** logs the given developer error as a GitHub issue */
-export async function logDevError(err: Error, activity: string, context: any, github: GitHubAPI) {
+export async function logDevError(err: Error, activity: string, context: Context, github: GitHubAPI) {
   console.log(`${context.org}|${context.repo}|${context.branch}: Error ${activity}`)
   await github.issues.create({
     owner: "kevgo",

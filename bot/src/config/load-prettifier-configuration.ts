@@ -11,6 +11,7 @@ export async function loadPrettifierConfiguration(
   org: string,
   repo: string,
   branch: string,
+  pullRequest: number,
   github: GitHubAPI
 ): Promise<PrettifierConfiguration> {
   let configText = ""
@@ -29,7 +30,14 @@ export async function loadPrettifierConfiguration(
   try {
     parsed = yml.safeLoad(configText)
   } catch (e) {
-    userError(e, `invalid Prettifier configuration: ${configText}`, { org, repo, branch }, github)
+    userError(
+      e,
+      `invalid Prettifier configuration: ${configText}`,
+      { org, repo, branch },
+      pullRequest,
+      new PrettifierConfiguration({}),
+      github
+    )
   }
   return new PrettifierConfiguration(parsed)
 }

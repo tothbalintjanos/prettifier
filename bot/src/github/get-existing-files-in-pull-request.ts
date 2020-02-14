@@ -9,6 +9,7 @@ import { Octokit } from "probot"
 export async function getExistingFilesInPullRequests(
   org: string,
   repo: string,
+  branch: string,
   pullRequestNumber: number,
   github: GitHubAPI
 ): Promise<string[]> {
@@ -21,7 +22,7 @@ export async function getExistingFilesInPullRequests(
     })
     files = callResult.data
   } catch (e) {
-    devError(e, "getting all files in pull request", { org, repo, pullRequestNumber }, github)
+    devError(e, "getting all files in pull request", { org, repo, branch, pullRequestNumber }, github)
   }
   const result = []
   for (const file of files) {

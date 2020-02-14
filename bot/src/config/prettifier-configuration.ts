@@ -5,6 +5,7 @@ import prettier from "prettier"
 interface ConfigOptions {
   commentTemplate: string
   commitMessage: string
+  debug: boolean
   excludeBranches: string[]
   excludeFiles: string[]
   pullsOnly: boolean
@@ -16,6 +17,9 @@ export class PrettifierConfiguration implements ConfigOptions {
   commentTemplate: string
 
   commitMessage: string
+
+  /** whether to comment user errors on pull requests */
+  debug: boolean
 
   /** names of the branches that should not be prettified */
   excludeBranches: string[]
@@ -36,6 +40,7 @@ export class PrettifierConfiguration implements ConfigOptions {
   constructor(actualConfig: Partial<ConfigOptions>) {
     this.commentTemplate = actualConfig.commentTemplate || ""
     this.commitMessage = actualConfig.commitMessage || "Format {{commitSha}}"
+    this.debug = actualConfig.debug ?? true
     this.excludeBranches = actualConfig.excludeBranches || []
     this.excludeFiles = actualConfig.excludeFiles || ["node_modules"]
     this.ignore = ignore().add(this.excludeFiles)

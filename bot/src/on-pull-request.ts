@@ -16,13 +16,16 @@ import { RequestError } from "@octokit/request-error"
 
 /** called when this bot gets notified about a new pull request */
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>) {
+  let orgName = ""
+  let repoName = ""
+  let branchName = ""
+  let pullRequestNumber = 0
   try {
-    const orgName = context.payload.repository.owner.login
-    const repoName = context.payload.repository.name
-    const branchName = context.payload.pull_request.head.ref
-    const pullRequestNumber = context.payload.pull_request.number
+    orgName = context.payload.repository.owner.login
+    repoName = context.payload.repository.name
+    branchName = context.payload.pull_request.head.ref
+    pullRequestNumber = context.payload.pull_request.number
     const repoPrefix = `${orgName}/${repoName}|#${pullRequestNumber}`
-
     console.log(`${repoPrefix}: PULL REQUEST DETECTED`)
     if (context.payload.action !== "opened") {
       console.log(`${repoPrefix}: PULL REQUEST ACTION IS ${context.payload.action}, IGNORING`)
@@ -30,7 +33,13 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     }
 
     // load Prettifier configuration
-    const prettifierConfig = await loadPrettifierConfiguration(orgName, repoName, branchName, context.github)
+    const prettifierConfig = await loadPrettifierConfiguration(
+      orgName,
+      repoName,
+      branchName,
+      pullRequestNumber,
+      context.github
+    )
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
 
     // check whether this branch should be ignored
@@ -40,10 +49,17 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     }
 
     // load Prettier configuration
-    const prettierConfig = await loadPrettierConfig(orgName, repoName, branchName, context.github)
+    const prettierConfig = await loadPrettierConfig(
+      orgName,
+      repoName,
+      branchName,
+      pullRequestNumber,
+      prettifierConfig,
+      context.github
+    )
 
     // load the files that this PR changes
-    const files = await getExistingFilesInPullRequests(orgName, repoName, pullRequestNumber, context.github)
+    const files = await getExistingFilesInPullRequests(orgName, repoName, branchName, pullRequestNumber, context.github)
     const prettifiedFiles = []
     for (let i = 0; i < files.length; i++) {
       const filePath = files[i]
@@ -102,14 +118,21 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       devError(
         e,
         "creating a commit on a freshly opened pull request",
-        { orgName, repoName, branchName },
+        { org: orgName, repo: repoName, branch: branchName },
         context.github
       )
     }
 
     // add comment
     if (prettifierConfig.commentTemplate !== "") {
-      await addComment(orgName, repoName, pullRequestNumber, prettifierConfig.commentTemplate, context.github)
+      await addComment(
+        orgName,
+        repoName,
+        branchName,
+        pullRequestNumber,
+        prettifierConfig.commentTemplate,
+        context.github
+      )
       console.log(`${repoPrefix}: ADDED COMMENT`)
     }
   } catch (e) {
@@ -117,7 +140,13 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       logDevError(
         e,
         "unknown dev error",
-        { event: "on-pull-request", payload: util.inspect(context.payload) },
+        {
+          org: orgName,
+          repo: repoName,
+          branch: branchName,
+          event: "on-pull-request",
+          payload: util.inspect(context.payload)
+        },
         context.github
       )
     }

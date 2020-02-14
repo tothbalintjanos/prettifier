@@ -6,6 +6,7 @@ import { Octokit } from "probot"
 export async function hasCommentFromPrettifier(
   org: string,
   repo: string,
+  branch: string,
   pullrequest: number,
   github: GitHubAPI
 ): Promise<boolean> {
@@ -18,7 +19,7 @@ export async function hasCommentFromPrettifier(
     })
     comments = result.data
   } catch (e) {
-    devError(e, "get comments of pull request", { org, repo, pullrequest }, github)
+    devError(e, "get comments of pull request", { org, repo, branch, pullrequest }, github)
   }
   for (const comment of comments) {
     if (comment.user.login === "prettifier[bot]") {

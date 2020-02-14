@@ -5,14 +5,14 @@ import { devError } from "../logging/dev-error"
 export async function loadFile(
   org: string,
   repo: string,
-  branchName: string,
+  branch: string,
   filePath: string,
   github: GitHubAPI
 ): Promise<string> {
   const result = await github.repos.getContents({
     owner: org,
     path: filePath,
-    ref: branchName,
+    ref: branch,
     repo
   })
   if (result.data instanceof Array) {
@@ -22,7 +22,7 @@ export async function loadFile(
       {
         org,
         repo,
-        branchName,
+        branch,
         filePath,
         message: "Received unexpected array while loading a single file from GitHub, expected single entry"
       },

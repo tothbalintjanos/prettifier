@@ -23,6 +23,8 @@ your code base. The configuration options are:
   disable pull request comments.
 - **commitMessage:** [text template](#text-templates) for the commit message of
   formatting fixes
+- **debug:** when enabled, Prettifier helps you investigate configuration issues
+  by commenting problems it finds on new pull requests you open
 - **excludeFiles:** file and directory paths to ignore, in a similar format as
   [.gitignore files](https://git-scm.com/docs/gitignore)
 - **excludeBranches:** branch names that Prettifier should ignore
@@ -38,7 +40,8 @@ Here is an example configuration file showing the default settings:
 
 ```yml
 commentTemplate: ""
-commitMessage: "Format {{commitSha}}",
+commitMessage: "Format {{commitSha}}"
+debug: true
 excludeBranches: []
 excludeFiles:
   - node_modules
@@ -54,3 +57,9 @@ Text templates can contain text or
 Prettifier replaces these placeholders in them:
 
 - `{{commitSha}}` for the SHA of the prettified commit
+
+### Verifying configuration
+
+It's best to make configuration changes to the Prettier or Prettifier
+configuration via a pull request. Prettifier will comment on that pull request
+if it encounters any issues with the new configuration.

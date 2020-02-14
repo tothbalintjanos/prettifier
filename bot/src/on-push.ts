@@ -19,14 +19,18 @@ import { concatToSet, removeAllFromSet } from "./helpers/set-tools"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
+  let orgName = ""
+  let repoName = ""
+  let branchName = ""
+  let authorName = ""
+  let commitSha = ""
   try {
-    const orgName = context.payload.repository.owner.login
-    const repoName = context.payload.repository.name
-    const branchName = context.payload.ref.replace("refs/heads/", "")
-    const authorName = context.payload.pusher.name
-    const commitSha = context.payload.after.substring(0, 7)
+    orgName = context.payload.repository.owner.login
+    repoName = context.payload.repository.name
+    branchName = context.payload.ref.replace("refs/heads/", "")
+    authorName = context.payload.pusher.name
+    commitSha = context.payload.after.substring(0, 7)
     const repoPrefix = `${orgName}/${repoName}|${branchName}|${commitSha}`
-
     // ignore deleted branches
     if (commitSha === "0000000") {
       console.log(`${repoPrefix}: IGNORING BRANCH DELETION`)
@@ -43,7 +47,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     // load Prettifier configuration
-    const prettifierConfig = await loadPrettifierConfiguration(orgName, repoName, branchName, context.github)
+    const prettifierConfig = await loadPrettifierConfiguration(orgName, repoName, branchName, 0, context.github)
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
 
     // check whether this branch should be ignored
@@ -63,7 +67,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     // load Prettier configuration
-    const prettierConfig = await loadPrettierConfig(orgName, repoName, branchName, context.github)
+    const prettierConfig = await loadPrettierConfig(orgName, repoName, branchName, 0, prettifierConfig, context.github)
 
     // find all changed files
     const changedFiles = new Set<string>()
@@ -139,11 +143,18 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     if (!createCommitError && prettifierConfig.commentTemplate !== "") {
       const pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
       if (pullRequestNumber > 0) {
-        const hasComment = await hasCommentFromPrettifier(orgName, repoName, pullRequestNumber, context.github)
+        const hasComment = await hasCommentFromPrettifier(
+          orgName,
+          repoName,
+          branchName,
+          pullRequestNumber,
+          context.github
+        )
         if (!hasComment) {
           addComment(
             orgName,
             repoName,
+            branchName,
             pullRequestNumber,
             formatCommitMessage(prettifierConfig.commentTemplate, commitSha),
             context.github
@@ -168,7 +179,12 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       }
     }
     if (!tryPullRequest) {
-      devError(createCommitError, "committing changes", { orgName, repoName, branchName }, context.github)
+      devError(
+        createCommitError,
+        "committing changes",
+        { org: orgName, repo: repoName, branch: branchName },
+        context.github
+      )
     }
 
     // try creating a pull request
@@ -185,7 +201,12 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     console.log(`${repoPrefix}: CREATED PULL REQUEST FOR ${prettifiedFiles.length} PRETTIFIED FILES`)
   } catch (e) {
     if (!(e instanceof LoggedError)) {
-      logDevError(e, "unknown dev error", { event: "on-push", payload: util.inspect(context.payload) }, context.github)
+      logDevError(
+        e,
+        "unknown dev error",
+        { org: orgName, repo: repoName, branch: branchName, event: "on-push", payload: util.inspect(context.payload) },
+        context.github
+      )
     }
   }
 }
