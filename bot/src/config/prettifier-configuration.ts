@@ -38,13 +38,13 @@ export class PrettifierConfiguration implements ConfigOptions {
    * Missing values are backfilled with default values.
    */
   constructor(actualConfig: Partial<ConfigOptions>) {
-    this.commentTemplate = actualConfig.commentTemplate || ""
-    this.commitMessage = actualConfig.commitMessage || "Format {{commitSha}}"
+    this.commentTemplate = actualConfig.commentTemplate ?? ""
+    this.commitMessage = actualConfig.commitMessage ?? "Format {{commitSha}}"
     this.debug = actualConfig.debug ?? true
-    this.excludeBranches = actualConfig.excludeBranches || []
-    this.excludeFiles = actualConfig.excludeFiles || ["node_modules"]
+    this.excludeBranches = actualConfig.excludeBranches ?? []
+    this.excludeFiles = actualConfig.excludeFiles ?? ["node_modules"]
     this.ignore = ignore().add(this.excludeFiles)
-    this.pullsOnly = actualConfig.pullsOnly || false
+    this.pullsOnly = actualConfig.pullsOnly ?? false
   }
 
   /** Indicates whether the given branch should be ignored. */
