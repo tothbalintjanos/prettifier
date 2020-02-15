@@ -21,16 +21,21 @@ export function userError(
 }
 
 function body(err: Error, desc: string): string {
-  return `Prettifier here. I noticed a problem with your configuration:
+  return `Prettifier-Bot here. I noticed a problem with your configuration:
 
-Error ${desc}: ${err.message}
+\`\`\`
+${desc}
+\`\`\`
+
+More details:
+\`\`\`
+${err.message}
+\`\`\`
 
 I can't format your code until this is fixed.
-If you think this is an error on my side, please report this problem at https://github.com/kevgo/prettifier/issues/new.
 
-To stop me from making these types of comments on future pull requests, please create a file \`.github/prettifier.yml\` (if it doesn't exist) and add the line \`debug: false\`.
-For more details, please visit https://kevgo.github.io/prettifier/docs/configuration.
+If you think this is an error on my side, please report this problem using [this form](https://github.com/kevgo/prettifier/issues/new).
 
-Your friendly Prettifier-Bot
+I will only comment when I see relevant config changes or non-working configuration. To stop me from making these types of comments on future pull requests, create a file \`.github/prettifier.yml\` (if it doesn't exist) and add the line \`debug: false\`. Please see the [documentation for configuration options](https://kevgo.github.io/prettifier/docs/configuration) for more details.
 `
 }

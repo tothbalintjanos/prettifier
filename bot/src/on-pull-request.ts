@@ -13,6 +13,7 @@ import { devError, logDevError } from "./logging/dev-error"
 import { LoggedError } from "./logging/logged-error"
 import util from "util"
 import { RequestError } from "@octokit/request-error"
+import { isConfigurationFile } from "./config/is-configuration-file"
 
 /** called when this bot gets notified about a new pull request */
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>) {
@@ -61,10 +62,13 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     // load the files that this PR changes
     const files = await getExistingFilesInPullRequests(orgName, repoName, branchName, pullRequestNumber, context.github)
     const prettifiedFiles = []
+    let configChange = false
     for (let i = 0; i < files.length; i++) {
       const filePath = files[i]
+      if (isConfigurationFile(filePath)) {
+        configChange = true
+      }
       const filePrefix = `${repoPrefix}: FILE ${i + 1}/${files.length} (${filePath})`
-
       // ignore files that shouldn't be prettified
       const shouldPrettify = await prettifierConfig.shouldPrettify(filePath)
       if (!shouldPrettify) {
@@ -88,6 +92,19 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       // store the prettified content
       prettifiedFiles.push({ path: filePath, content: formatted })
       console.log(`${filePrefix} - PRETTIFYING`)
+    }
+
+    // verify correct config changes
+    if (configChange && prettifierConfig.debug) {
+      await addComment(
+        orgName,
+        repoName,
+        branchName,
+        pullRequestNumber,
+        "Prettifier-Bot here. The configuration changes made in this pull request look good to me.",
+        context.github
+      )
+      console.log(`${repoPrefix}: ADDED CONFIG CHANGE DEBUG COMMENT`)
     }
 
     if (prettifiedFiles.length === 0) {
@@ -123,7 +140,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       )
     }
 
-    // add comment
+    // add community comment
     if (prettifierConfig.commentTemplate !== "") {
       await addComment(
         orgName,
@@ -133,7 +150,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
         prettifierConfig.commentTemplate,
         context.github
       )
-      console.log(`${repoPrefix}: ADDED COMMENT`)
+      console.log(`${repoPrefix}: ADDED COMMUNITY COMMENT`)
     }
   } catch (e) {
     if (!(e instanceof LoggedError)) {

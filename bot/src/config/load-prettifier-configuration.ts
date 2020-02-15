@@ -32,7 +32,7 @@ export async function loadPrettifierConfiguration(
   } catch (e) {
     userError(
       e,
-      `invalid Prettifier configuration: ${configText}`,
+      `invalid Prettifier configuration:\n${configText}`,
       { org, repo, branch },
       pullRequest,
       new PrettifierConfiguration({}),
