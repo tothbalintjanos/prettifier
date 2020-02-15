@@ -174,7 +174,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     let tryPullRequest = false
     if (createCommitError.constructor.name === "RequestError") {
       const requestError = createCommitError as RequestError
-      if (requestError.status === 422 && requestError.message.includes("Required status check")) {
+      if (requestError.status === 422) {
         tryPullRequest = true
       }
     }
