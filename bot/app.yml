@@ -114,7 +114,7 @@ default_permissions:
 # The name of the GitHub App. Defaults to the name specified in package.json
 name: Prettifier
 # The homepage of your GitHub App.
-url: https://github.com/Originate/prettify-bot
+url: https://github.com/kevgo/prettifier
 # A description of the GitHub App.
 description: A Github bot that automatically formats commits via Prettier
 # Set to true when your GitHub App is available to the public or false when it is only accessible to the owner of the app.
