@@ -100,7 +100,18 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       }
 
       // load the file content
-      const fileContent = await loadFile(orgName, repoName, branchName, file, context.github)
+      let fileContent = ""
+      try {
+        fileContent = await loadFile(orgName, repoName, branchName, file, context.github)
+      } catch (e) {
+        if (e.constructor.name === "RequestError") {
+          if ((e as RequestError).status === 403) {
+            // file exists but the server refused to serve the file --> ignore
+            continue
+          }
+        }
+        throw e
+      }
 
       // prettify the file
       const prettierConfigForFile = applyPrettierConfigOverrides(prettierConfig, file)
