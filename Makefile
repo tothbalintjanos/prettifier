@@ -32,6 +32,9 @@ lint:  # lints the code base
 log:   # shows the log output from the production server
 	heroku logs --tail --app prettifier-prod
 
+stats:  # shows code statistics
+	@find . -type f | grep -v '/node_modules/' | grep -v '/dist/' | grep -v '\./.git/' | grep -v '\./docs/' | grep -v '\./tools/' | grep -v '\./website/website/' | xargs scc
+
 test:  # runs all tests
 	@make --no-print-directory lint
 	@(cd bot && make --no-print-directory test)

@@ -34,6 +34,9 @@ lint:  # lints the code base
 logs:   # shows the log output from the production server
 	heroku logs --tail --app prettifier-prod
 
+stats:  # shows code statistics
+	@find . -type f | grep -v '\./node_modules/' | grep -v '\./dist/' | xargs cloc
+
 test:  # runs all tests
 	@node_modules$/.bin$/tsc --noEmit &
 	@node_modules$/.bin$/tslint --project tsconfig.json &
