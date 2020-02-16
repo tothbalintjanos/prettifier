@@ -18,9 +18,8 @@ export async function loadPrettifierConfiguration(
   try {
     configText = await loadFile(org, repo, branch, ".github/prettifier.yml", github)
   } catch (e) {
-    if (e.constructor.name === "RequestError") {
-      const requestError = e as RequestError
-      if (requestError.code === 404) {
+    if (e instanceof RequestError) {
+      if ((e as RequestError).code === 404) {
         return new PrettifierConfiguration({})
       }
     }

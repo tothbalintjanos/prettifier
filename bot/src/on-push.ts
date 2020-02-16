@@ -104,7 +104,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       try {
         fileContent = await loadFile(orgName, repoName, branchName, file, context.github)
       } catch (e) {
-        if (e.constructor.name === "RequestError") {
+        if (e instanceof RequestError) {
           if ((e as RequestError).status === 403) {
             // file exists but the server refused to serve the file --> ignore
             continue
@@ -183,9 +183,8 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     // When reaching this, the pull request has failed.
     // Analyze the error to see if we should try creating a pull request.
     let tryPullRequest = false
-    if (createCommitError.constructor.name === "RequestError") {
-      const requestError = createCommitError as RequestError
-      if (requestError.status === 422) {
+    if (createCommitError instanceof RequestError) {
+      if ((createCommitError as RequestError).status === 422) {
         tryPullRequest = true
       }
     }

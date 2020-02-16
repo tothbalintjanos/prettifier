@@ -125,7 +125,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       })
       console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
     } catch (e) {
-      if (e.constructor.name === "RequestError") {
+      if (e instanceof RequestError) {
         const requestError = e as RequestError
         if (requestError.status === 422 && requestError.message.includes("Required status check")) {
           // pull request of a protected branch
