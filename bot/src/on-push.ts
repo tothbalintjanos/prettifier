@@ -184,7 +184,8 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     // Analyze the error to see if we should try creating a pull request.
     let tryPullRequest = false
     if (createCommitError instanceof RequestError) {
-      if ((createCommitError as RequestError).status === 422) {
+      const requestError = createCommitError as RequestError
+      if (requestError.status === 422 || requestError.status === 403) {
         tryPullRequest = true
       }
     }
