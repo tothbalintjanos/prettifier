@@ -29,10 +29,13 @@ To debug a change in production:
 
 ### Deployment
 
-To deploy this bot to Heroku, run <code textrun="verify-make-command">make
-deploy</code> inside this directory.
+- deploy the master branch to production: run
+  <code textrun="verify-make-command">make deploy</code> inside this directory
+- deploy the current branch to production: run
+  <code textrun="verify-make-command">make deploy-current</code> inside this
+  directory
 
 ### DevOps
 
 - this code base uses GitHubOps: production incidents get filed as GitHub
-  tickets at https://github.com/kevgo/prettifier/issues.
+  tickets at https://github.com/kevgo/prettifier/issues
