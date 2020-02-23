@@ -14,9 +14,10 @@ build: clean  # builds all code bases
 clean:  # removes all build artifacts
 	@(cd bot && make --no-print-directory clean)
 
-doc:  # verifies the documentation
+docs:  # verifies the documentation
 	@(cd bot && make --no-print-directory build)
 	@tools/text-runner/node_modules$/.bin$/text-run --format dot --offline
+.PHONY: docs
 
 fix:  # fixes the auto-fixable formatting issues
 	@tools/prettier/prettify --write
