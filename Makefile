@@ -39,7 +39,7 @@ stats:  # shows code statistics
 test:  # runs all tests
 	@make --no-print-directory lint
 	@(cd bot && make --no-print-directory test)
-	@make --no-print-directory doc
+	@make --no-print-directory docs
 
 setup:  # prepares the code base for working after being cloned
 	@(cd bot && make --no-print-directory setup)
