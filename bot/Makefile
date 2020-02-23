@@ -45,7 +45,9 @@ test:  # runs all tests
 .PHONY: test
 
 setup:
-	@yarn
+	yarn
+	make --no-print-directory test
+	heroku git:remote -a originate-intrabot
 
 start:   # starts the server
 	yarn start

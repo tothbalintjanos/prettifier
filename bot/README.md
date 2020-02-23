@@ -4,11 +4,12 @@ This is the source code for the Prettifier bot.
 
 ### Setup
 
-- install [Node.js](https://nodejs.org) version 8 or later
-- install [Yarn](https://yarnpkg.com/en/docs/install)
-- run <code textrun="verify-make-command"> make setup </code> in the root
-  directory of this code base
-- run `make help` to see all available make commands
+Install these tools:
+
+- [Node.js](https://nodejs.org) version 8 or later
+- [Yarn](https://yarnpkg.com/en/docs/install)
+
+Run <code textrun="verify-make-command"> make setup </code>.
 
 ### Testing
 
@@ -19,6 +20,12 @@ This is the source code for the Prettifier bot.
 - run the unit tests: <code textrun="verify-make-command">make unit</code>
 - fix the auto-fixable issues: <code textrun="verify-make-command">make
   fix</code>
+
+To debug a change in production:
+
+- make your changes in a branch called `test`
+- run `make deploy-test` to deploy this `test` branch to production
+- run `make logs` to see the production logs
 
 ### Deployment
 
