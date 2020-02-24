@@ -11,6 +11,8 @@ Install these tools:
 
 Run <code textrun="verify-make-command"> make setup </code>.
 
+To prepare deployment: `heroku git:remote -a originate-intrabot`
+
 ### Testing
 
 - run all tests: <code textrun="verify-make-command">make test</code>

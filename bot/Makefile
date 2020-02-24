@@ -44,10 +44,8 @@ test:  # runs all tests
 	@make --no-print-directory lint
 .PHONY: test
 
-setup:
+setup:  # prepares this code base for development
 	yarn
-	make --no-print-directory test
-	heroku git:remote -a originate-intrabot
 
 start:   # starts the server
 	yarn start
