@@ -114,30 +114,46 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     }
 
     // create a commit
-    try {
-      await createCommit({
-        branch: branchName,
-        github: context.github,
-        files: prettifiedFiles,
-        message: formatCommitMessage(prettifierConfig.commitMessage, `#${pullRequestNumber}`),
-        org: orgName,
-        repo: repoName
-      })
-      console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
-    } catch (e) {
-      if (e instanceof RequestError) {
-        const requestError = e as RequestError
-        if (requestError.status === 422 && requestError.message.includes("Required status check")) {
-          // pull request of a protected branch
-          return
+    let createCommitTries = 2
+    while (createCommitTries > 1) {
+      try {
+        await createCommit({
+          branch: branchName,
+          github: context.github,
+          files: prettifiedFiles,
+          message: formatCommitMessage(prettifierConfig.commitMessage, `#${pullRequestNumber}`),
+          org: orgName,
+          repo: repoName
+        })
+        console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
+      } catch (e) {
+        if (e instanceof RequestError) {
+          const requestError = e as RequestError
+          if (requestError.status === 422) {
+            if (requestError.message.includes("Required status check")) {
+              // pull request of a protected branch
+              return
+            }
+            if (requestError.message === "Update is not a fast forward") {
+              if (createCommitTries === 1) {
+                console.log(`${repoPrefix}: EXHAUSTED ALL ATTEMPTS TO CREATE COMMIT ON NEW PULL REQUEST, GIVING UP`)
+                return
+              }
+              console.log(
+                `${repoPrefix}: CANNOT CREATE COMMIT ON NEW PULL REQUEST BECAUSE UPDATE IS NOT A FAST FORWARD, TRYING AGAIN`
+              )
+              createCommitTries--
+              continue
+            }
+          }
         }
+        devError(
+          e,
+          "creating a commit on a freshly opened pull request",
+          { org: orgName, repo: repoName, branch: branchName },
+          context.github
+        )
       }
-      devError(
-        e,
-        "creating a commit on a freshly opened pull request",
-        { org: orgName, repo: repoName, branch: branchName },
-        context.github
-      )
     }
 
     // add community comment
