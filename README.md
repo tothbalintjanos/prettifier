@@ -15,7 +15,9 @@ top-level directory contains some aspect of the code base:
 - [.github](.github/): configuration for the Prettifier instance keeping this
   repository formatted
 - [bot](bot/): source code for the GitHub bot
-- [docs](docs/): rendered website
-- [text-run](text-run/): documentation test scripts
+- [docs](docs/): the rendered content of the
+  [website](https://kevgo.github.io/prettifier)
+- [text-run](text-run/): documentation tests
 - [tools](tools/): development tools
-- [website](website/): source code for the documentation website
+- [website](website/): source code for the
+  [website](https://kevgo.github.io/prettifier)
