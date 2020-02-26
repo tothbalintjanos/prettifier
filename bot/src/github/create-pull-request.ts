@@ -1,6 +1,8 @@
 import { createCommit, FileToCreate } from "./create-commit"
 import { GitHubAPI } from "probot/lib/github"
 import { devError } from "../logging/dev-error"
+import { RequestError } from "@octokit/request-error"
+import { LoggedError } from "../logging/logged-error"
 
 export async function createPullRequest(args: {
   org: string
@@ -42,6 +44,13 @@ export async function createPullRequest(args: {
       title: args.message
     })
   } catch (e) {
-    devError(e, "creating a pull request", args, args.github)
+    if (e instanceof RequestError) {
+      const requestError = e as RequestError
+      if (requestError.status === 403 && requestError.message === "Resource not accessible by integration") {
+        console.log(`${args.org}|${args.repo}|${args.branch}: USER HASN'T ACCEPTED THE PERMISSIONS TO EDIT CONTENT`)
+        throw new LoggedError()
+      }
+      devError(e, "creating a pull request", args, args.github)
+    }
   }
 }
