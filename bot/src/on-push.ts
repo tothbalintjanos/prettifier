@@ -18,7 +18,7 @@ import util from "util"
 import { concatToSet, removeAllFromSet } from "./helpers/set-tools"
 
 /** called when this bot gets notified about a push on Github */
-export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>) {
+export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>): Promise<void> {
   let orgName = ""
   let repoName = ""
   let branchName = ""

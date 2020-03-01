@@ -13,7 +13,7 @@ export async function createCommit(args: {
   message: string
   files: FileToCreate[]
   github: GitHubAPI
-}) {
+}): Promise<void> {
   // NOTE: we don't automatically catch errors here
   //       since this can legitimately fail
   //       when trying to create a commit in a protected branch.
@@ -28,6 +28,7 @@ export async function createCommit(args: {
 
   // get the SHA of the tree of the commit
   const getCommitResult = await args.github.git.getCommit({
+    // eslint-disable-next-line @typescript-eslint/camelcase
     commit_sha: currentCommitSha,
     owner: args.org,
     repo: args.repo
@@ -57,6 +58,7 @@ export async function createCommit(args: {
     })
   }
   const createTreeResult = await args.github.git.createTree({
+    // eslint-disable-next-line @typescript-eslint/camelcase
     base_tree: treeSha,
     owner: args.org,
     repo: args.repo,

@@ -15,6 +15,7 @@ export async function hasCommentFromPrettifier(
     const result = await github.issues.listComments({
       owner: org,
       repo,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       issue_number: pullrequest
     })
     comments = result.data

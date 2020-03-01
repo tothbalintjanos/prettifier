@@ -8,10 +8,11 @@ export async function addComment(
   issue: number,
   text: string,
   github: GitHubAPI
-) {
+): Promise<void> {
   try {
     await github.issues.createComment({
       body: text,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       issue_number: issue,
       owner: org,
       repo

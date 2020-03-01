@@ -17,6 +17,7 @@ export async function getExistingFilesInPullRequests(
   try {
     const callResult = await github.pulls.listFiles({
       owner: org,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       pull_number: pullRequestNumber,
       repo
     })

@@ -28,7 +28,7 @@ help:   # prints all make targets
 
 lint:  # lints the code base
 	@node_modules$/.bin$/tsc --noEmit
-	@node_modules$/.bin$/tslint --project tsconfig.json
+	@node_modules$/.bin$/eslint . --ext .ts
 	@../tools/prettier/prettify -l
 
 logs:   # shows the log output from the production server

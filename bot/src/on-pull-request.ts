@@ -16,7 +16,7 @@ import { RequestError } from "@octokit/request-error"
 import { isConfigurationFile } from "./config/is-configuration-file"
 
 /** called when this bot gets notified about a new pull request */
-export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>) {
+export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>): Promise<void> {
   let orgName = ""
   let repoName = ""
   let branchName = ""

@@ -17,7 +17,7 @@ export function devError(err: Error, activity: string, context: Context, github:
 }
 
 /** logs the given developer error as a GitHub issue */
-export async function logDevError(err: Error, activity: string, context: Context, github: GitHubAPI) {
+export async function logDevError(err: Error, activity: string, context: Context, github: GitHubAPI): Promise<void> {
   console.log(`${context.org}|${context.repo}|${context.branch}: Error ${activity}`)
   await github.issues.create({
     owner: "kevgo",
@@ -27,7 +27,7 @@ export async function logDevError(err: Error, activity: string, context: Context
   })
 }
 
-export function body(err: Error, context: object) {
+export function body(err: Error, context: object): string {
   let result = "Environment:\n"
   for (const [k, v] of Object.entries(context)) {
     result += `- ${k}: ${v}\n`

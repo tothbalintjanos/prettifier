@@ -13,7 +13,7 @@ export async function createPullRequest(args: {
   body: string
   files: FileToCreate[]
   github: GitHubAPI
-}) {
+}): Promise<void> {
   // get the SHA of the latest commit in the parent branch
   try {
     const getRefResult = await args.github.git.getRef({
