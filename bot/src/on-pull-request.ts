@@ -114,8 +114,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     }
 
     // create a commit
-    let createCommitTries = 2
-    while (createCommitTries > 1) {
+    for (let createCommitTries = 2; createCommitTries > 0; createCommitTries--) {
       try {
         await createCommit({
           branch: branchName,
@@ -135,15 +134,18 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
               return
             }
             if (requestError.message === "Update is not a fast forward") {
-              if (createCommitTries === 1) {
-                console.log(`${repoPrefix}: EXHAUSTED ALL ATTEMPTS TO CREATE COMMIT ON NEW PULL REQUEST, GIVING UP`)
-                return
-              }
+              // somebody else committed at the same time --> try again
               console.log(
                 `${repoPrefix}: CANNOT CREATE COMMIT ON NEW PULL REQUEST BECAUSE UPDATE IS NOT A FAST FORWARD, TRYING AGAIN`
               )
-              createCommitTries--
               continue
+            }
+          }
+          if (requestError.status === 403) {
+            if (requestError.message.includes("Resource not accessible by integration")) {
+              // nothing we can do here
+              // TODO: send error to user asking to update permissions?
+              return
             }
           }
         }
