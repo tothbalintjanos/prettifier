@@ -1,6 +1,7 @@
 import { GitHubAPI } from "probot/lib/github"
 import { devError } from "../logging/dev-error"
-import { Octokit } from "probot"
+import path from "path"
+import { promises as fs } from "fs"
 
 /**
  * Returns the pull request number for this branch.
@@ -12,21 +13,25 @@ export async function getPullRequestForBranch(
   branch: string,
   github: GitHubAPI
 ): Promise<number> {
-  let pulls: Octokit.PullsListResponse = []
+  const filePath = path.join("src", "github", "pullrequests-for-branch.graphql")
+  let query = ""
   try {
-    const result = await github.pulls.list({
-      head: `${org}:${branch}`, // request only the pull request for this branch
-      owner: org,
-      repo,
-      state: "open"
-    })
-    pulls = result.data
+    query = await fs.readFile(filePath, "utf-8")
+  } catch (e) {
+    devError(e, `reading file '${filePath}'`, { org, repo, branch }, github)
+  }
+  let callResult
+  try {
+    callResult = await github.graphql(query, { org, repo, branch })
   } catch (e) {
     devError(e, "loading pull request number for branch", { org, repo, branch }, github)
   }
-  if (pulls.length === 0) {
+  const pulls = callResult?.repository?.ref?.associatedPullRequests
+  if (pulls.totalCount === 0) {
     return 0
-  } else {
-    return pulls[0].number
   }
+  if (pulls.totalCount > 1) {
+    devError(new Error(), "multiple open pull requests found for branch", { org, repo, branch }, github)
+  }
+  return pulls.nodes[0].number
 }

@@ -1,0 +1,12 @@
+query PullRequestFileData($org: String!, $repo: String!, $branch: String!) {
+  repository(owner: $org, name: $repo) {
+    ref(qualifiedName: $branch) {
+      associatedPullRequests(first: 2, states: OPEN) {
+        totalCount
+        nodes {
+          number
+        }
+      }
+    }
+  }
+}

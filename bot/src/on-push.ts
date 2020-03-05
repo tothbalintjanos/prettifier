@@ -5,8 +5,6 @@ import { applyPrettierConfigOverrides } from "./prettier/apply-prettier-config-o
 import { createCommit } from "./github/create-commit"
 import { createPullRequest } from "./github/create-pull-request"
 import { formatCommitMessage } from "./template/format-commit-message"
-import { loadPrettierConfig } from "./prettier/load-prettier-config"
-import { loadPrettifierConfiguration } from "./config/load-prettifier-configuration"
 import { prettify } from "./prettier/prettify"
 import { getPullRequestForBranch } from "./github/get-pull-request-for-branch"
 import { addComment } from "./github/create-comment"
@@ -16,6 +14,7 @@ import { loadFile } from "./github/load-file"
 import { devError, logDevError } from "./logging/dev-error"
 import util from "util"
 import { concatToSet, removeAllFromSet } from "./helpers/set-tools"
+import { loadConfigurations } from "./github/load-configurations"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>): Promise<void> {
@@ -46,9 +45,16 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       return
     }
 
-    // load Prettifier configuration
-    const prettifierConfig = await loadPrettifierConfiguration(orgName, repoName, branchName, 0, context.github)
+    // load configurations
+    const { prettifierConfig, prettierConfig } = await loadConfigurations(
+      orgName,
+      repoName,
+      branchName,
+      0,
+      context.github
+    )
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
+    console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
 
     // check whether this branch should be ignored
     if (prettifierConfig.shouldIgnoreBranch(branchName)) {
@@ -66,9 +72,6 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       }
       console.log(`${repoPrefix}: THIS BRANCH HAS PULL REQUEST #${pullRequestNumber}`)
     }
-
-    // load Prettier configuration
-    const prettierConfig = await loadPrettierConfig(orgName, repoName, branchName, 0, prettifierConfig, context.github)
 
     // find all changed files
     const changedFiles = new Set<string>()

@@ -4,8 +4,6 @@ import { loadFile } from "./github/load-file"
 import { getExistingFilesInPullRequests } from "./github/get-existing-files-in-pull-request"
 import { formatCommitMessage } from "./template/format-commit-message"
 import { createCommit } from "./github/create-commit"
-import { loadPrettifierConfiguration } from "./config/load-prettifier-configuration"
-import { loadPrettierConfig } from "./prettier/load-prettier-config"
 import { applyPrettierConfigOverrides } from "./prettier/apply-prettier-config-overrides"
 import { prettify } from "./prettier/prettify"
 import { addComment } from "./github/create-comment"
@@ -14,6 +12,7 @@ import { LoggedError } from "./logging/logged-error"
 import util from "util"
 import { RequestError } from "@octokit/request-error"
 import { isConfigurationFile } from "./config/is-configuration-file"
+import { loadConfigurations } from "./github/load-configurations"
 
 /** called when this bot gets notified about a new pull request */
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>): Promise<void> {
@@ -33,8 +32,8 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       return
     }
 
-    // load Prettifier configuration
-    const prettifierConfig = await loadPrettifierConfiguration(
+    // load configurations
+    const { prettifierConfig, prettierConfig } = await loadConfigurations(
       orgName,
       repoName,
       branchName,
@@ -48,16 +47,6 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       console.log(`${repoPrefix}: IGNORING THIS BRANCH PER BOT CONFIG`)
       return
     }
-
-    // load Prettier configuration
-    const prettierConfig = await loadPrettierConfig(
-      orgName,
-      repoName,
-      branchName,
-      pullRequestNumber,
-      prettifierConfig,
-      context.github
-    )
 
     // load the files that this PR changes
     const files = await getExistingFilesInPullRequests(orgName, repoName, branchName, pullRequestNumber, context.github)

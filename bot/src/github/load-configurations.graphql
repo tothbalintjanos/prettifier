@@ -1,0 +1,14 @@
+query PullRequestCommentAuthors($org: String!, $repo: String!) {
+  repository(owner: $org, name: $repo) {
+    prettifierConfig: object(expression: "{{branch}}:.github/prettifier.yml") {
+      ... on Blob {
+        text
+      }
+    }
+    prettierConfig: object(expression: "{{branch}}:.prettierrc") {
+      ... on Blob {
+        text
+      }
+    }
+  }
+}
