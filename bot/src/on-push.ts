@@ -18,18 +18,18 @@ import { loadConfigurations } from "./github/load-configurations"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>): Promise<void> {
-  let orgName = ""
-  let repoName = ""
-  let branchName = ""
-  let authorName = ""
+  let org = ""
+  let repo = ""
+  let branch = ""
+  let author = ""
   let commitSha = ""
   try {
-    orgName = context.payload.repository.owner.login
-    repoName = context.payload.repository.name
-    branchName = context.payload.ref.replace("refs/heads/", "")
-    authorName = context.payload.pusher.name
+    org = context.payload.repository.owner.login
+    repo = context.payload.repository.name
+    branch = context.payload.ref.replace("refs/heads/", "")
+    author = context.payload.pusher.name
     commitSha = context.payload.after.substring(0, 7)
-    const repoPrefix = `${orgName}/${repoName}|${branchName}|${commitSha}`
+    const repoPrefix = `${org}/${repo}|${branch}|${commitSha}`
 
     // ignore deleted branches
     if (commitSha === "0000000") {
@@ -41,24 +41,18 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     console.log(`${repoPrefix}: PUSH DETECTED`)
 
     // ignore commits by Prettifier
-    if (authorName === "prettifier[bot]") {
+    if (author === "prettifier[bot]") {
       console.log(`${repoPrefix}: IGNORING COMMIT BY PRETTIFIER`)
       return
     }
 
     // load configurations
-    const { prettifierConfig, prettierConfig } = await loadConfigurations(
-      orgName,
-      repoName,
-      branchName,
-      0,
-      context.github
-    )
+    const { prettifierConfig, prettierConfig } = await loadConfigurations(org, repo, branch, 0, context.github)
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
     console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
 
     // check whether this branch should be ignored
-    if (prettifierConfig.shouldIgnoreBranch(branchName)) {
+    if (prettifierConfig.shouldIgnoreBranch(branch)) {
       console.log(`${repoPrefix}: IGNORING THIS BRANCH PER BOT CONFIG`)
       return
     }
@@ -66,7 +60,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     // check pull requests
     let pullRequestNumber = -1
     if (prettifierConfig.pullsOnly) {
-      pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
+      pullRequestNumber = await getPullRequestForBranch(org, repo, branch, context.github)
       if (pullRequestNumber === 0) {
         console.log(`${repoPrefix}: IGNORING THIS BRANCH BECAUSE IT HAS NO OPEN PULL REQUEST`)
         return
@@ -107,7 +101,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       // load the file content
       let fileContent = ""
       try {
-        fileContent = await loadFile(orgName, repoName, branchName, file, context.github)
+        fileContent = await loadFile(org, repo, branch, file, context.github)
       } catch (e) {
         if (e instanceof RequestError) {
           const requestError = e as RequestError
@@ -148,12 +142,12 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     let createCommitError: Error | null = null
     try {
       await createCommit({
-        branch: branchName,
+        branch,
         github: context.github,
         files: prettifiedFiles,
         message: formatCommitMessage(prettifierConfig.commitMessage, commitSha),
-        org: orgName,
-        repo: repoName
+        org,
+        repo
       })
       console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
     } catch (e) {
@@ -163,21 +157,15 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
 
     if (!createCommitError && prettifierConfig.commentTemplate !== "") {
       if (pullRequestNumber === -1) {
-        pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
+        pullRequestNumber = await getPullRequestForBranch(org, repo, branch, context.github)
       }
       if (pullRequestNumber > 0) {
-        const hasComment = await hasCommentFromPrettifier(
-          orgName,
-          repoName,
-          branchName,
-          pullRequestNumber,
-          context.github
-        )
+        const hasComment = await hasCommentFromPrettifier(org, repo, branch, pullRequestNumber, context.github)
         if (!hasComment) {
           addComment(
-            orgName,
-            repoName,
-            branchName,
+            org,
+            repo,
+            branch,
             pullRequestNumber,
             formatCommitMessage(prettifierConfig.commentTemplate, commitSha),
             context.github
@@ -202,12 +190,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       }
     }
     if (!tryPullRequest) {
-      devError(
-        createCommitError,
-        "committing changes",
-        { org: orgName, repo: repoName, branch: branchName },
-        context.github
-      )
+      devError(createCommitError, "committing changes", { org, repo, branch }, context.github)
     }
 
     // try creating a pull request
@@ -217,9 +200,9 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       github: context.github,
       files: prettifiedFiles,
       message: formatCommitMessage(prettifierConfig.commitMessage, commitSha),
-      org: orgName,
+      org,
       parentBranch: "master",
-      repo: repoName
+      repo
     })
     console.log(`${repoPrefix}: CREATED PULL REQUEST FOR ${prettifiedFiles.length} PRETTIFIED FILES`)
   } catch (e) {
@@ -227,7 +210,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       logDevError(
         e,
         "unknown dev error",
-        { org: orgName, repo: repoName, branch: branchName, event: "on-push", payload: util.inspect(context.payload) },
+        { org, repo, branch, event: "on-push", payload: util.inspect(context.payload) },
         context.github
       )
     }
