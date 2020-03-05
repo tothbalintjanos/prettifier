@@ -21,7 +21,7 @@ export function userError(
 }
 
 function body(err: Error, desc: string): string {
-  return `Prettifier-Bot here. I noticed a problem with your configuration:
+  return `Prettifier-Bot here. I noticed a problem with your setup:
 
 \`\`\`
 ${desc}
