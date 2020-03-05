@@ -57,8 +57,9 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     // check pull requests
+    let pullRequestNumber = -1
     if (prettifierConfig.pullsOnly) {
-      const pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
+      pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
       if (pullRequestNumber === 0) {
         console.log(`${repoPrefix}: IGNORING THIS BRANCH BECAUSE IT HAS NO OPEN PULL REQUEST`)
         return
@@ -157,7 +158,9 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     if (!createCommitError && prettifierConfig.commentTemplate !== "") {
-      const pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
+      if (pullRequestNumber === -1) {
+        pullRequestNumber = await getPullRequestForBranch(orgName, repoName, branchName, context.github)
+      }
       if (pullRequestNumber > 0) {
         const hasComment = await hasCommentFromPrettifier(
           orgName,
