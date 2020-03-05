@@ -30,6 +30,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     authorName = context.payload.pusher.name
     commitSha = context.payload.after.substring(0, 7)
     const repoPrefix = `${orgName}/${repoName}|${branchName}|${commitSha}`
+
     // ignore deleted branches
     if (commitSha === "0000000") {
       console.log(`${repoPrefix}: IGNORING BRANCH DELETION`)
