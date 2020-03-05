@@ -21,7 +21,7 @@ deploy-current:  # deploys the current branch to Heroku
 
 fix:  # fixes the auto-fixable formatting issues
 	@../tools/prettier/prettify --write
-	@node_modules/.bin/tslint --fix --project tsconfig.json
+	@node_modules$/.bin$/eslint . --ext .ts --fix
 
 help:   # prints all make targets
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
@@ -39,7 +39,7 @@ stats:  # shows code statistics
 
 test:  # runs all tests
 	@node_modules$/.bin$/tsc --noEmit &
-	@node_modules$/.bin$/tslint --project tsconfig.json &
+	@node_modules$/.bin$/eslint . --ext .ts &
 	@node_modules$/.bin$/mocha src/**/*.test.ts &
 	@make --no-print-directory lint
 .PHONY: test
