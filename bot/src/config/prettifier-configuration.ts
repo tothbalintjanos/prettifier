@@ -61,6 +61,16 @@ export class PrettifierConfiguration implements ConfigOptions {
 
     // check whether Prettifier thinks it can handle the file
     const result = await prettier.getFileInfo(filename)
-    return !result.ignored
+    if (result.ignored) {
+      // this somehow always returns false,
+      // seems to be influenced by Prettier config
+      return false
+    }
+    if (!result.inferredParser) {
+      // whether Prettier has a parser for this file type
+      // seems to indicate better whether Prettier can handle the file
+      return false
+    }
+    return true
   }
 }
