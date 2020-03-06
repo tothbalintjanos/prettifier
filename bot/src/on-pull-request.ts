@@ -16,16 +16,16 @@ import { loadConfigurations } from "./github/load-configurations"
 
 /** called when this bot gets notified about a new pull request */
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>): Promise<void> {
-  let orgName = ""
-  let repoName = ""
-  let branchName = ""
+  let org = ""
+  let repo = ""
+  let branch = ""
   let pullRequestNumber = 0
   try {
-    orgName = context.payload.repository.owner.login
-    repoName = context.payload.repository.name
-    branchName = context.payload.pull_request.head.ref
+    org = context.payload.repository.owner.login
+    repo = context.payload.repository.name
+    branch = context.payload.pull_request.head.ref
     pullRequestNumber = context.payload.pull_request.number
-    const repoPrefix = `${orgName}/${repoName}|#${pullRequestNumber}`
+    const repoPrefix = `${org}/${repo}|#${pullRequestNumber}`
     console.log(`${repoPrefix}: PULL REQUEST DETECTED`)
     if (context.payload.action !== "opened") {
       console.log(`${repoPrefix}: PULL REQUEST ACTION IS ${context.payload.action}, IGNORING`)
@@ -34,22 +34,22 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 
     // load configurations
     const { prettifierConfig, prettierConfig } = await loadConfigurations(
-      orgName,
-      repoName,
-      branchName,
+      org,
+      repo,
+      branch,
       pullRequestNumber,
       context.github
     )
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
 
     // check whether this branch should be ignored
-    if (prettifierConfig.shouldIgnoreBranch(branchName)) {
+    if (prettifierConfig.shouldIgnoreBranch(branch)) {
       console.log(`${repoPrefix}: IGNORING THIS BRANCH PER BOT CONFIG`)
       return
     }
 
     // load the files that this PR changes
-    const files = await getExistingFilesInPullRequests(orgName, repoName, branchName, pullRequestNumber, context.github)
+    const files = await getExistingFilesInPullRequests(org, repo, branch, pullRequestNumber, context.github)
     const prettifiedFiles = []
     let configChange = false
     for (let i = 0; i < files.length; i++) {
@@ -66,7 +66,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       }
 
       // load the file content
-      const fileContent = await loadFile(orgName, repoName, branchName, filePath, context.github)
+      const fileContent = await loadFile(org, repo, branch, filePath, context.github)
 
       // prettify the file content
       const prettierConfigForFile = applyPrettierConfigOverrides(prettierConfig, filePath)
@@ -86,9 +86,9 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     // verify correct config changes
     if (configChange && prettifierConfig.debug) {
       await addComment(
-        orgName,
-        repoName,
-        branchName,
+        org,
+        repo,
+        branch,
         pullRequestNumber,
         "Prettifier-Bot here. The configuration changes made in this pull request look good to me.",
         context.github
@@ -106,12 +106,12 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     for (let createCommitTries = 2; createCommitTries > 0; createCommitTries--) {
       try {
         await createCommit({
-          branch: branchName,
+          branch,
           github: context.github,
           files: prettifiedFiles,
           message: formatCommitMessage(prettifierConfig.commitMessage, `#${pullRequestNumber}`),
-          org: orgName,
-          repo: repoName
+          org,
+          repo
         })
         console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
       } catch (e) {
@@ -138,25 +138,13 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
             }
           }
         }
-        devError(
-          e,
-          "creating a commit on a freshly opened pull request",
-          { org: orgName, repo: repoName, branch: branchName },
-          context.github
-        )
+        devError(e, "creating a commit on a freshly opened pull request", { org, repo, branch }, context.github)
       }
     }
 
     // add community comment
     if (prettifierConfig.commentTemplate !== "") {
-      await addComment(
-        orgName,
-        repoName,
-        branchName,
-        pullRequestNumber,
-        prettifierConfig.commentTemplate,
-        context.github
-      )
+      await addComment(org, repo, branch, pullRequestNumber, prettifierConfig.commentTemplate, context.github)
       console.log(`${repoPrefix}: ADDED COMMUNITY COMMENT`)
     }
   } catch (e) {
@@ -165,9 +153,9 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
         e,
         "unknown dev error",
         {
-          org: orgName,
-          repo: repoName,
-          branch: branchName,
+          org,
+          repo,
+          branch,
           event: "on-pull-request",
           payload: util.inspect(context.payload)
         },
