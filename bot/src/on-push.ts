@@ -51,12 +51,15 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
 
     // load additional information from GitHub
     const pushData = await loadPushData(org, repo, branch, context.github)
+
+    const pullRequestNumber = pushData.pullRequestNumber
+
     const prettifierConfig = prettifierConfigFromYML(
       pushData.prettifierConfigText,
       org,
       repo,
       branch,
-      pushData.pullRequestNumber,
+      pullRequestNumber,
       context.github
     )
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
@@ -66,13 +69,11 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       org,
       repo,
       branch,
-      pushData.pullRequestNumber,
+      pullRequestNumber,
       prettifierConfig,
       context.github
     )
     console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
-
-    const pullRequestNumber = pushData.pullRequestNumber
 
     // check whether this branch should be ignored
     if (prettifierConfig.shouldIgnoreBranch(branch)) {
@@ -242,7 +243,8 @@ interface PushData {
 }
 
 async function loadPushData(org: string, repo: string, branch: string, github: GitHubAPI): Promise<PushData> {
-  const query = await fs.readFile(path.join("src", "on-push.graphql"), "utf-8")
+  let query = await fs.readFile(path.join("src", "on-push.graphql"), "utf-8")
+  query = query.replace(/\{\{branch\}\}/g, branch)
   let callResult
   try {
     callResult = await github.graphql(query, { org, repo, branch })

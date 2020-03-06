@@ -193,7 +193,8 @@ async function loadPullRequestData(
   branch: string,
   github: GitHubAPI
 ): Promise<PullRequestData> {
-  const query = await fs.readFile(path.join("src", "on-pull-request.graphql"), "utf-8")
+  let query = await fs.readFile(path.join("src", "on-pull-request.graphql"), "utf-8")
+  query = query.replace(/\{\{branch\}\}/g, branch)
   let callResult
   try {
     callResult = await github.graphql(query, { org, repo })

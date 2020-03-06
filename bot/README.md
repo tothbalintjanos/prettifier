@@ -31,11 +31,8 @@ To debug a change in production:
 
 ### Deployment
 
-- deploy the master branch to production: run
-  <code textrun="verify-make-command">make deploy</code> inside this directory
 - deploy the current branch to production: run
-  <code textrun="verify-make-command">make deploy-current</code> inside this
-  directory
+  <code textrun="verify-make-command">make deploy</code> inside this directory
 
 ### DevOps
 
