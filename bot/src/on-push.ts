@@ -245,7 +245,7 @@ async function loadPushData(org: string, repo: string, branch: string, github: G
   const query = await fs.readFile(path.join("src", "on-push.graphql"), "utf-8")
   let callResult
   try {
-    callResult = await github.graphql(query, { org, repo })
+    callResult = await github.graphql(query, { org, repo, branch })
   } catch (e) {
     devError(e, `loading push data from GitHub`, { org, repo, branch }, github)
   }
