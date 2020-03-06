@@ -12,7 +12,11 @@ import { LoggedError } from "./logging/logged-error"
 import util from "util"
 import { RequestError } from "@octokit/request-error"
 import { isConfigurationFile } from "./config/is-configuration-file"
-import { loadConfigurations } from "./github/load-configurations"
+import { GitHubAPI } from "probot/lib/github"
+import { promises as fs } from "fs"
+import path from "path"
+import { prettierConfigFromYML } from "./prettier/prettier-config-from-yml"
+import { prettifierConfigFromYML } from "./config/prettifier-configuration-from-yml"
 
 /** called when this bot gets notified about a new pull request */
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>): Promise<void> {
@@ -32,8 +36,10 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       return
     }
 
-    // load configurations
-    const { prettifierConfig, prettierConfig } = await loadConfigurations(
+    // load additional information from GitHub
+    const pullData = await loadPullRequestData(org, repo, branch, context.github)
+    const prettifierConfig = prettifierConfigFromYML(
+      pullData.prettifierConfigText,
       org,
       repo,
       branch,
@@ -41,6 +47,17 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       context.github
     )
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
+
+    const prettierConfig = prettierConfigFromYML(
+      pullData.prettierConfigText,
+      org,
+      repo,
+      branch,
+      pullRequestNumber,
+      prettifierConfig,
+      context.github
+    )
+    console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
 
     // check whether this branch should be ignored
     if (prettifierConfig.shouldIgnoreBranch(branch)) {
@@ -162,5 +179,30 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
         context.github
       )
     }
+  }
+}
+
+interface PullRequestData {
+  prettifierConfigText: string
+  prettierConfigText: string
+}
+
+async function loadPullRequestData(
+  org: string,
+  repo: string,
+  branch: string,
+  github: GitHubAPI
+): Promise<PullRequestData> {
+  const query = await fs.readFile(path.join("src", "on-pull-request.graphql"), "utf-8")
+  let callResult
+  try {
+    callResult = await github.graphql(query, { org, repo })
+  } catch (e) {
+    devError(e, `loading pull-request data from GitHub`, { org, repo, branch }, github)
+  }
+
+  return {
+    prettifierConfigText: callResult?.repository.prettifierConfig?.text || "",
+    prettierConfigText: callResult?.repository.prettierConfig?.text || ""
   }
 }

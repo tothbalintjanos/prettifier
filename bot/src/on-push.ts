@@ -6,7 +6,6 @@ import { createCommit } from "./github/create-commit"
 import { createPullRequest } from "./github/create-pull-request"
 import { formatCommitMessage } from "./template/format-commit-message"
 import { prettify } from "./prettier/prettify"
-import { getPullRequestForBranch } from "./github/get-pull-request-for-branch"
 import { addComment } from "./github/create-comment"
 import { hasCommentFromPrettifier } from "./github/has-comment-from-prettifier"
 import { LoggedError } from "./logging/logged-error"
@@ -14,7 +13,11 @@ import { loadFile } from "./github/load-file"
 import { devError, logDevError } from "./logging/dev-error"
 import util from "util"
 import { concatToSet, removeAllFromSet } from "./helpers/set-tools"
-import { loadConfigurations } from "./github/load-configurations"
+import { promises as fs } from "fs"
+import path from "path"
+import { prettifierConfigFromYML } from "./config/prettifier-configuration-from-yml"
+import { GitHubAPI } from "probot/lib/github"
+import { prettierConfigFromYML } from "./prettier/prettier-config-from-yml"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>): Promise<void> {
@@ -46,10 +49,30 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       return
     }
 
-    // load configurations
-    const { prettifierConfig, prettierConfig } = await loadConfigurations(org, repo, branch, 0, context.github)
+    // load additional information from GitHub
+    const pushData = await loadPushData(org, repo, branch, context.github)
+    const prettifierConfig = prettifierConfigFromYML(
+      pushData.prettifierConfigText,
+      org,
+      repo,
+      branch,
+      pushData.pullRequestNumber,
+      context.github
+    )
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
+
+    const prettierConfig = prettierConfigFromYML(
+      pushData.prettierConfigText,
+      org,
+      repo,
+      branch,
+      pushData.pullRequestNumber,
+      prettifierConfig,
+      context.github
+    )
     console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
+
+    const pullRequestNumber = pushData.pullRequestNumber
 
     // check whether this branch should be ignored
     if (prettifierConfig.shouldIgnoreBranch(branch)) {
@@ -58,9 +81,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     // check pull requests
-    let pullRequestNumber = -1
     if (prettifierConfig.pullsOnly) {
-      pullRequestNumber = await getPullRequestForBranch(org, repo, branch, context.github)
       if (pullRequestNumber === 0) {
         console.log(`${repoPrefix}: IGNORING THIS BRANCH BECAUSE IT HAS NO OPEN PULL REQUEST`)
         return
@@ -156,9 +177,6 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     if (!createCommitError && prettifierConfig.commentTemplate !== "") {
-      if (pullRequestNumber === -1) {
-        pullRequestNumber = await getPullRequestForBranch(org, repo, branch, context.github)
-      }
       if (pullRequestNumber > 0) {
         const hasComment = await hasCommentFromPrettifier(org, repo, branch, pullRequestNumber, context.github)
         if (!hasComment) {
@@ -214,5 +232,36 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
         context.github
       )
     }
+  }
+}
+
+interface PushData {
+  prettifierConfigText: string
+  prettierConfigText: string
+  pullRequestNumber: number
+}
+
+async function loadPushData(org: string, repo: string, branch: string, github: GitHubAPI): Promise<PushData> {
+  const query = await fs.readFile(path.join("src", "on-push.graphql"), "utf-8")
+  let callResult
+  try {
+    callResult = await github.graphql(query, { org, repo })
+  } catch (e) {
+    devError(e, `loading push data from GitHub`, { org, repo, branch }, github)
+  }
+
+  let pullRequestNumber = 0
+  const pulls = callResult?.repository?.ref?.associatedPullRequests
+  if (pulls.totalCount > 1) {
+    devError(new Error(), "multiple open pull requests found for branch", { org, repo, branch }, github)
+  }
+  if (pulls.totalCount > 0) {
+    pullRequestNumber = pulls.nodes[0].number
+  }
+
+  return {
+    prettifierConfigText: callResult?.repository.prettifierConfig?.text || "",
+    prettierConfigText: callResult?.repository.prettierConfig?.text || "",
+    pullRequestNumber
   }
 }

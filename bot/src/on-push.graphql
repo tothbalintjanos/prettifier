@@ -1,0 +1,25 @@
+query OnPush($org: String!, $repo: String!, $branch: String!) {
+  # config file contents
+  repository(owner: $org, name: $repo) {
+    prettifierConfig: object(expression: "{{branch}}:.github/prettifier.yml") {
+      ... on Blob {
+        text
+      }
+    }
+    prettierConfig: object(expression: "{{branch}}:.prettierrc") {
+      ... on Blob {
+        text
+      }
+    }
+  }
+
+  # pull-request for this branch
+  ref(qualifiedName: $branch) {
+    associatedPullRequests(first: 2, states: OPEN) {
+      totalCount
+      nodes {
+        number
+      }
+    }
+  }
+}

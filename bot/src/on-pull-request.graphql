@@ -1,4 +1,5 @@
-query PullRequestCommentAuthors($org: String!, $repo: String!) {
+query OnPullRequest($org: String!, $repo: String!, $branch: String!) {
+  # config file contents
   repository(owner: $org, name: $repo) {
     prettifierConfig: object(expression: "{{branch}}:.github/prettifier.yml") {
       ... on Blob {
