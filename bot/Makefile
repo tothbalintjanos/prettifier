@@ -13,10 +13,7 @@ build: clean  # builds the production version
 clean:  # removes all build artifacts
 	@rm -rf dist
 
-deploy:  # deploys the master branch to Heroku
-	@(cd .. && git push heroku $(shell cd .. && git subtree split --prefix bot master):master --force)
-
-deploy-current:  # deploys the current branch to Heroku
+deploy:  # deploys the current branch to Heroku
 	@(cd .. && git push heroku $(shell cd .. && git subtree split --prefix bot $(shell git branch --show-current)):master --force)
 
 fix:  # fixes the auto-fixable formatting issues
