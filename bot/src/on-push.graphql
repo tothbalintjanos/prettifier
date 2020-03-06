@@ -11,14 +11,14 @@ query OnPush($org: String!, $repo: String!, $branch: String!) {
         text
       }
     }
-  }
 
-  # pull-request for this branch
-  ref(qualifiedName: $branch) {
-    associatedPullRequests(first: 2, states: OPEN) {
-      totalCount
-      nodes {
-        number
+    # pull-request for this branch
+    ref(qualifiedName: $branch) {
+      associatedPullRequests(first: 2, states: OPEN) {
+        totalCount
+        nodes {
+          number
+        }
       }
     }
   }
