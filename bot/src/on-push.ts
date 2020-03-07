@@ -18,6 +18,8 @@ import path from "path"
 import { prettifierConfigFromYML } from "./config/prettifier-configuration-from-yml"
 import { GitHubAPI } from "probot/lib/github"
 import { prettierConfigFromYML } from "./prettier/prettier-config-from-yml"
+import { PrettifierConfiguration } from "./config/prettifier-configuration"
+import { PrettierConfiguration } from "./prettier/prettier-config"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>): Promise<void> {
@@ -50,29 +52,13 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     // load additional information from GitHub
-    const pushData = await loadPushData(org, repo, branch, context.github)
-
-    const pullRequestNumber = pushData.pullRequestNumber
-
-    const prettifierConfig = prettifierConfigFromYML(
-      pushData.prettifierConfigText,
+    const { prettifierConfig, prettierConfig, pullRequestNumber } = await loadPushContext(
       org,
       repo,
       branch,
-      pullRequestNumber,
       context.github
     )
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
-
-    const prettierConfig = prettierConfigFromYML(
-      pushData.prettierConfigText,
-      org,
-      repo,
-      branch,
-      pullRequestNumber,
-      prettifierConfig,
-      context.github
-    )
     console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
 
     // check whether this branch should be ignored
@@ -236,13 +222,13 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
   }
 }
 
-interface PushData {
-  prettifierConfigText: string
-  prettierConfigText: string
+interface PushContext {
+  prettifierConfig: PrettifierConfiguration
+  prettierConfig: PrettierConfiguration
   pullRequestNumber: number
 }
 
-async function loadPushData(org: string, repo: string, branch: string, github: GitHubAPI): Promise<PushData> {
+async function loadPushContext(org: string, repo: string, branch: string, github: GitHubAPI): Promise<PushContext> {
   let query = await fs.readFile(path.join("src", "on-push.graphql"), "utf-8")
   query = query.replace(/\{\{branch\}\}/g, branch)
   let callResult
@@ -261,9 +247,24 @@ async function loadPushData(org: string, repo: string, branch: string, github: G
     pullRequestNumber = pulls.nodes[0].number
   }
 
-  return {
-    prettifierConfigText: callResult?.repository.prettifierConfig?.text || "",
-    prettierConfigText: callResult?.repository.prettierConfig?.text || "",
-    pullRequestNumber
-  }
+  const prettifierConfig = prettifierConfigFromYML(
+    callResult?.repository.prettifierConfig?.text || "",
+    org,
+    repo,
+    branch,
+    pullRequestNumber,
+    github
+  )
+
+  const prettierConfig = prettierConfigFromYML(
+    callResult?.repository.prettierConfig?.text || "{}",
+    org,
+    repo,
+    branch,
+    pullRequestNumber,
+    prettifierConfig,
+    github
+  )
+
+  return { prettifierConfig, prettierConfig, pullRequestNumber }
 }
