@@ -23,7 +23,8 @@ export async function logDevError(err: Error, activity: string, context: Context
     owner: "kevgo",
     repo: "prettifier",
     title: `Error ${activity}: ${err.message}`,
-    body: body(err, context)
+    body: body(err, context),
+    labels: ["GitHubOps"]
   })
 }
 
