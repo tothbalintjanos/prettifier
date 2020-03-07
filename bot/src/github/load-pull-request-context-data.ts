@@ -20,7 +20,7 @@ export async function loadPullRequestContextData(
   try {
     callResult = await github.graphql(query, { org, repo, branch })
   } catch (e) {
-    devError(e, `loading push data from GitHub`, { org, repo, branch }, github)
+    devError(e, `loading pull request data from GitHub`, { org, repo, branch }, github)
   }
   return {
     prettifierConfig: callResult?.repository.prettifierConfig?.text || "",
