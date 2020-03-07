@@ -7,7 +7,7 @@
 			-name '*.md' -o \
 			-name '*.yml' \) | \
 		grep -v node_modules | \
-		grep -v '/dist/' | \
-		grep -v '/docs/' | \
-		grep -v 'website/website/' | \
+		grep -v '^\./bot/dist/' | \
+		grep -v '^\./docs/.*\.js$' | \
+		grep -v '^\./website/website/' | \
 		xargs $(dirname $0)/node_modules/.bin/prettier "$@"

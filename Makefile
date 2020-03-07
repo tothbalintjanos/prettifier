@@ -20,7 +20,17 @@ docs:  # verifies the documentation
 .PHONY: docs
 
 fix:  # fixes the auto-fixable formatting issues
-	@tools/prettier/prettify --write
+	@find . -type f \( \
+					-name '*.ts' -o \
+					-name '*.js' -o \
+					-name '*.json' -o \
+					-name '*.md' -o \
+					-name '*.yml' \) | \
+		grep -v node_modules | \
+		grep -v '^\./bot/' | \
+		grep -v '^\./docs/.*\.js' | \
+		grep -v '^\./website/website/' | \
+		xargs tools/prettier/node_modules/.bin/prettier --write
 	@(cd bot && make --no-print-directory fix)
 
 help:   # shows all available Make commands
