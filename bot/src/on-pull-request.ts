@@ -9,7 +9,6 @@ import { prettify } from "./prettier/prettify"
 import { addComment } from "./github/create-comment"
 import { devError, logDevError } from "./logging/dev-error"
 import { LoggedError } from "./logging/logged-error"
-import util from "util"
 import { RequestError } from "@octokit/request-error"
 import { isConfigurationFile } from "./config/is-configuration-file"
 import { GitHubAPI } from "probot/lib/github"
@@ -165,7 +164,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
           repo,
           branch,
           event: "on-pull-request",
-          payload: util.inspect(context.payload)
+          payload: context.payload
         },
         context.github
       )

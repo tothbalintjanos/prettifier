@@ -1,4 +1,4 @@
-# Prettifier Bot source code
+# Prettifier Bot
 
 This is the source code for the Prettifier bot.
 
