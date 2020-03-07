@@ -31,7 +31,7 @@ export async function logDevError(err: Error, activity: string, context: Context
 export function body(err: Error, context: object): string {
   let result = "Environment:\n"
   for (const [k, v] of Object.entries(context)) {
-    result += `- ${k}: ${v}\n`
+    result += `- **${k}:**\n\`\`\`\n${util.inspect(v, false, Infinity)}\n\`\`\`\n`
   }
   result += `
 
