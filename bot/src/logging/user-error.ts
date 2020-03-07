@@ -4,6 +4,20 @@ import { addComment } from "../github/create-comment"
 import { Context } from "./context"
 import { PrettifierConfiguration } from "../config/prettifier-configuration"
 
+/** UserError indicates a user error */
+export class UserError extends Error {
+  activity: string
+  cause: Error
+  context: object
+
+  constructor(activity: string, cause: Error, context: object = {}) {
+    super()
+    this.activity = activity
+    this.cause = cause
+    this.context = context
+  }
+}
+
 /** Logs a user mistake. */
 export function userError(
   err: Error,
@@ -15,12 +29,12 @@ export function userError(
 ): never {
   console.log(`${context.org}|${context.repo}: USER ERROR: ${desc}:`, err.message)
   if (pullRequest > 0 && config.debug) {
-    addComment(context.org, context.repo, context.branch, pullRequest, body(err, desc), github)
+    addComment(context.org, context.repo, pullRequest, bodyTemplate(err, desc), github)
   }
   throw new LoggedError()
 }
 
-function body(err: Error, desc: string): string {
+export function bodyTemplate(err: Error, desc: string): string {
   return `Prettifier-Bot here. I noticed a problem with your setup:
 
 \`\`\`

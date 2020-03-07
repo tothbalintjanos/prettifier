@@ -1,6 +1,6 @@
 import { GitHubAPI } from "probot/lib/github"
-import { devError } from "../logging/dev-error"
 import { Octokit } from "probot"
+import { DevError } from "../logging/dev-error"
 
 /**
  * Returns the paths for files that exist in the given pull request.
@@ -9,7 +9,6 @@ import { Octokit } from "probot"
 export async function getExistingFilesInPullRequests(
   org: string,
   repo: string,
-  branch: string,
   pullRequestNumber: number,
   github: GitHubAPI
 ): Promise<string[]> {
@@ -26,7 +25,7 @@ export async function getExistingFilesInPullRequests(
     })
     files = callResult.data
   } catch (e) {
-    devError(e, "getting all files in pull request", { org, repo, branch, pullRequestNumber }, github)
+    throw new DevError("getting all files in pull request", e)
   }
   const result = []
   for (const file of files) {

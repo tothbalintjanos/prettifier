@@ -7,11 +7,10 @@ import { createCommit } from "./github/create-commit"
 import { applyPrettierConfigOverrides } from "./prettier/apply-prettier-config-overrides"
 import { prettify } from "./prettier/prettify"
 import { addComment } from "./github/create-comment"
-import { devError, logDevError } from "./logging/dev-error"
+import { DevError, logDevError } from "./logging/dev-error"
 import { LoggedError } from "./logging/logged-error"
 import { RequestError } from "@octokit/request-error"
 import { isConfigurationFile } from "./config/is-configuration-file"
-import { GitHubAPI } from "probot/lib/github"
 import { prettierConfigFromYML } from "./prettier/prettier-config-from-yml"
 import { prettifierConfigFromYML } from "./config/prettifier-configuration-from-yml"
 import { PrettifierConfiguration } from "./config/prettifier-configuration"
@@ -38,14 +37,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 
     // load additional information from GitHub
     const pullRequestContextData = await loadPullRequestContextData(org, repo, branch, context.github)
-    const { prettifierConfig, prettierConfig } = parsePullRequestContextData(
-      org,
-      repo,
-      branch,
-      pullRequestNumber,
-      pullRequestContextData,
-      context.github
-    )
+    const { prettifierConfig, prettierConfig } = parsePullRequestContextData(pullRequestContextData)
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
     console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
 
@@ -56,7 +48,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     }
 
     // load the files that this PR changes
-    const files = await getExistingFilesInPullRequests(org, repo, branch, pullRequestNumber, context.github)
+    const files = await getExistingFilesInPullRequests(org, repo, pullRequestNumber, context.github)
     const prettifiedFiles = []
     let configChange = false
     for (let i = 0; i < files.length; i++) {
@@ -95,7 +87,6 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       await addComment(
         org,
         repo,
-        branch,
         pullRequestNumber,
         "Prettifier-Bot here. The configuration changes made in this pull request look good to me.",
         context.github
@@ -145,30 +136,33 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
             }
           }
         }
-        devError(e, "creating a commit on a freshly opened pull request", { org, repo, branch }, context.github)
+        throw new DevError("creating a commit on a freshly opened pull request", e)
       }
     }
 
     // add community comment
     if (prettifierConfig.commentTemplate !== "") {
-      await addComment(org, repo, branch, pullRequestNumber, prettifierConfig.commentTemplate, context.github)
+      await addComment(org, repo, pullRequestNumber, prettifierConfig.commentTemplate, context.github)
       console.log(`${repoPrefix}: ADDED COMMUNITY COMMENT`)
     }
   } catch (e) {
-    if (!(e instanceof LoggedError)) {
-      logDevError(
-        e,
-        "unknown dev error",
-        {
-          org,
-          repo,
-          branch,
-          event: "on-pull-request",
-          payload: context.payload
-        },
-        context.github
-      )
+    if (e instanceof LoggedError) {
+      return
     }
+    if (e instanceof DevError) {
+      e.context.org = org
+      e.context.repo = repo
+      e.context.branch = branch
+      e.context.pullRequestNumber = pullRequestNumber
+      logDevError(e, e.activity, e.context, context.github)
+      return
+    }
+    logDevError(
+      e,
+      "unknown dev error",
+      { org, repo, branch, pullRequestNumber, event: "on-pull-request", payload: context.payload },
+      context.github
+    )
   }
 }
 
@@ -177,23 +171,8 @@ interface PullRequestContext {
   prettierConfig: PrettierConfiguration
 }
 
-export function parsePullRequestContextData(
-  org: string,
-  repo: string,
-  branch: string,
-  pullRequestNumber: number,
-  data: PullRequestContextData,
-  github: GitHubAPI
-): PullRequestContext {
-  const prettifierConfig = prettifierConfigFromYML(data.prettifierConfig, org, repo, branch, pullRequestNumber, github)
-  const prettierConfig = prettierConfigFromYML(
-    data.prettierConfig,
-    org,
-    repo,
-    branch,
-    pullRequestNumber,
-    prettifierConfig,
-    github
-  )
+export function parsePullRequestContextData(data: PullRequestContextData): PullRequestContext {
+  const prettifierConfig = prettifierConfigFromYML(data.prettifierConfig)
+  const prettierConfig = prettierConfigFromYML(data.prettierConfig)
   return { prettifierConfig, prettierConfig }
 }

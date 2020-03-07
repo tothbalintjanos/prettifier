@@ -1,10 +1,9 @@
 import { GitHubAPI } from "probot/lib/github"
-import { devError } from "../logging/dev-error"
+import { DevError } from "../logging/dev-error"
 
 export async function addComment(
   org: string,
   repo: string,
-  branch: string,
   issue: number,
   text: string,
   github: GitHubAPI
@@ -18,6 +17,6 @@ export async function addComment(
       repo
     })
   } catch (e) {
-    devError(e, "commenting on a pull request", { org, repo, branch, issue }, github)
+    throw new DevError("commenting on a pull request", e, { issue })
   }
 }

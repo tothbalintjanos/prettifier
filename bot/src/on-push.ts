@@ -10,14 +10,13 @@ import { addComment } from "./github/create-comment"
 import { hasCommentFromPrettifier } from "./github/has-comment-from-prettifier"
 import { LoggedError } from "./logging/logged-error"
 import { loadFile } from "./github/load-file"
-import { devError, logDevError } from "./logging/dev-error"
+import { DevError, logDevError } from "./logging/dev-error"
 import { concatToSet, removeAllFromSet } from "./helpers/set-tools"
 import { prettifierConfigFromYML } from "./config/prettifier-configuration-from-yml"
 import { prettierConfigFromYML } from "./prettier/prettier-config-from-yml"
 import { PrettifierConfiguration } from "./config/prettifier-configuration"
 import { PrettierConfiguration } from "./prettier/prettier-configuration"
 import { loadPushContextData, PushContextData } from "./github/load-push-context-data"
-import { GitHubAPI } from "probot/lib/github"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>): Promise<void> {
@@ -26,6 +25,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
   let branch = ""
   let author = ""
   let commitSha = ""
+  let pullRequestNumber = 0
   try {
     org = context.payload.repository.owner.login
     repo = context.payload.repository.name
@@ -51,15 +51,12 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
 
     // load additional information from GitHub
     const pushContextData = await loadPushContextData(org, repo, branch, context.github)
-    const { prettifierConfig, prettierConfig, pullRequestNumber } = await parsePushContextData(
-      org,
-      repo,
-      branch,
-      pushContextData,
-      context.github
-    )
+    const pushContext = parsePushContextData(pushContextData)
+    const prettifierConfig = pushContext.prettifierConfig
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
+    const prettierConfig = pushContext.prettierConfig
     console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
+    pullRequestNumber = pushContext.pullRequestNumber
 
     // check whether this branch should be ignored
     if (prettifierConfig.shouldIgnoreBranch(branch)) {
@@ -165,12 +162,11 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
 
     if (!createCommitError && prettifierConfig.commentTemplate !== "") {
       if (pullRequestNumber > 0) {
-        const hasComment = await hasCommentFromPrettifier(org, repo, branch, pullRequestNumber, context.github)
+        const hasComment = await hasCommentFromPrettifier(org, repo, pullRequestNumber, context.github)
         if (!hasComment) {
           addComment(
             org,
             repo,
-            branch,
             pullRequestNumber,
             formatCommitMessage(prettifierConfig.commentTemplate, commitSha),
             context.github
@@ -195,7 +191,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       }
     }
     if (!tryPullRequest) {
-      devError(createCommitError, "committing changes", { org, repo, branch }, context.github)
+      throw new DevError("committing changes", createCommitError)
     }
 
     // try creating a pull request
@@ -211,14 +207,23 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     })
     console.log(`${repoPrefix}: CREATED PULL REQUEST FOR ${prettifiedFiles.length} PRETTIFIED FILES`)
   } catch (e) {
-    if (!(e instanceof LoggedError)) {
-      logDevError(
-        e,
-        "unknown dev error",
-        { org, repo, branch, event: "on-push", payload: context.payload },
-        context.github
-      )
+    if (e instanceof LoggedError) {
+      return
     }
+    if (e instanceof DevError) {
+      e.context.org = org
+      e.context.repo = repo
+      e.context.branch = branch
+      e.context.pullRequestNumber = pullRequestNumber
+      logDevError(e.cause, e.activity, e.context, context.github)
+      return
+    }
+    logDevError(
+      e,
+      "unknown dev error",
+      { org, repo, branch, pullRequestNumber, event: "on-push", payload: context.payload },
+      context.github
+    )
   }
 }
 
@@ -228,23 +233,9 @@ interface PushContext {
   pullRequestNumber: number
 }
 
-export function parsePushContextData(
-  org: string,
-  repo: string,
-  branch: string,
-  data: PushContextData,
-  github: GitHubAPI
-): PushContext {
+export function parsePushContextData(data: PushContextData): PushContext {
   const pullRequestNumber = data.pullRequestNumber
-  const prettifierConfig = prettifierConfigFromYML(data.prettifierConfig, org, repo, branch, pullRequestNumber, github)
-  const prettierConfig = prettierConfigFromYML(
-    data.prettierConfig,
-    org,
-    repo,
-    branch,
-    pullRequestNumber,
-    prettifierConfig,
-    github
-  )
+  const prettifierConfig = prettifierConfigFromYML(data.prettifierConfig)
+  const prettierConfig = prettierConfigFromYML(data.prettierConfig)
   return { prettifierConfig, prettierConfig, pullRequestNumber }
 }

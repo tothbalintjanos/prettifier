@@ -1,18 +1,21 @@
 import { prettierConfigFromYML } from "./prettier-config-from-yml"
-import { PrettifierConfiguration } from "../config/prettifier-configuration"
-import { GitHubAPI } from "probot/lib/github"
 import { assert } from "chai"
+import { UserError } from "../logging/user-error"
 
 suite("prettierConfigFromYML")
 
 test("empty", function() {
-  const prettifierConfig = new PrettifierConfiguration({})
-  const actual = prettierConfigFromYML("", "org", "repo", "branch", 0, prettifierConfig, GitHubAPI())
+  const actual = prettierConfigFromYML("")
   assert.deepEqual(actual, {})
 })
 
-test("with content", function() {
-  const prettifierConfig = new PrettifierConfiguration({})
-  const actual = prettierConfigFromYML("semi: false", "org", "repo", "branch", 0, prettifierConfig, GitHubAPI())
+test("valid content", function() {
+  const actual = prettierConfigFromYML("semi: false")
   assert.deepEqual(actual, { semi: false })
+})
+
+test("invalid content", function() {
+  assert.throws(function() {
+    prettierConfigFromYML("'wrong")
+  }, UserError)
 })

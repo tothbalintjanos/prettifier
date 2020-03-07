@@ -1,6 +1,6 @@
 import { createCommit, FileToCreate } from "./create-commit"
 import { GitHubAPI } from "probot/lib/github"
-import { devError } from "../logging/dev-error"
+import { DevError } from "../logging/dev-error"
 import { RequestError } from "@octokit/request-error"
 import { LoggedError } from "../logging/logged-error"
 
@@ -50,7 +50,7 @@ export async function createPullRequest(args: {
         console.log(`${args.org}|${args.repo}|${args.branch}: USER HASN'T ACCEPTED THE PERMISSIONS TO EDIT CONTENT`)
         throw new LoggedError()
       }
-      devError(e, "creating a pull request", args, args.github)
+      throw new DevError("creating a pull request", e, args)
     }
   }
 }

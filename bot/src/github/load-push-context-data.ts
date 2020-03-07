@@ -1,6 +1,6 @@
 import { GitHubAPI } from "probot/lib/github"
 import { promises as fs } from "fs"
-import { devError } from "../logging/dev-error"
+import { DevError } from "../logging/dev-error"
 import path from "path"
 
 export interface PushContextData {
@@ -21,13 +21,13 @@ export async function loadPushContextData(
   try {
     callResult = await github.graphql(query, { org, repo, branch })
   } catch (e) {
-    devError(e, `loading push data from GitHub`, { org, repo, branch }, github)
+    throw new DevError(`loading push data from GitHub`, e)
   }
 
   let pullRequestNumber = 0
   const pulls = callResult?.repository?.ref?.associatedPullRequests
   if (pulls.totalCount > 1) {
-    devError(new Error(), "multiple open pull requests found for branch", { org, repo, branch }, github)
+    throw new DevError("multiple open pull requests found for branch", new Error())
   }
   if (pulls.totalCount > 0) {
     pullRequestNumber = pulls.nodes[0].number

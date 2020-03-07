@@ -1,6 +1,6 @@
 import { GitHubAPI } from "probot/lib/github"
 import { promises as fs } from "fs"
-import { devError } from "../logging/dev-error"
+import { DevError } from "../logging/dev-error"
 import path from "path"
 
 export interface PullRequestContextData {
@@ -20,7 +20,7 @@ export async function loadPullRequestContextData(
   try {
     callResult = await github.graphql(query, { org, repo, branch })
   } catch (e) {
-    devError(e, `loading pull request data from GitHub`, { org, repo, branch }, github)
+    throw new DevError(`loading pull request data from GitHub`, e)
   }
   return {
     prettifierConfig: callResult?.repository.prettifierConfig?.text || "",
