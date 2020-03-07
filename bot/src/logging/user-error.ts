@@ -2,7 +2,6 @@ import { GitHubAPI } from "probot/lib/github"
 import { LoggedError } from "./logged-error"
 import { addComment } from "../github/create-comment"
 import { Context } from "./context"
-import { PrettifierConfiguration } from "../config/prettifier-configuration"
 
 /** UserError indicates a user error */
 export class UserError extends Error {
@@ -19,16 +18,9 @@ export class UserError extends Error {
 }
 
 /** Logs a user mistake. */
-export function userError(
-  err: Error,
-  desc: string,
-  context: Context,
-  pullRequest: number,
-  config: PrettifierConfiguration,
-  github: GitHubAPI
-): never {
+export function userError(err: Error, desc: string, context: Context, pullRequest: number, github: GitHubAPI): never {
   console.log(`${context.org}|${context.repo}: USER ERROR: ${desc}:`, err.message)
-  if (pullRequest > 0 && config.debug) {
+  if (pullRequest > 0) {
     addComment(context.org, context.repo, pullRequest, bodyTemplate(err, desc), github)
   }
   throw new LoggedError()
@@ -50,6 +42,5 @@ I can't format your code until this is fixed.
 
 If you think this is an error on my side, please report this problem using [this form](https://github.com/kevgo/prettifier/issues/new).
 
-I will only comment when I see relevant config changes or non-working configuration. To stop me from making these types of comments on future pull requests, create a file \`.github/prettifier.yml\` (if it doesn't exist) and add the line \`debug: false\`. Please see the [documentation for configuration options](https://kevgo.github.io/prettifier/docs/configuration) for more details.
-`
+I will only comment when I see relevant configuration changes.`
 }

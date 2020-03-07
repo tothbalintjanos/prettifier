@@ -82,7 +82,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     }
 
     // verify correct config changes
-    if (configChange && prettifierConfig.debug) {
+    if (configChange) {
       await addComment(
         org,
         repo,
