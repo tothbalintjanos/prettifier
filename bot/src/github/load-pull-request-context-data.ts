@@ -14,7 +14,7 @@ export async function loadPullRequestContextData(
   branch: string,
   github: GitHubAPI
 ): Promise<PullRequestContextData> {
-  let query = await fs.readFile(path.join("src", "pull-request-context.graphql"), "utf-8")
+  let query = await fs.readFile(path.join("src", "github", "pull-request-context.graphql"), "utf-8")
   query = query.replace(/\{\{branch\}\}/g, branch)
   let callResult
   try {

@@ -15,7 +15,7 @@ export async function loadPushContextData(
   branch: string,
   github: GitHubAPI
 ): Promise<PushContextData> {
-  let query = await fs.readFile(path.join("src", "push-context.graphql"), "utf-8")
+  let query = await fs.readFile(path.join("src", "github", "push-context.graphql"), "utf-8")
   query = query.replace(/\{\{branch\}\}/g, branch)
   let callResult
   try {
