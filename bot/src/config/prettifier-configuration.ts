@@ -1,18 +1,18 @@
 import ignore, { Ignore } from "ignore"
 import prettier from "prettier"
 
-/** ConfigOptions defines the Prettifier configuration options */
+/** ConfigOptions defines the configuration options that users can provide. */
 interface ConfigOptions {
-  commentTemplate: string
-  commitMessage: string
-  debug: boolean
-  excludeBranches: string[]
-  excludeFiles: string[]
-  pullsOnly: boolean
+  commentTemplate?: string
+  commitMessage?: string
+  debug?: boolean
+  excludeBranches?: string[] | string
+  excludeFiles?: string[] | string
+  pullsOnly?: boolean
 }
 
 /** PrettifierConfiguration provides the configuration of Prettifier. */
-export class PrettifierConfiguration implements ConfigOptions {
+export class PrettifierConfiguration {
   /** template for comments on the pull request */
   commentTemplate: string
 
@@ -37,14 +37,26 @@ export class PrettifierConfiguration implements ConfigOptions {
    * Creates a new configuration based on the given config object.
    * Missing values are backfilled with default values.
    */
-  constructor(actualConfig: Partial<ConfigOptions>) {
-    this.commentTemplate = actualConfig.commentTemplate ?? ""
-    this.commitMessage = actualConfig.commitMessage ?? "Format {{commitSha}}"
-    this.debug = actualConfig.debug ?? true
-    this.excludeBranches = actualConfig.excludeBranches ?? []
-    this.excludeFiles = actualConfig.excludeFiles ?? ["node_modules"]
+  constructor(providedConfig: ConfigOptions) {
+    this.commentTemplate = providedConfig.commentTemplate ?? ""
+    this.commitMessage = providedConfig.commitMessage ?? "Format {{commitSha}}"
+    this.debug = providedConfig.debug ?? true
+    if (Array.isArray(providedConfig.excludeBranches)) {
+      this.excludeBranches = providedConfig.excludeBranches
+    } else if (!providedConfig.excludeBranches) {
+      this.excludeBranches = ["node_modules"]
+    } else {
+      this.excludeBranches = [providedConfig.excludeBranches]
+    }
+    if (Array.isArray(providedConfig.excludeFiles)) {
+      this.excludeFiles = providedConfig.excludeFiles
+    } else if (!providedConfig.excludeFiles) {
+      this.excludeFiles = []
+    } else {
+      this.excludeFiles = [providedConfig.excludeFiles]
+    }
     this.ignore = ignore().add(this.excludeFiles)
-    this.pullsOnly = actualConfig.pullsOnly ?? false
+    this.pullsOnly = providedConfig.pullsOnly ?? false
   }
 
   /** Indicates whether the given branch should be ignored. */

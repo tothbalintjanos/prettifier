@@ -2,7 +2,7 @@ import yml from "js-yaml"
 import { GitHubAPI } from "probot/lib/github"
 import { userError } from "../logging/user-error"
 import { PrettifierConfiguration } from "../config/prettifier-configuration"
-import { PrettierConfiguration } from "./prettier-config"
+import { PrettierConfiguration } from "./prettier-configuration"
 
 /** Returns a PrettierConfiguration with the given content */
 export function prettierConfigFromYML(
@@ -15,7 +15,7 @@ export function prettierConfigFromYML(
   github: GitHubAPI
 ): PrettierConfiguration {
   try {
-    return yml.safeLoad(configText)
+    return yml.safeLoad(configText) || {}
   } catch (e) {
     userError(e, "parsing .prettierrc:", { org, repo, branch }, pullRequest, prettifierConfig, github)
   }

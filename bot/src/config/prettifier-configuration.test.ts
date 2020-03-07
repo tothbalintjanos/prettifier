@@ -3,41 +3,72 @@ import { PrettifierConfiguration } from "./prettifier-configuration"
 
 suite("PrettifierConfiguration.shouldIgnoreBranch")
 
-test("name listed in config", function() {
+test("ignores excluded branches", function() {
   const config = new PrettifierConfiguration({
     excludeBranches: ["master"]
   })
   assert.isTrue(config.shouldIgnoreBranch("master"))
 })
 
-test("name not listed in config", function() {
+test("approves non-excluded branches", function() {
   const config = new PrettifierConfiguration({
     excludeBranches: ["master"]
   })
   assert.isFalse(config.shouldIgnoreBranch("foo"))
 })
 
-test("no botConfig", function() {
+test("default behavior", function() {
   const config = new PrettifierConfiguration({})
   assert.isFalse(config.shouldIgnoreBranch("foo"))
 })
 
 suite("PrettifierConfiguration.shouldPrettify")
 
-test("ignores node_modules out of the box", async function() {
+test("ignores 'node_modules' by default", async function() {
   const config = new PrettifierConfiguration({})
-  const result = await config.shouldPrettify("node_modules/foo/bar.js")
-  assert.isFalse(result)
+  assert.isFalse(await config.shouldPrettify("node_modules/foo/bar.js"))
 })
 
-test("prettifierConfig excludeFiles contains the folder name", async function() {
+test("excluded folder", async function() {
   const config = new PrettifierConfiguration({ excludeFiles: ["dist"] })
-  const result = await config.shouldPrettify("dist/foo.js")
-  assert.isFalse(result)
+  assert.isFalse(await config.shouldPrettify("dist/foo.js"))
 })
 
-test("allows other files", async function() {
+test("non-excluded file", async function() {
   const config = new PrettifierConfiguration({})
-  const result = await config.shouldPrettify("foo.js")
-  assert.isTrue(result)
+  assert.isTrue(await config.shouldPrettify("foo.js"))
+})
+
+suite("PrettifierConfiguration.excludeBranches")
+
+test("array given", async function() {
+  const config = new PrettifierConfiguration({ excludeBranches: ["foo"] })
+  assert.deepEqual(config.excludeBranches, ["foo"])
+})
+
+test("single name given", async function() {
+  const config = new PrettifierConfiguration({ excludeBranches: "foo" })
+  assert.deepEqual(config.excludeBranches, ["foo"])
+})
+
+test("nothing given", async function() {
+  const config = new PrettifierConfiguration({})
+  assert.deepEqual(config.excludeBranches, ["node_modules"])
+})
+
+suite("PrettifierConfiguration.excludeFiles")
+
+test("array given", async function() {
+  const config = new PrettifierConfiguration({ excludeFiles: ["foo"] })
+  assert.deepEqual(config.excludeFiles, ["foo"])
+})
+
+test("single name given", async function() {
+  const config = new PrettifierConfiguration({ excludeFiles: "foo" })
+  assert.deepEqual(config.excludeFiles, ["foo"])
+})
+
+test("nothing given", async function() {
+  const config = new PrettifierConfiguration({})
+  assert.deepEqual(config.excludeFiles, [])
 })

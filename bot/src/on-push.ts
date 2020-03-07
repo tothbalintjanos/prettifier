@@ -13,13 +13,12 @@ import { loadFile } from "./github/load-file"
 import { devError, logDevError } from "./logging/dev-error"
 import util from "util"
 import { concatToSet, removeAllFromSet } from "./helpers/set-tools"
-import { promises as fs } from "fs"
-import path from "path"
 import { prettifierConfigFromYML } from "./config/prettifier-configuration-from-yml"
-import { GitHubAPI } from "probot/lib/github"
 import { prettierConfigFromYML } from "./prettier/prettier-config-from-yml"
 import { PrettifierConfiguration } from "./config/prettifier-configuration"
-import { PrettierConfiguration } from "./prettier/prettier-config"
+import { PrettierConfiguration } from "./prettier/prettier-configuration"
+import { loadPushContextData, PushContextData } from "./github/load-push-context-data"
+import { GitHubAPI } from "probot/lib/github"
 
 /** called when this bot gets notified about a push on Github */
 export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush>): Promise<void> {
@@ -52,10 +51,12 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     // load additional information from GitHub
-    const { prettifierConfig, prettierConfig, pullRequestNumber } = await loadPushContext(
+    const pushContextData = await loadPushContextData(org, repo, branch, context.github)
+    const { prettifierConfig, prettierConfig, pullRequestNumber } = await parsePushContextData(
       org,
       repo,
       branch,
+      pushContextData,
       context.github
     )
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
@@ -228,36 +229,17 @@ interface PushContext {
   pullRequestNumber: number
 }
 
-async function loadPushContext(org: string, repo: string, branch: string, github: GitHubAPI): Promise<PushContext> {
-  let query = await fs.readFile(path.join("src", "on-push.graphql"), "utf-8")
-  query = query.replace(/\{\{branch\}\}/g, branch)
-  let callResult
-  try {
-    callResult = await github.graphql(query, { org, repo, branch })
-  } catch (e) {
-    devError(e, `loading push data from GitHub`, { org, repo, branch }, github)
-  }
-
-  let pullRequestNumber = 0
-  const pulls = callResult?.repository?.ref?.associatedPullRequests
-  if (pulls.totalCount > 1) {
-    devError(new Error(), "multiple open pull requests found for branch", { org, repo, branch }, github)
-  }
-  if (pulls.totalCount > 0) {
-    pullRequestNumber = pulls.nodes[0].number
-  }
-
-  const prettifierConfig = prettifierConfigFromYML(
-    callResult?.repository.prettifierConfig?.text || "",
-    org,
-    repo,
-    branch,
-    pullRequestNumber,
-    github
-  )
-
+export function parsePushContextData(
+  org: string,
+  repo: string,
+  branch: string,
+  data: PushContextData,
+  github: GitHubAPI
+): PushContext {
+  const pullRequestNumber = data.pullRequestNumber
+  const prettifierConfig = prettifierConfigFromYML(data.prettifierConfig, org, repo, branch, pullRequestNumber, github)
   const prettierConfig = prettierConfigFromYML(
-    callResult?.repository.prettierConfig?.text || "{}",
+    data.prettierConfig,
     org,
     repo,
     branch,
@@ -265,6 +247,5 @@ async function loadPushContext(org: string, repo: string, branch: string, github
     prettifierConfig,
     github
   )
-
   return { prettifierConfig, prettierConfig, pullRequestNumber }
 }
