@@ -48,7 +48,7 @@ start:   # starts the server
 	yarn start
 
 unit:  # runs the unit tests
-	@node_modules$/.bin$/mocha src/**/*.test.ts
+	@node_modules$/.bin$/mocha src/**/*.test.ts --reporter dot
 
 update:  # updates the dependencies
 	yarn upgrade --latest
