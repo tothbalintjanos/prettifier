@@ -24,9 +24,9 @@ help:   # prints all make targets
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
 lint:  # lints the code base
-	@node_modules$/.bin$/tsc --noEmit
-	@node_modules$/.bin$/eslint . --ext .ts
-	@../tools/prettier/prettify -l
+	node_modules$/.bin$/tsc --noEmit
+	node_modules$/.bin$/eslint . --ext .ts
+	../tools/prettier/prettify -l
 
 logs:   # shows the log output from the production server
 	heroku logs --tail --app prettifier-prod
