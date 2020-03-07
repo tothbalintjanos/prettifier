@@ -31,13 +31,11 @@ export async function logDevError(err: Error, activity: string, context: Context
 export function body(err: Error, context: object): string {
   let result = "Environment:\n"
   for (const [k, v] of Object.entries(context)) {
-    switch (typeof v) {
-      case "string":
-      case "number":
-        result += `- **${k}:** ${v}\n`
-        break
-      case "object":
-        result += `- **${k}:**\n\`\`\`\n${JSON.stringify(v)}\n\`\`\`\n`
+    console.log(typeof v)
+    if (typeof v === "object") {
+      result += `- **${k}:**\n\`\`\`\n${JSON.stringify(v, null, 2)}\n\`\`\`\n`
+    } else {
+      result += `- **${k}:** ${v}\n`
     }
   }
   result += `

@@ -11,7 +11,6 @@ import { hasCommentFromPrettifier } from "./github/has-comment-from-prettifier"
 import { LoggedError } from "./logging/logged-error"
 import { loadFile } from "./github/load-file"
 import { devError, logDevError } from "./logging/dev-error"
-import util from "util"
 import { concatToSet, removeAllFromSet } from "./helpers/set-tools"
 import { prettifierConfigFromYML } from "./config/prettifier-configuration-from-yml"
 import { prettierConfigFromYML } from "./prettier/prettier-config-from-yml"
@@ -216,7 +215,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       logDevError(
         e,
         "unknown dev error",
-        { org, repo, branch, event: "on-push", payload: util.inspect(context.payload) },
+        { org, repo, branch, event: "on-push", payload: context.payload },
         context.github
       )
     }
