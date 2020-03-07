@@ -23,8 +23,8 @@ const users = [
 const siteConfig = {
   title: "Prettifier", // Title for your website.
   tagline: "A bot that keeps your code base formatted",
-  url: "https://kevgo.github.io", // Your website URL
-  baseUrl: "/prettifier/", // Base URL for your project */
+  url: "https://prettifier.io", // Your website URL
+  baseUrl: "/", // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
   //   baseUrl: '/test-site/',
