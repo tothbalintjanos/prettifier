@@ -1,4 +1,4 @@
-query OnPullRequest($org: String!, $repo: String!, $branch: String!) {
+query OnPullRequest($org: String!, $repo: String!) {
   # config file contents
   repository(owner: $org, name: $repo) {
     prettifierConfig: object(expression: "{{branch}}:.github/prettifier.yml") {
