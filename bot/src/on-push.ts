@@ -4,7 +4,7 @@ import * as probot from "probot"
 import { applyPrettierConfigOverrides } from "./prettier/apply-prettier-config-overrides"
 import { createCommit } from "./github/create-commit"
 import { createPullRequest } from "./github/create-pull-request"
-import { formatCommitMessage } from "./template/format-commit-message"
+import { renderTemplate } from "./template/render-template"
 import { prettify } from "./prettier/prettify"
 import { addComment } from "./github/create-comment"
 import { hasCommentFromPrettifier } from "./github/has-comment-from-prettifier"
@@ -149,7 +149,10 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
         branch,
         github: context.github,
         files: prettifiedFiles,
-        message: formatCommitMessage(prettifierConfig.commitMessage, commitSha),
+        message: renderTemplate(prettifierConfig.commitMessage, {
+          commitSha,
+          files: prettifiedFiles.map(f => f.path)
+        }),
         org,
         repo
       })
@@ -167,7 +170,10 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
             org,
             repo,
             pullRequestNumber,
-            formatCommitMessage(prettifierConfig.commentTemplate, commitSha),
+            renderTemplate(prettifierConfig.commentTemplate, {
+              commitSha,
+              files: prettifiedFiles.map(f => f.path)
+            }),
             context.github
           )
         } else {
@@ -199,7 +205,10 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       branch: `prettifier-${commitSha}`,
       github: context.github,
       files: prettifiedFiles,
-      message: formatCommitMessage(prettifierConfig.commitMessage, commitSha),
+      message: renderTemplate(prettifierConfig.commitMessage, {
+        commitSha,
+        files: prettifiedFiles.map(f => f.path)
+      }),
       org,
       parentBranch: "master",
       repo

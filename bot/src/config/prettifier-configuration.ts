@@ -7,6 +7,7 @@ interface ConfigOptions {
   commitMessage?: string
   excludeBranches?: string[] | string
   excludeFiles?: string[] | string
+  forkComment?: string
   pullsOnly?: boolean
 }
 
@@ -22,6 +23,9 @@ export class PrettifierConfiguration {
 
   /** names of files that should not be prettified */
   excludeFiles: string[]
+
+  /** comment template when pull requests from forks are unformatted */
+  forkComment: string
 
   /** whether to only prettify branches that are under code review */
   pullsOnly: boolean
@@ -50,6 +54,23 @@ export class PrettifierConfiguration {
     } else {
       this.excludeFiles = [providedConfig.excludeFiles]
     }
+    this.forkComment =
+      providedConfig.forkComment ??
+      `Hey there! :wave: This repository is formatted using [Prettier](https://prettier.io).
+
+These files in your pull request aren't properly formatted:
+{{#files}}
+- {{.}}
+{{/files}}
+
+Please format them using Prettier to conform to this project's code style.
+The [Prettier installation guide](https://prettier.io/docs/en/install.html) is a good place to get started with this.
+Thanks!!
+
+:heart:
+
+Your friendly [Prettifier](https://prettifier.io) bot
+`
     this.ignore = ignore().add(this.excludeFiles)
     this.pullsOnly = providedConfig.pullsOnly ?? false
   }

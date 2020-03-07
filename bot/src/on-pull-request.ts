@@ -2,7 +2,7 @@ import * as probot from "probot"
 import webhooks from "@octokit/webhooks"
 import { loadFile } from "./github/load-file"
 import { getExistingFilesInPullRequests } from "./github/get-existing-files-in-pull-request"
-import { formatCommitMessage } from "./template/format-commit-message"
+import { renderTemplate } from "./template/render-template"
 import { createCommit } from "./github/create-commit"
 import { applyPrettierConfigOverrides } from "./prettier/apply-prettier-config-overrides"
 import { prettify } from "./prettier/prettify"
@@ -29,6 +29,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     pullRequestNumber = context.payload.pull_request.number
     const repoPrefix = `${org}/${repo}|#${pullRequestNumber}`
     console.log(`${repoPrefix}: PULL REQUEST DETECTED`)
+
     if (context.payload.action !== "opened") {
       console.log(`${repoPrefix}: PULL REQUEST ACTION IS ${context.payload.action}, IGNORING`)
       return
@@ -99,6 +100,15 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       return
     }
 
+    const isPullRequestFromFork =
+      context.payload.pull_request.head.repo.full_name !== context.payload.pull_request.base.repo.full_name
+    if (isPullRequestFromFork) {
+      const text = renderTemplate(prettifierConfig.forkComment, { files: prettifiedFiles.map(f => f.path) })
+      await addComment(org, repo, pullRequestNumber, text, context.github)
+      console.log(`${repoPrefix}: COMMENTED ON PULL REQUEST FROM FORK`)
+      return
+    }
+
     // create a commit
     for (let createCommitTries = 2; createCommitTries > 0; createCommitTries--) {
       try {
@@ -106,7 +116,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
           branch,
           github: context.github,
           files: prettifiedFiles,
-          message: formatCommitMessage(prettifierConfig.commitMessage, `#${pullRequestNumber}`),
+          message: renderTemplate(prettifierConfig.commitMessage, { files: prettifiedFiles.map(f => f.path) }),
           org,
           repo
         })
