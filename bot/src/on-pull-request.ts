@@ -14,7 +14,6 @@ import { isConfigurationFile } from "./config/is-configuration-file"
 import { prettierConfigFromYML } from "./prettier/prettier-config-from-yml"
 import { prettifierConfigFromYML } from "./config/prettifier-configuration-from-yml"
 import { PrettifierConfiguration } from "./config/prettifier-configuration"
-import { PrettierConfiguration } from "./prettier/prettier-configuration"
 import { PullRequestContextData, loadPullRequestContextData } from "./github/load-pull-request-context-data"
 
 /** called when this bot gets notified about a new pull request */
@@ -168,7 +167,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 
 interface PullRequestContext {
   prettifierConfig: PrettifierConfiguration
-  prettierConfig: PrettierConfiguration
+  prettierConfig: object
 }
 
 export function parsePullRequestContextData(data: PullRequestContextData): PullRequestContext {
