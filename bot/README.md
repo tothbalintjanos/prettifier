@@ -13,6 +13,14 @@ Run <code textrun="verify-make-command"> make setup </code>.
 
 To prepare deployment: `heroku git:remote -a originate-intrabot`
 
+### Development
+
+Create new GraphQL queries and mutations:
+
+- open https://developer.github.com/v4/explorer
+- log in
+- write new queries
+
 ### Testing
 
 - run all tests: <code textrun="verify-make-command">make test</code>
