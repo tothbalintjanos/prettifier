@@ -9,7 +9,9 @@ test("empty", function() {
   const data: PushContextData = {
     prettifierConfig: "",
     prettierConfig: "",
-    pullRequestNumber: 0
+    pullRequestNumber: 0,
+    pullRequestId: "",
+    pullRequestURL: ""
   }
   const actual = parsePushContextData(data)
   assert.deepEqual(actual.prettierConfig, {})
@@ -21,11 +23,15 @@ test("with content", function() {
   const data: PushContextData = {
     prettifierConfig: "excludeFiles: dist",
     prettierConfig: "semi: false",
-    pullRequestNumber: 3
+    pullRequestNumber: 3,
+    pullRequestId: "id",
+    pullRequestURL: "url"
   }
   const actual = parsePushContextData(data)
   assert.deepEqual(actual.prettierConfig, { semi: false })
   assert.instanceOf(actual.prettifierConfig, PrettifierConfiguration)
   assert.deepEqual(actual.prettifierConfig.excludeFiles, ["dist"])
   assert.equal(actual.pullRequestNumber, 3)
+  assert.equal(actual.pullRequestId, "id")
+  assert.equal(actual.pullRequestURL, "url")
 })

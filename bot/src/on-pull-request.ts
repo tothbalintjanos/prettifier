@@ -22,11 +22,15 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
   let repo = ""
   let branch = ""
   let pullRequestNumber = 0
+  let pullRequestId = ""
+  let pullRequestURL = ""
   try {
     org = context.payload.repository.owner.login
     repo = context.payload.repository.name
     branch = context.payload.pull_request.head.ref
     pullRequestNumber = context.payload.pull_request.number
+    pullRequestId = context.payload.pull_request.node_id
+    pullRequestURL = context.payload.pull_request.html_url
     const repoPrefix = `${org}/${repo}|#${pullRequestNumber}`
     console.log(`${repoPrefix}: PULL REQUEST DETECTED`)
 
@@ -84,13 +88,15 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 
     // verify correct config changes
     if (configChange) {
-      await addComment(
-        org,
-        repo,
-        pullRequestNumber,
-        "Prettifier-Bot here. The configuration changes made in this pull request look good to me.",
-        context.github
-      )
+      try {
+        await addComment(
+          pullRequestId,
+          "Prettifier-Bot here. The configuration changes made in this pull request look good to me.",
+          context.github
+        )
+      } catch (e) {
+        throw new DevError(`Commenting that configuration changes are ok`, e)
+      }
       console.log(`${repoPrefix}: ADDED CONFIG CHANGE DEBUG COMMENT`)
     }
 
@@ -104,7 +110,11 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       context.payload.pull_request.head.repo.full_name !== context.payload.pull_request.base.repo.full_name
     if (isPullRequestFromFork) {
       const text = renderTemplate(await prettifierConfig.forkComment(), { files: prettifiedFiles.map(f => f.path) })
-      await addComment(org, repo, pullRequestNumber, text, context.github)
+      try {
+        await addComment(pullRequestId, text, context.github)
+      } catch (e) {
+        throw new DevError(`commenting on pull request from fork`, e)
+      }
       console.log(`${repoPrefix}: COMMENTED ON PULL REQUEST FROM FORK`)
       return
     }
@@ -151,7 +161,11 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 
     // add community comment
     if (prettifierConfig.commentTemplate !== "") {
-      await addComment(org, repo, pullRequestNumber, prettifierConfig.commentTemplate, context.github)
+      try {
+        await addComment(pullRequestId, prettifierConfig.commentTemplate, context.github)
+      } catch (e) {
+        throw new DevError(`adding community comment`, e)
+      }
       console.log(`${repoPrefix}: ADDED COMMUNITY COMMENT`)
     }
   } catch (e) {
@@ -169,7 +183,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     logDevError(
       e,
       "unknown dev error",
-      { org, repo, branch, pullRequestNumber, event: "on-pull-request", payload: context.payload },
+      { pullRequestURL, event: "on-pull-request", payload: context.payload },
       context.github
     )
   }

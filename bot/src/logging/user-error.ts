@@ -1,5 +1,4 @@
 import { GitHubAPI } from "probot/lib/github"
-import { LoggedError } from "./logged-error"
 import { addComment } from "../github/add-comment"
 import { Context } from "./context"
 
@@ -22,14 +21,13 @@ export function logUserError(
   err: Error,
   desc: string,
   context: Context,
-  pullRequest: number,
+  pullRequestId: string,
   github: GitHubAPI
-): never {
+): void {
   console.log(`${context.org}|${context.repo}: USER ERROR: ${desc}:`, err.message)
-  if (pullRequest > 0) {
-    addComment(context.org, context.repo, pullRequest, bodyTemplate(err, desc), github)
+  if (pullRequestId !== "") {
+    addComment(pullRequestId, bodyTemplate(err, desc), github)
   }
-  throw new LoggedError()
 }
 
 export function bodyTemplate(err: Error, desc: string): string {

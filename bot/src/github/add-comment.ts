@@ -1,22 +1,8 @@
 import { GitHubAPI } from "probot/lib/github"
-import { DevError } from "../logging/dev-error"
+import { promises as fs } from "fs"
+import path = require("path")
 
-export async function addComment(
-  org: string,
-  repo: string,
-  issue: number,
-  text: string,
-  github: GitHubAPI
-): Promise<void> {
-  try {
-    await github.issues.createComment({
-      body: text,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      issue_number: issue,
-      owner: org,
-      repo
-    })
-  } catch (e) {
-    throw new DevError("commenting on a pull request", e, { issue })
-  }
+export async function addComment(issueId: string, text: string, github: GitHubAPI): Promise<void> {
+  const query = await fs.readFile(path.join("src", "github", "add-comment.graphql"), "utf-8")
+  await github.graphql(query, { issueId, text })
 }

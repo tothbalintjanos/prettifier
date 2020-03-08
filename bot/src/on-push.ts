@@ -25,6 +25,8 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
   let author = ""
   let commitSha = ""
   let pullRequestNumber = 0
+  let pullRequestId = ""
+  let pullRequestURL = ""
   try {
     org = context.payload.repository.owner.login
     repo = context.payload.repository.name
@@ -56,6 +58,8 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     const prettierConfig = pushContext.prettierConfig
     console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
     pullRequestNumber = pushContext.pullRequestNumber
+    pullRequestId = pushContext.pullRequestId
+    pullRequestURL = pushContext.pullRequestURL
 
     // check whether this branch should be ignored
     if (prettifierConfig.shouldIgnoreBranch(branch)) {
@@ -163,19 +167,21 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     if (!createCommitError && prettifierConfig.commentTemplate !== "") {
-      if (pullRequestNumber > 0) {
+      if (pullRequestId !== "") {
         const hasComment = await hasCommentFromPrettifier(org, repo, pullRequestNumber, context.github)
         if (!hasComment) {
-          addComment(
-            org,
-            repo,
-            pullRequestNumber,
-            renderTemplate(prettifierConfig.commentTemplate, {
-              commitSha,
-              files: prettifiedFiles.map(f => f.path)
-            }),
-            context.github
-          )
+          try {
+            addComment(
+              pullRequestId,
+              renderTemplate(prettifierConfig.commentTemplate, {
+                commitSha,
+                files: prettifiedFiles.map(f => f.path)
+              }),
+              context.github
+            )
+          } catch (e) {
+            throw new DevError(`adding community comment to pull request of push`, e)
+          }
         } else {
           console.log(`${repoPrefix}: PULL REQUEST ALREADY HAS COMMENT, SKIPPING`)
         }
@@ -219,11 +225,8 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       return
     }
     if (e instanceof DevError) {
-      e.context.org = org
-      e.context.repo = repo
-      e.context.branch = branch
-      e.context.pullRequestNumber = pullRequestNumber
-      logDevError(e.cause, e.activity, e.context, context.github)
+      const data = { org, repo, branch, commitSha, pullRequestURL, payload: context.payload }
+      logDevError(e.cause, e.activity, data, context.github)
       return
     }
     logDevError(
@@ -238,12 +241,17 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
 interface PushContext {
   prettifierConfig: PrettifierConfiguration
   prettierConfig: object
+  pullRequestId: string
   pullRequestNumber: number
+  pullRequestURL: string
 }
 
 export function parsePushContextData(data: PushContextData): PushContext {
-  const pullRequestNumber = data.pullRequestNumber
-  const prettifierConfig = prettifierConfigFromYML(data.prettifierConfig)
-  const prettierConfig = prettierConfigFromYML(data.prettierConfig)
-  return { prettifierConfig, prettierConfig, pullRequestNumber }
+  return {
+    prettifierConfig: prettifierConfigFromYML(data.prettifierConfig),
+    prettierConfig: prettierConfigFromYML(data.prettierConfig),
+    pullRequestId: data.pullRequestId,
+    pullRequestNumber: data.pullRequestNumber,
+    pullRequestURL: data.pullRequestURL
+  }
 }

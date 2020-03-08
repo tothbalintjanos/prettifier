@@ -18,6 +18,8 @@ query OnPush($org: String!, $repo: String!, $branch: String!) {
         totalCount
         nodes {
           number
+          id
+          url
         }
       }
     }

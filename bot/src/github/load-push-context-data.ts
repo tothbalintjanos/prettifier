@@ -7,6 +7,8 @@ export interface PushContextData {
   prettifierConfig: string
   prettierConfig: string
   pullRequestNumber: number
+  pullRequestId: string
+  pullRequestURL: string
 }
 
 export async function loadPushContextData(
@@ -25,17 +27,23 @@ export async function loadPushContextData(
   }
 
   let pullRequestNumber = 0
+  let pullRequestId = ""
+  let pullRequestURL = ""
   const pulls = callResult?.repository?.ref?.associatedPullRequests
   if (pulls.totalCount > 1) {
     throw new DevError("multiple open pull requests found for branch", new Error())
   }
   if (pulls.totalCount > 0) {
     pullRequestNumber = pulls.nodes[0].number
+    pullRequestId = pulls.nodes[0].id
+    pullRequestURL = pulls.nodes[0].url
   }
 
   return {
     prettifierConfig: callResult?.repository.prettifierConfig?.text || "",
     prettierConfig: callResult?.repository.prettierConfig?.text || "",
-    pullRequestNumber
+    pullRequestNumber,
+    pullRequestId,
+    pullRequestURL
   }
 }
