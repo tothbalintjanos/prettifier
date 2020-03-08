@@ -9,6 +9,10 @@ interface Placeholders {
   files?: string[]
 }
 
-export function renderTemplate(template: string, data: Placeholders): string {
+export function renderTemplate(template: string, placeholders: Placeholders): string {
+  const data = placeholders as any
+  data.PrettifierLink = "[Prettifier](https://prettifier.io)"
+  data.PrettifierContactURL = "https://github.com/kevgo/prettifier/issues/new"
+  mustache.escape = (text): string => text
   return mustache.render(template, data)
 }

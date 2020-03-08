@@ -17,3 +17,11 @@ test("files placeholder", function() {
 {{/files}}`
   assert.equal(renderTemplate(template, { files: ["one", "two"] }), "- one\n- two\n")
 })
+
+test("PrettifierLink placeholder", function() {
+  assert.equal(renderTemplate("{{PrettifierLink}}", {}), "[Prettifier](https://prettifier.io)")
+})
+
+test("PrettifierContactLink placeholder", function() {
+  assert.equal(renderTemplate("{{PrettifierContactURL}}", {}), "https://github.com/kevgo/prettifier/issues/new")
+})
