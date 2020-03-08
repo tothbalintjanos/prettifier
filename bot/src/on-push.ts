@@ -221,13 +221,17 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       return
     }
     if (e instanceof DevError) {
-      const data = { org, repo, branch, commitSha, pullRequestURL, payload: context.payload }
-      logDevError(e.cause, e.activity, data, context.github)
+      logDevError(
+        e.cause,
+        e.activity,
+        { org, repo, branch, commitSha, pullRequestURL, payload: context.payload },
+        context.github
+      )
       return
     }
     logDevError(
       e,
-      "unknown dev error",
+      "Development error",
       { org, repo, branch, pullRequestNumber, event: "on-push", payload: context.payload },
       context.github
     )

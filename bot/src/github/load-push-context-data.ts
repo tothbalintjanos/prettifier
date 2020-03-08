@@ -19,12 +19,7 @@ export async function loadPushContextData(
 ): Promise<PushContextData> {
   let query = await fs.readFile(path.join("src", "github", "push-context.graphql"), "utf-8")
   query = query.replace(/\{\{branch\}\}/g, branch)
-  let callResult
-  try {
-    callResult = await github.graphql(query, { org, repo, branch })
-  } catch (e) {
-    throw new DevError(`loading push data from GitHub`, e)
-  }
+  const callResult = await github.graphql(query, { org, repo, branch })
 
   let pullRequestNumber = 0
   let pullRequestId = ""

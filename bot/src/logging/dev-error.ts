@@ -41,7 +41,7 @@ export function bodyTemplate(err: Error, context: object): string {
 ### Error
 
 \`\`\`
-${util.inspect(err)}
+${util.inspect(err, false, Infinity)}
 \`\`\`
 
 ### Stack
