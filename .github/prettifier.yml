@@ -1,3 +1,4 @@
 excludeFiles:
   - dist
   - /docs
+  - /website/website/build
