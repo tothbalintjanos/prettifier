@@ -6,6 +6,6 @@ export function prettierConfigFromYML(configText: string): object {
   try {
     return yml.safeLoad(configText) || {}
   } catch (e) {
-    throw new UserError("parsing .prettierrc:", e)
+    throw new UserError("invalid content in file '.prettierrc'", e)
   }
 }

@@ -1,5 +1,4 @@
 import { GitHubAPI } from "probot/lib/github"
-import { DevError } from "../logging/dev-error"
 import { promises as fs } from "fs"
 import path from "path"
 
@@ -10,19 +9,8 @@ export async function hasCommentFromPrettifier(
   pullrequest: number,
   github: GitHubAPI
 ): Promise<boolean> {
-  const filePath = path.join("src", "github", "pullrequest-comment-authors.graphql")
-  let query = ""
-  try {
-    query = await fs.readFile(filePath, "utf-8")
-  } catch (e) {
-    throw new DevError(`reading file '${filePath}'`, e)
-  }
-  let callResult
-  try {
-    callResult = await github.graphql(query, { org, repo, pullrequest })
-  } catch (e) {
-    throw new DevError("get comments of pull request", e)
-  }
+  const query = await fs.readFile(path.join("src", "github", "pullrequest-comment-authors.graphql"), "utf-8")
+  const callResult = await github.graphql(query, { org, repo, pullrequest })
   for (const comment of callResult?.repository.pullRequest.comments.nodes) {
     if (comment.author.login === "prettifier") {
       return true
