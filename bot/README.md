@@ -29,6 +29,14 @@ To debug a change in production:
 - run `make deploy-test` to deploy this `test` branch to production
 - run `make logs` to see the production logs
 
+Validate GraphQL schemata:
+
+```bash
+graphql-inspector \
+    --header "Authorization: bearer <your GitHub API token>" \
+    validate './src/github/*.graphql' https://api.github.com/graphql
+```
+
 ### Deployment
 
 - deploy the current branch to production: run
