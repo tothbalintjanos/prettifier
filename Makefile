@@ -28,7 +28,6 @@ fix:  # fixes the auto-fixable formatting issues
 					-name '*.yml' \) | \
 		grep -v node_modules | \
 		grep -v '^\./bot/' | \
-		grep -v '^\./docs/.*\.js' | \
 		grep -v '^\./website/website/' | \
 		xargs tools/prettier/prettier --write
 	@(cd bot && make --no-print-directory fix)
@@ -45,7 +44,6 @@ lint:  # lints the code base
 					-name '*.yml' \) | \
 		grep -v node_modules | \
 		grep -v '^\./bot/' | \
-		grep -v '^\./docs/.*\.js' | \
 		grep -v '^\./website/website/' | \
 		xargs tools/prettier/prettier --list-different
 	@(cd bot && make --no-print-directory lint)
