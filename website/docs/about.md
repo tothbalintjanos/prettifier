@@ -11,7 +11,7 @@ that contains unformatted content to GitHub, Prettifier fixes it.
 
 Prettier commits the formatting fixes right into normal (unprotected) branches.
 
-<img src="/prettifier/img/screenshot_annotated_small.gif" width="547" height="106">
+<img src="/img/screenshot_annotated_small.gif" width="547" height="106">
 
 ## Protected branches
 
@@ -24,4 +24,4 @@ for example to always keep your `master` or `production` branch working.
 Since Prettifier cannot commit directly into protected branches, it opens a pull
 request to submit its fixes for the protected branch.
 
-<img src="/prettifier/img/screenshot_pull_request.gif" width="576" height="455">
+<img src="/img/screenshot_pull_request.gif" width="576" height="455">
