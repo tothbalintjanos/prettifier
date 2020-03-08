@@ -232,7 +232,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     logDevError(
       e,
       "Development error",
-      { org, repo, branch, pullRequestNumber, event: "on-push", payload: context.payload },
+      { org, repo, branch, pullRequestURL, event: "on-push", payload: context.payload },
       context.github
     )
   }
