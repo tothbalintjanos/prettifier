@@ -1,6 +1,6 @@
 import { GitHubAPI } from "probot/lib/github"
 import { LoggedError } from "./logged-error"
-import { addComment } from "../github/create-comment"
+import { addComment } from "../github/add-comment"
 import { Context } from "./context"
 
 /** UserError indicates a user error */
