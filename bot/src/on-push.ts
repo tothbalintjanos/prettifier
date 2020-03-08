@@ -170,18 +170,14 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       if (pullRequestId !== "") {
         const hasComment = await hasCommentFromPrettifier(org, repo, pullRequestNumber, context.github)
         if (!hasComment) {
-          try {
-            addComment(
-              pullRequestId,
-              renderTemplate(prettifierConfig.commentTemplate, {
-                commitSha,
-                files: prettifiedFiles.map(f => f.path)
-              }),
-              context.github
-            )
-          } catch (e) {
-            throw new DevError(`adding community comment to pull request of push`, e)
-          }
+          addComment(
+            pullRequestId,
+            renderTemplate(prettifierConfig.commentTemplate, {
+              commitSha,
+              files: prettifiedFiles.map(f => f.path)
+            }),
+            context.github
+          )
         } else {
           console.log(`${repoPrefix}: PULL REQUEST ALREADY HAS COMMENT, SKIPPING`)
         }

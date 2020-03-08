@@ -88,15 +88,11 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 
     // verify correct config changes
     if (configChange) {
-      try {
-        await addComment(
-          pullRequestId,
-          "Prettifier-Bot here. The configuration changes made in this pull request look good to me.",
-          context.github
-        )
-      } catch (e) {
-        throw new DevError(`Commenting that configuration changes are ok`, e)
-      }
+      await addComment(
+        pullRequestId,
+        "Prettifier-Bot here. The configuration changes made in this pull request look good to me.",
+        context.github
+      )
       console.log(`${repoPrefix}: ADDED CONFIG CHANGE DEBUG COMMENT`)
     }
 
@@ -110,11 +106,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       context.payload.pull_request.head.repo.full_name !== context.payload.pull_request.base.repo.full_name
     if (isPullRequestFromFork) {
       const text = renderTemplate(await prettifierConfig.forkComment(), { files: prettifiedFiles.map(f => f.path) })
-      try {
-        await addComment(pullRequestId, text, context.github)
-      } catch (e) {
-        throw new DevError(`commenting on pull request from fork`, e)
-      }
+      await addComment(pullRequestId, text, context.github)
       console.log(`${repoPrefix}: COMMENTED ON PULL REQUEST FROM FORK`)
       return
     }
@@ -161,11 +153,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 
     // add community comment
     if (prettifierConfig.commentTemplate !== "") {
-      try {
-        await addComment(pullRequestId, prettifierConfig.commentTemplate, context.github)
-      } catch (e) {
-        throw new DevError(`adding community comment`, e)
-      }
+      await addComment(pullRequestId, prettifierConfig.commentTemplate, context.github)
       console.log(`${repoPrefix}: ADDED COMMUNITY COMMENT`)
     }
   } catch (e) {
