@@ -149,7 +149,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
         branch,
         github: context.github,
         files: prettifiedFiles,
-        message: renderTemplate(prettifierConfig.commitMessage, {
+        message: renderTemplate(await prettifierConfig.commitMessage(), {
           commitSha,
           files: prettifiedFiles.map(f => f.path)
         }),
@@ -205,7 +205,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       branch: `prettifier-${commitSha}`,
       github: context.github,
       files: prettifiedFiles,
-      message: renderTemplate(prettifierConfig.commitMessage, {
+      message: renderTemplate(await prettifierConfig.commitMessage(), {
         commitSha,
         files: prettifiedFiles.map(f => f.path)
       }),

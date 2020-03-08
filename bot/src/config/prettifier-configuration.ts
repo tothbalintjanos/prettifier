@@ -1,5 +1,7 @@
 import ignore, { Ignore } from "ignore"
 import prettier from "prettier"
+import { promises as fs } from "fs"
+import path from "path"
 
 /** ConfigOptions defines the configuration options that users can provide. */
 interface ConfigOptions {
@@ -16,7 +18,7 @@ export class PrettifierConfiguration {
   /** template for comments on the pull request */
   commentTemplate: string
 
-  commitMessage: string
+  private customCommitMessage: string
 
   /** names of the branches that should not be prettified */
   excludeBranches: string[]
@@ -25,7 +27,7 @@ export class PrettifierConfiguration {
   excludeFiles: string[]
 
   /** comment template when pull requests from forks are unformatted */
-  forkComment: string
+  private customForkComment: string
 
   /** whether to only prettify branches that are under code review */
   pullsOnly: boolean
@@ -39,7 +41,7 @@ export class PrettifierConfiguration {
    */
   constructor(providedConfig: ConfigOptions) {
     this.commentTemplate = providedConfig.commentTemplate ?? ""
-    this.commitMessage = providedConfig.commitMessage ?? "Format {{commitSha}}"
+    this.customCommitMessage = providedConfig.commitMessage ?? ""
     if (Array.isArray(providedConfig.excludeBranches)) {
       this.excludeBranches = providedConfig.excludeBranches
     } else if (!providedConfig.excludeBranches) {
@@ -54,25 +56,17 @@ export class PrettifierConfiguration {
     } else {
       this.excludeFiles = [providedConfig.excludeFiles]
     }
-    this.forkComment =
-      providedConfig.forkComment ??
-      `Hey there! :wave: This repository is formatted using [Prettier](https://prettier.io).
-
-These files in your pull request aren't properly formatted:
-{{#files}}
-- {{.}}
-{{/files}}
-
-Please format them using Prettier to conform to this project's code style.
-The [Prettier installation guide](https://prettier.io/docs/en/install.html) is a good place to get started with this.
-Thanks!!
-
-:heart:
-
-Your friendly [Prettifier](https://prettifier.io) bot
-`
+    this.customForkComment = providedConfig.forkComment ?? ""
     this.ignore = ignore().add(this.excludeFiles)
     this.pullsOnly = providedConfig.pullsOnly ?? false
+  }
+
+  async forkComment(): Promise<string> {
+    if (this.customForkComment !== "") {
+      return this.customForkComment
+    }
+    const defaultForkComment = await fs.readFile(path.join("src", "config", "default-fork-comment.mustache"), "utf-8")
+    return defaultForkComment
   }
 
   /** Indicates whether the given branch should be ignored. */
@@ -100,5 +94,16 @@ Your friendly [Prettifier](https://prettifier.io) bot
       return false
     }
     return true
+  }
+
+  async commitMessage(): Promise<string> {
+    if (this.customCommitMessage !== "") {
+      return this.customCommitMessage
+    }
+    const defaultCommitMessage = await fs.readFile(
+      path.join("src", "config", "default-commit-message.mustache"),
+      "utf-8"
+    )
+    return defaultCommitMessage.trim()
   }
 }

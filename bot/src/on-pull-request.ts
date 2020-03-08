@@ -103,7 +103,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     const isPullRequestFromFork =
       context.payload.pull_request.head.repo.full_name !== context.payload.pull_request.base.repo.full_name
     if (isPullRequestFromFork) {
-      const text = renderTemplate(prettifierConfig.forkComment, { files: prettifiedFiles.map(f => f.path) })
+      const text = renderTemplate(await prettifierConfig.forkComment(), { files: prettifiedFiles.map(f => f.path) })
       await addComment(org, repo, pullRequestNumber, text, context.github)
       console.log(`${repoPrefix}: COMMENTED ON PULL REQUEST FROM FORK`)
       return
@@ -116,7 +116,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
           branch,
           github: context.github,
           files: prettifiedFiles,
-          message: renderTemplate(prettifierConfig.commitMessage, { files: prettifiedFiles.map(f => f.path) }),
+          message: renderTemplate(await prettifierConfig.commitMessage(), { files: prettifiedFiles.map(f => f.path) }),
           org,
           repo
         })
