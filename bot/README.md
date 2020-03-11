@@ -11,15 +11,10 @@ Install these tools:
 
 Run <code textrun="verify-make-command"> make setup </code>.
 
-To prepare deployment: `heroku git:remote -a originate-intrabot`
-
 ### Development
 
-Create new GraphQL queries and mutations:
-
-- open https://developer.github.com/v4/explorer
-- log in
-- write new queries
+Use [GitHub's API explorer](https://developer.github.com/v4/explorer) to play
+with GitHub's GraphQL API.
 
 ### Testing
 
@@ -31,12 +26,6 @@ Create new GraphQL queries and mutations:
 - fix the auto-fixable issues: <code textrun="verify-make-command">make
   fix</code>
 
-To debug a change in production:
-
-- make your changes in a branch called `test`
-- run `make deploy-test` to deploy this `test` branch to production
-- run `make logs` to see the production logs
-
 Validate GraphQL schemata:
 
 ```bash
@@ -47,8 +36,9 @@ graphql-inspector \
 
 ### Deployment
 
-- deploy the current branch to production: run
-  <code textrun="verify-make-command">make deploy</code> inside this directory
+Support for running on Heroku is built in. To deploy the current branch to
+production, run <code textrun="verify-make-command">make deploy</code> inside
+this directory.
 
 ### DevOps
 
