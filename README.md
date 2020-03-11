@@ -9,7 +9,7 @@ Please see the [documentation](https://kevgo.github.io/prettifier) for how to
 use Prettifier.
 
 This is the source code of Prettifier. It is organized as a monorepository. Each
-top-level directory contains some aspect of the code base:
+top-level directory contains some aspect of the product:
 
 - [.circleci](.circleci/): CI configuration
 - [.github](.github/): configuration for the Prettifier instance keeping this
