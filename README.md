@@ -18,4 +18,4 @@ top-level directory contains some aspect of the code base:
 - [text-run](text-run/): documentation tests
 - [tools](tools/): development tools
 - [website](website/): source code for the
-  [website](https://kevgo.github.io/prettifier)
+  [website](https://www.prettifier.io)
