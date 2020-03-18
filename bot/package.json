@@ -9,7 +9,7 @@
     "ignore": "5.1.4",
     "js-yaml": "3.13.1",
     "minimatch": "3.0.4",
-    "mustache": "4.0.0",
+    "mustache": "4.0.1",
     "prettier": "1.19.1",
     "probot": "9.9.7"
   },
