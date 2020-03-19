@@ -65,7 +65,10 @@ export class PrettifierConfiguration {
     if (this.customForkComment !== "") {
       return this.customForkComment
     }
-    const defaultForkComment = await fs.readFile(path.join("src", "config", "default-fork-comment.mustache"), "utf-8")
+    const defaultForkComment = await fs.readFile(
+      path.join("src", "config", "default-fork-comment.md.mustache"),
+      "utf-8"
+    )
     return defaultForkComment
   }
 
@@ -101,7 +104,7 @@ export class PrettifierConfiguration {
       return this.customCommitMessage
     }
     const defaultCommitMessage = await fs.readFile(
-      path.join("src", "config", "default-commit-message.mustache"),
+      path.join("src", "config", "default-commit-message.md.mustache"),
       "utf-8"
     )
     return defaultCommitMessage.trim()
