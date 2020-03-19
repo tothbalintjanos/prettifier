@@ -51,7 +51,14 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
 
     // load additional information from GitHub
-    const pushContextData = await loadPushContextData(org, repo, branch, context.github)
+    let pushContextData: PushContextData
+    try {
+      pushContextData = await loadPushContextData(org, repo, branch, context.github)
+    } catch (e) {
+      // can't load push context for some reason, like missing permissions --> abort
+      console.log(`${repoPrefix}: CAN'T LOAD PUSH CONTEXT:`, e)
+      return
+    }
     const pushContext = parsePushContextData(pushContextData)
     const prettifierConfig = pushContext.prettifierConfig
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)

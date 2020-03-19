@@ -57,7 +57,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       files = await getExistingFilesInPullRequests(org, repo, pullRequestNumber, context.github)
     } catch (e) {
       // can't load files of pull request for some reason --> abort
-      console.log("Cannot load files of pull request:", e)
+      console.log(`${repoPrefix}: CAN'T LOAD FILES OF PULL REQUEST:`, e)
       return
     }
     const prettifiedFiles = []
