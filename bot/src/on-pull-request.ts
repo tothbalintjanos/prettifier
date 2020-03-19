@@ -52,7 +52,14 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
     }
 
     // load the files that this PR changes
-    const files = await getExistingFilesInPullRequests(org, repo, pullRequestNumber, context.github)
+    let files: string[] = []
+    try {
+      files = await getExistingFilesInPullRequests(org, repo, pullRequestNumber, context.github)
+    } catch (e) {
+      // can't load files of pull request for some reason --> abort
+      console.log("Cannot load files of pull request:", e)
+      return
+    }
     const prettifiedFiles = []
     let configChange = false
     for (let i = 0; i < files.length; i++) {
