@@ -33,7 +33,7 @@ export function bodyTemplate(err: Error, context: object): string {
     if (typeof v === "object") {
       result += `- **${k}:**\n\`\`\`\n${JSON.stringify(v, null, 2)}\n\`\`\`\n`
     } else {
-      result += `- **${k}:** ${v}\n`
+      result += `- **${k}:** \`${v}\`\n`
     }
   }
   result += `
