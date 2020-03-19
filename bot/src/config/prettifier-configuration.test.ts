@@ -70,5 +70,5 @@ test("single name given", async function() {
 
 test("nothing given", async function() {
   const config = new PrettifierConfiguration({})
-  assert.deepEqual(config.excludeFiles, [])
+  assert.deepEqual(config.excludeFiles, ["package-lock.json"])
 })

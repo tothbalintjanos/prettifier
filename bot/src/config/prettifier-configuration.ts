@@ -52,7 +52,7 @@ export class PrettifierConfiguration {
     if (Array.isArray(providedConfig.excludeFiles)) {
       this.excludeFiles = providedConfig.excludeFiles
     } else if (!providedConfig.excludeFiles) {
-      this.excludeFiles = []
+      this.excludeFiles = ["package-lock.json"]
     } else {
       this.excludeFiles = [providedConfig.excludeFiles]
     }
