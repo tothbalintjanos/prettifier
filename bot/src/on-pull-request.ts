@@ -19,6 +19,7 @@ import { PullRequestContextData, loadPullRequestContextData } from "./github/loa
 /** called when this bot gets notified about a new pull request */
 export async function onPullRequest(context: probot.Context<webhooks.WebhookPayloadPullRequest>): Promise<void> {
   let org = ""
+  let headOrg = ""
   let repo = ""
   let branch = ""
   let pullRequestNumber = 0
@@ -26,6 +27,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
   let pullRequestURL = ""
   try {
     org = context.payload.repository.owner.login
+    headOrg = context.payload.pull_request.head.repo.owner.login
     repo = context.payload.repository.name
     branch = context.payload.pull_request.head.ref
     pullRequestNumber = context.payload.pull_request.number
@@ -76,7 +78,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       }
 
       // load the file content
-      const fileContent = await loadFile(org, repo, branch, filePath, context.github)
+      const fileContent = await loadFile(headOrg, repo, branch, filePath, context.github)
 
       // prettify the file content
       const prettierConfigForFile = applyPrettierConfigOverrides(prettierConfig, filePath)
@@ -109,8 +111,7 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
       return
     }
 
-    const isPullRequestFromFork =
-      context.payload.pull_request.head.repo.full_name !== context.payload.pull_request.base.repo.full_name
+    const isPullRequestFromFork = headOrg !== org
     if (isPullRequestFromFork) {
       const text = renderTemplate(await prettifierConfig.forkComment(), { files: prettifiedFiles.map(f => f.path) })
       await addComment(pullRequestId, text, context.github)
