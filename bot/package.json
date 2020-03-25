@@ -11,7 +11,7 @@
     "minimatch": "3.0.4",
     "mustache": "4.0.1",
     "prettier": "1.19.1",
-    "probot": "9.11.1"
+    "probot": "9.11.2"
   },
   "devDependencies": {
     "@graphql-inspector/cli": "1.27.0",
