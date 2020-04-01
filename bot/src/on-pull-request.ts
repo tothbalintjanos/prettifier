@@ -126,7 +126,9 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
           branch,
           github: context.github,
           files: prettifiedFiles,
-          message: renderTemplate(await prettifierConfig.commitMessage(), { files: prettifiedFiles.map(f => f.path) }),
+          message: renderTemplate(await prettifierConfig.commitMessage(), {
+            files: prettifiedFiles.map(f => f.path)
+          }),
           org,
           repo
         })
