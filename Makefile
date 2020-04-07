@@ -20,32 +20,14 @@ docs:  # verifies the documentation
 .PHONY: docs
 
 fix:  # fixes the auto-fixable formatting issues
-	@find . -type f \( \
-					-name '*.ts' -o \
-					-name '*.js' -o \
-					-name '*.json' -o \
-					-name '*.md' -o \
-					-name '*.yml' \) | \
-		grep -v node_modules | \
-		grep -v '^\./bot/' | \
-		grep -v '^\./website/website/' | \
-		xargs tools/prettier/prettier --write
+	tools/prettier/prettier --write .
 	@(cd bot && make --no-print-directory fix)
 
 help:   # shows all available Make commands
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
 lint:  # lints the code base
-	@find . -type f \( \
-					-name '*.ts' -o \
-					-name '*.js' -o \
-					-name '*.json' -o \
-					-name '*.md' -o \
-					-name '*.yml' \) | \
-		grep -v node_modules | \
-		grep -v '^\./bot/' | \
-		grep -v '^\./website/website/' | \
-		xargs tools/prettier/prettier --list-different
+	@tools/prettier/prettier --list-different .
 	@(cd bot && make --no-print-directory lint)
 
 log:   # shows the log output from the production server

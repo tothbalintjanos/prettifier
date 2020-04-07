@@ -10,7 +10,7 @@
     "js-yaml": "3.13.1",
     "minimatch": "3.0.4",
     "mustache": "4.0.1",
-    "prettier": "1.19.1",
+    "prettier": "2.0.4",
     "probot": "9.11.2"
   },
   "devDependencies": {
@@ -21,8 +21,8 @@
     "@types/js-yaml": "3.12.3",
     "@types/minimatch": "3.0.3",
     "@types/mocha": "7.0.2",
-    "@types/node": "13.9.8",
-    "@types/prettier": "1.19.1",
+    "@types/node": "13.11.0",
+    "@types/prettier": "2.0.0",
     "@typescript-eslint/eslint-plugin": "2.27.0",
     "@typescript-eslint/parser": "2.27.0",
     "chai": "4.2.0",
