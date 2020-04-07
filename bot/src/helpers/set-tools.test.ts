@@ -3,7 +3,7 @@ import { concatToSet, removeAllFromSet } from "./set-tools"
 
 suite("concatToSet")
 
-test("adding values", function() {
+test("adding values", function () {
   const s = new Set<string>()
   concatToSet(s, ["one", "two"])
   concatToSet(s, ["one", "three"])
@@ -12,7 +12,7 @@ test("adding values", function() {
 
 suite("removeAllFromSet")
 
-test("removing values", function() {
+test("removing values", function () {
   const s = new Set<string>()
   s.add("one")
   s.add("three")

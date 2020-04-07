@@ -18,6 +18,6 @@ export async function loadPullRequestContextData(
   const callResult = await github.graphql(query, { org, repo, branch })
   return {
     prettifierConfig: callResult?.repository.prettifierConfig?.text || "",
-    prettierConfig: callResult?.repository.prettierConfig?.text || ""
+    prettierConfig: callResult?.repository.prettierConfig?.text || "",
   }
 }

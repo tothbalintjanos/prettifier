@@ -5,20 +5,20 @@ import { parsePullRequestContextData } from "./on-pull-request"
 
 suite("parsePullRequestContextData")
 
-test("empty", function() {
+test("empty", function () {
   const data: PullRequestContextData = {
     prettifierConfig: "",
-    prettierConfig: ""
+    prettierConfig: "",
   }
   const actual = parsePullRequestContextData(data)
   assert.deepEqual(actual.prettierConfig, {})
   assert.instanceOf(actual.prettifierConfig, PrettifierConfiguration)
 })
 
-test("with content", function() {
+test("with content", function () {
   const data: PullRequestContextData = {
     prettifierConfig: "excludeFiles: dist",
-    prettierConfig: "semi: false"
+    prettierConfig: "semi: false",
   }
   const actual = parsePullRequestContextData(data)
   assert.deepEqual(actual.prettierConfig, { semi: false })

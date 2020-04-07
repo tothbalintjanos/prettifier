@@ -10,10 +10,7 @@ module.exports = async function verifyMakeCommand(args) {
   args.name(`verify Make command ${cyan(expected)} exists`)
   const makefilePath = path.join(args.configuration.sourceDir, path.dirname(args.file), "Makefile")
   const makefileContent = await fs.readFile(makefilePath, "utf8")
-  const commands = makefileContent
-    .split(/\r?\n/)
-    .filter(lineDefinesMakeCommand)
-    .map(extractMakeCommand)
+  const commands = makefileContent.split(/\r?\n/).filter(lineDefinesMakeCommand).map(extractMakeCommand)
   if (!commands.includes(expected)) {
     throw new Error(`Make command ${cyan(expected)} not found in ${commands}`)
   }

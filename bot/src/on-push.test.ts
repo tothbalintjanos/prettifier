@@ -5,13 +5,13 @@ import { PrettifierConfiguration } from "./config/prettifier-configuration"
 
 suite("parsePushContextData")
 
-test("empty", function() {
+test("empty", function () {
   const data: PushContextData = {
     prettifierConfig: "",
     prettierConfig: "",
     pullRequestNumber: 0,
     pullRequestId: "",
-    pullRequestURL: ""
+    pullRequestURL: "",
   }
   const actual = parsePushContextData(data)
   assert.deepEqual(actual.prettierConfig, {})
@@ -19,13 +19,13 @@ test("empty", function() {
   assert.equal(actual.pullRequestNumber, 0)
 })
 
-test("with content", function() {
+test("with content", function () {
   const data: PushContextData = {
     prettifierConfig: "excludeFiles: dist",
     prettierConfig: "semi: false",
     pullRequestNumber: 3,
     pullRequestId: "id",
-    pullRequestURL: "url"
+    pullRequestURL: "url",
   }
   const actual = parsePushContextData(data)
   assert.deepEqual(actual.prettierConfig, { semi: false })

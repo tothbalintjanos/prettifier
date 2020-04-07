@@ -162,10 +162,10 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
         files: prettifiedFiles,
         message: renderTemplate(await prettifierConfig.commitMessage(), {
           commitSha,
-          files: prettifiedFiles.map(f => f.path)
+          files: prettifiedFiles.map(f => f.path),
         }),
         org,
-        repo
+        repo,
       })
       console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
     } catch (e) {
@@ -181,7 +181,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
             pullRequestId,
             renderTemplate(prettifierConfig.commentTemplate, {
               commitSha,
-              files: prettifiedFiles.map(f => f.path)
+              files: prettifiedFiles.map(f => f.path),
             }),
             context.github
           )
@@ -216,11 +216,11 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
       files: prettifiedFiles,
       message: renderTemplate(await prettifierConfig.commitMessage(), {
         commitSha,
-        files: prettifiedFiles.map(f => f.path)
+        files: prettifiedFiles.map(f => f.path),
       }),
       org,
       parentBranch: "master",
-      repo
+      repo,
     })
     console.log(`${repoPrefix}: CREATED PULL REQUEST FOR ${prettifiedFiles.length} PRETTIFIED FILES`)
   } catch (e) {
@@ -259,6 +259,6 @@ export function parsePushContextData(data: PushContextData): PushContext {
     prettierConfig: prettierConfigFromYML(data.prettierConfig),
     pullRequestId: data.pullRequestId,
     pullRequestNumber: data.pullRequestNumber,
-    pullRequestURL: data.pullRequestURL
+    pullRequestURL: data.pullRequestURL,
   }
 }

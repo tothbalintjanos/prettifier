@@ -13,12 +13,12 @@ export async function loadFile(
     owner: org,
     path: filePath,
     ref: branch,
-    repo
+    repo,
   })
   if (result.data instanceof Array) {
     throw new DevError("loading the content of a file from GitHub", new Error(), {
       filePath,
-      message: "Received unexpected array while loading a single file from GitHub, expected single entry"
+      message: "Received unexpected array while loading a single file from GitHub, expected single entry",
     })
   }
   return Buffer.from(result.data.content || "", "base64").toString()

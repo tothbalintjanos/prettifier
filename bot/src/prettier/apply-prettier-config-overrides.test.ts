@@ -3,38 +3,38 @@ import { applyPrettierConfigOverrides } from "./apply-prettier-config-overrides"
 
 suite("applyPrettierConfigOverrides")
 
-test("no override", function() {
+test("no override", function () {
   const config = {
     printWidth: 120,
     proseWrap: "always",
-    semi: false
+    semi: false,
   }
   const overridden = applyPrettierConfigOverrides(config, "README.md")
   assert.deepEqual(overridden, {
     printWidth: 120,
     proseWrap: "always",
-    semi: false
+    semi: false,
   })
 })
 
-test("with override", function() {
+test("with override", function () {
   const config = {
     overrides: [
       {
         files: "**/*.md",
-        options: { printWidth: 80 }
-      }
+        options: { printWidth: 80 },
+      },
     ],
     printWidth: 120,
     proseWrap: "always",
-    semi: false
+    semi: false,
   }
   let overridden = applyPrettierConfigOverrides(config, "README.md")
   assert.deepEqual(
     {
       printWidth: 80,
       proseWrap: "always",
-      semi: false
+      semi: false,
     },
     overridden
   )
@@ -43,7 +43,7 @@ test("with override", function() {
     {
       printWidth: 80,
       proseWrap: "always",
-      semi: false
+      semi: false,
     },
     overridden
   )

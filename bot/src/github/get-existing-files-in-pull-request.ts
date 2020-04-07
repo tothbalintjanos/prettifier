@@ -17,7 +17,7 @@ export async function getExistingFilesInPullRequests(
     owner: org,
     // eslint-disable-next-line @typescript-eslint/camelcase
     pull_number: pullRequestNumber,
-    repo
+    repo,
   })
   const result = []
   for (const file of callResult.data) {

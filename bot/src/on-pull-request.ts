@@ -127,10 +127,10 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
           github: context.github,
           files: prettifiedFiles,
           message: renderTemplate(await prettifierConfig.commitMessage(), {
-            files: prettifiedFiles.map(f => f.path)
+            files: prettifiedFiles.map(f => f.path),
           }),
           org,
-          repo
+          repo,
         })
         console.log(`${repoPrefix}: COMMITTED ${prettifiedFiles.length} PRETTIFIED FILES`)
       } catch (e) {

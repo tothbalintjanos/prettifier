@@ -22,7 +22,7 @@ export async function createCommit(args: {
   const getRefResult = await args.github.git.getRef({
     owner: args.org,
     ref: `heads/${args.branch}`,
-    repo: args.repo
+    repo: args.repo,
   })
   const currentCommitSha = getRefResult.data.object.sha
 
@@ -31,7 +31,7 @@ export async function createCommit(args: {
     // eslint-disable-next-line @typescript-eslint/camelcase
     commit_sha: currentCommitSha,
     owner: args.org,
-    repo: args.repo
+    repo: args.repo,
   })
   const treeSha = getCommitResult.data.tree.sha
 
@@ -42,7 +42,7 @@ export async function createCommit(args: {
       content: file.content,
       encoding: "utf-8",
       owner: args.org,
-      repo: args.repo
+      repo: args.repo,
     })
     fileBlobs.push(response.data)
   }
@@ -54,7 +54,7 @@ export async function createCommit(args: {
       mode: "100644",
       path: args.files[i].path,
       sha: fileBlobs[i].sha,
-      type: "blob"
+      type: "blob",
     })
   }
   const createTreeResult = await args.github.git.createTree({
@@ -62,7 +62,7 @@ export async function createCommit(args: {
     base_tree: treeSha,
     owner: args.org,
     repo: args.repo,
-    tree: treeParams
+    tree: treeParams,
   })
 
   // create the new commit
@@ -71,7 +71,7 @@ export async function createCommit(args: {
     owner: args.org,
     parents: [currentCommitSha],
     repo: args.repo,
-    tree: createTreeResult.data.sha
+    tree: createTreeResult.data.sha,
   })
   const newCommitSha = newCommitResult.data.sha
 
@@ -80,6 +80,6 @@ export async function createCommit(args: {
     owner: args.org,
     ref: `heads/${args.branch}`,
     repo: args.repo,
-    sha: newCommitSha
+    sha: newCommitSha,
   })
 }

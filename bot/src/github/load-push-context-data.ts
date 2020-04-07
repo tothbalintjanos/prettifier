@@ -39,6 +39,6 @@ export async function loadPushContextData(
     prettierConfig: callResult?.repository.prettierConfig?.text || "",
     pullRequestNumber,
     pullRequestId,
-    pullRequestURL
+    pullRequestURL,
   }
 }

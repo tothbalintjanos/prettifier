@@ -4,18 +4,18 @@ import { UserError } from "../logging/user-error"
 
 suite("prettierConfigFromYML")
 
-test("empty", function() {
+test("empty", function () {
   const actual = prettierConfigFromYML("")
   assert.deepEqual(actual, {})
 })
 
-test("valid content", function() {
+test("valid content", function () {
   const actual = prettierConfigFromYML("semi: false")
   assert.deepEqual(actual, { semi: false })
 })
 
-test("invalid content", function() {
-  assert.throws(function() {
+test("invalid content", function () {
+  assert.throws(function () {
     prettierConfigFromYML("'wrong")
   }, UserError)
 })

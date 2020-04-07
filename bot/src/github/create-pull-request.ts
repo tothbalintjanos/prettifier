@@ -19,7 +19,7 @@ export async function createPullRequest(args: {
     const getRefResult = await args.github.git.getRef({
       owner: args.org,
       ref: `heads/${args.parentBranch}`,
-      repo: args.repo
+      repo: args.repo,
     })
     const parentBranchSHA = getRefResult.data.object.sha
 
@@ -28,7 +28,7 @@ export async function createPullRequest(args: {
       owner: args.org,
       ref: `refs/heads/${args.branch}`,
       repo: args.repo,
-      sha: parentBranchSHA
+      sha: parentBranchSHA,
     })
 
     // commit changes into in the new branch
@@ -41,7 +41,7 @@ export async function createPullRequest(args: {
       head: args.branch,
       owner: args.org,
       repo: args.repo,
-      title: args.message
+      title: args.message,
     })
   } catch (e) {
     if (e instanceof RequestError) {
