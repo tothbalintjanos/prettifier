@@ -6,25 +6,25 @@
  */
 
 /* eslint-disable */
-(function scrollSpy() {
-  var OFFSET = 10;
-  var timer;
-  var headingsCache;
+;(function scrollSpy() {
+  var OFFSET = 10
+  var timer
+  var headingsCache
 
   var findHeadings = function findHeadings() {
-    return headingsCache || document.querySelectorAll('.toc-headings > li > a');
-  };
+    return headingsCache || document.querySelectorAll(".toc-headings > li > a")
+  }
 
   var onScroll = function onScroll() {
     if (timer) {
       // throttle
-      return;
+      return
     }
 
-    timer = setTimeout(function() {
-      timer = null;
-      var activeNavFound = false;
-      var headings = findHeadings(); // toc nav anchors
+    timer = setTimeout(function () {
+      timer = null
+      var activeNavFound = false
+      var headings = findHeadings() // toc nav anchors
 
       /**
        * On every call, try to find header right after  <-- next header
@@ -35,7 +35,7 @@
         // headings[i] is current element
         // if an element is already active, then current element is not active
         // if no element is already active, then current element is active
-        var currNavActive = !activeNavFound;
+        var currNavActive = !activeNavFound
         /**
          * Enter the following check up only when an active nav header is not yet found
          * Then, check the bounding rectangle of the next header
@@ -44,18 +44,18 @@
          */
 
         if (currNavActive && i < headings.length - 1) {
-          var heading = headings[i + 1];
-          var next = decodeURIComponent(heading.href.split('#')[1]);
-          var nextHeader = document.getElementById(next);
+          var heading = headings[i + 1]
+          var next = decodeURIComponent(heading.href.split("#")[1])
+          var nextHeader = document.getElementById(next)
 
           if (nextHeader) {
-            var top = nextHeader.getBoundingClientRect().top;
-            currNavActive = top > OFFSET;
+            var top = nextHeader.getBoundingClientRect().top
+            currNavActive = top > OFFSET
           } else {
-            console.error('Can not find header element', {
+            console.error("Can not find header element", {
               id: next,
               heading: heading,
-            });
+            })
           }
         }
         /**
@@ -64,20 +64,20 @@
          */
 
         if (currNavActive) {
-          activeNavFound = true;
-          headings[i].classList.add('active');
+          activeNavFound = true
+          headings[i].classList.add("active")
         } else {
-          headings[i].classList.remove('active');
+          headings[i].classList.remove("active")
         }
       }
-    }, 100);
-  };
+    }, 100)
+  }
 
-  document.addEventListener('scroll', onScroll);
-  document.addEventListener('resize', onScroll);
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("scroll", onScroll)
+  document.addEventListener("resize", onScroll)
+  document.addEventListener("DOMContentLoaded", function () {
     // Cache the headings once the page has fully loaded.
-    headingsCache = findHeadings();
-    onScroll();
-  });
-})();
+    headingsCache = findHeadings()
+    onScroll()
+  })
+})()
