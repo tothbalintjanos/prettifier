@@ -11,5 +11,10 @@ query OnPullRequest($org: String!, $repo: String!) {
         text
       }
     }
+    prettierIgnore: object(expression: "{{branch}}:.prettierignore") {
+      ... on Blob {
+        text
+      }
+    }
   }
 }

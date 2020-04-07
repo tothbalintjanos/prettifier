@@ -255,7 +255,7 @@ interface PushContext {
 
 export function parsePushContextData(data: PushContextData): PushContext {
   return {
-    prettifierConfig: prettifierConfigFromYML(data.prettifierConfig),
+    prettifierConfig: prettifierConfigFromYML(data.prettifierConfig, data.prettierIgnore),
     prettierConfig: prettierConfigFromYML(data.prettierConfig),
     pullRequestId: data.pullRequestId,
     pullRequestNumber: data.pullRequestNumber,

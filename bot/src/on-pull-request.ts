@@ -43,9 +43,10 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 
     // load additional information from GitHub
     const pullRequestContextData = await loadPullRequestContextData(org, repo, branch, context.github)
-    const { prettifierConfig, prettierConfig } = parsePullRequestContextData(pullRequestContextData)
+    const { prettifierConfig, prettierConfig, prettierIgnore } = parsePullRequestContextData(pullRequestContextData)
     console.log(`${repoPrefix}: BOT CONFIG: ${JSON.stringify(prettifierConfig)}`)
     console.log(`${repoPrefix}: PRETTIER CONFIG: ${JSON.stringify(prettierConfig)}`)
+    console.log(`${repoPrefix}: PRETTIER IGNORE: ${JSON.stringify(prettierIgnore)}`)
 
     // check whether this branch should be ignored
     if (prettifierConfig.shouldIgnoreBranch(branch)) {
@@ -190,10 +191,11 @@ export async function onPullRequest(context: probot.Context<webhooks.WebhookPayl
 interface PullRequestContext {
   prettifierConfig: PrettifierConfiguration
   prettierConfig: object
+  prettierIgnore: string
 }
 
 export function parsePullRequestContextData(data: PullRequestContextData): PullRequestContext {
-  const prettifierConfig = prettifierConfigFromYML(data.prettifierConfig)
+  const prettifierConfig = prettifierConfigFromYML(data.prettifierConfig, data.prettierIgnore)
   const prettierConfig = prettierConfigFromYML(data.prettierConfig)
-  return { prettifierConfig, prettierConfig }
+  return { prettifierConfig, prettierConfig, prettierIgnore: data.prettierIgnore }
 }

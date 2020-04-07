@@ -6,6 +6,7 @@ import path from "path"
 export interface PushContextData {
   prettifierConfig: string
   prettierConfig: string
+  prettierIgnore: string
   pullRequestNumber: number
   pullRequestId: string
   pullRequestURL: string
@@ -37,6 +38,7 @@ export async function loadPushContextData(
   return {
     prettifierConfig: callResult?.repository.prettifierConfig?.text || "",
     prettierConfig: callResult?.repository.prettierConfig?.text || "",
+    prettierIgnore: callResult?.repository.prettierIgnore?.text || "",
     pullRequestNumber,
     pullRequestId,
     pullRequestURL,

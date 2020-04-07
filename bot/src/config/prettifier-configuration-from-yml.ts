@@ -3,9 +3,9 @@ import { UserError } from "../logging/user-error"
 import yml from "js-yaml"
 
 /** Provides a PrettifierConfiguration instance populated with the values in the given YML file */
-export function prettifierConfigFromYML(configText: string): PrettifierConfiguration {
+export function prettifierConfigFromYML(configText: string, prettierIgnore: string): PrettifierConfiguration {
   if (configText.trim() === "") {
-    return new PrettifierConfiguration({})
+    return new PrettifierConfiguration({}, prettierIgnore)
   }
   let parsed = {}
   try {
@@ -13,5 +13,5 @@ export function prettifierConfigFromYML(configText: string): PrettifierConfigura
   } catch (e) {
     throw new UserError(`Prettifier configuration is not valid YML format:\n${configText}`, e)
   }
-  return new PrettifierConfiguration(parsed)
+  return new PrettifierConfiguration(parsed, prettierIgnore)
 }

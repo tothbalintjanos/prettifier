@@ -9,6 +9,7 @@ test("empty", function () {
   const data: PushContextData = {
     prettifierConfig: "",
     prettierConfig: "",
+    prettierIgnore: "",
     pullRequestNumber: 0,
     pullRequestId: "",
     pullRequestURL: "",
@@ -23,6 +24,7 @@ test("with content", function () {
   const data: PushContextData = {
     prettifierConfig: "excludeFiles: dist",
     prettierConfig: "semi: false",
+    prettierIgnore: "",
     pullRequestNumber: 3,
     pullRequestId: "id",
     pullRequestURL: "url",

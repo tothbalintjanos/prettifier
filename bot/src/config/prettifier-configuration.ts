@@ -39,7 +39,7 @@ export class PrettifierConfiguration {
    * Creates a new configuration based on the given config object.
    * Missing values are backfilled with default values.
    */
-  constructor(providedConfig: ConfigOptions) {
+  constructor(providedConfig: ConfigOptions, prettierIgnore: string) {
     this.commentTemplate = providedConfig.commentTemplate ?? ""
     this.customCommitMessage = providedConfig.commitMessage ?? ""
     if (Array.isArray(providedConfig.excludeBranches)) {
@@ -57,7 +57,7 @@ export class PrettifierConfiguration {
       this.excludeFiles = [providedConfig.excludeFiles]
     }
     this.customForkComment = providedConfig.forkComment ?? ""
-    this.ignore = ignore().add(this.excludeFiles)
+    this.ignore = ignore().add(this.excludeFiles).add(prettierIgnore)
     this.pullsOnly = providedConfig.pullsOnly ?? false
   }
 

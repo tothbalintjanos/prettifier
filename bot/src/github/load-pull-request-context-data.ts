@@ -5,6 +5,7 @@ import path from "path"
 export interface PullRequestContextData {
   prettifierConfig: string
   prettierConfig: string
+  prettierIgnore: string
 }
 
 export async function loadPullRequestContextData(
@@ -19,5 +20,6 @@ export async function loadPullRequestContextData(
   return {
     prettifierConfig: callResult?.repository.prettifierConfig?.text || "",
     prettierConfig: callResult?.repository.prettierConfig?.text || "",
+    prettierIgnore: callResult?.repository.prettierIgnore?.text || "",
   }
 }

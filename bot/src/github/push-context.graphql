@@ -11,6 +11,11 @@ query OnPush($org: String!, $repo: String!, $branch: String!) {
         text
       }
     }
+    prettierIgnore: object(expression: "{{branch}}:.prettierignore") {
+      ... on Blob {
+        text
+      }
+    }
 
     # pull-request for this branch
     ref(qualifiedName: $branch) {

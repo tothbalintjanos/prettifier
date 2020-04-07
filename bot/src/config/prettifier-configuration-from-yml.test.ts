@@ -6,21 +6,26 @@ import { UserError } from "../logging/user-error"
 suite("prettifierConfigFromYML")
 
 test("empty", function () {
-  const actual = prettifierConfigFromYML("")
+  const actual = prettifierConfigFromYML("", "")
   assert.isNotNull(actual)
   assert.instanceOf(actual, PrettifierConfiguration)
   assert.deepEqual(actual.excludeBranches, ["node_modules"])
 })
 
-test("valid", function () {
-  const actual = prettifierConfigFromYML("excludeBranches: dist")
+test("excludeBranches in prettifier.yml", function () {
+  const actual = prettifierConfigFromYML("excludeBranches: dist", "")
   assert.isNotNull(actual)
   assert.instanceOf(actual, PrettifierConfiguration)
   assert.deepEqual(actual.excludeBranches, ["dist"])
 })
 
+test(".prettierignore", async function () {
+  const config = prettifierConfigFromYML("", "dist/")
+  assert.isFalse(await config.shouldPrettify("dist/foo.md"))
+})
+
 test("invalid", function () {
   assert.throws(function () {
-    prettifierConfigFromYML("'wrong")
+    prettifierConfigFromYML("'wrong", "")
   }, UserError)
 })

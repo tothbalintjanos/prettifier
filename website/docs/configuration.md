@@ -3,12 +3,15 @@ id: configuration
 title: Configuration
 ---
 
-Prettifier's behavior can be customized in a variety of ways.
+You can customize Prettifier's behavior in a variety of ways.
 
 ### Prettier configuration
 
 Add a [.prettierrc](https://prettier.io/docs/en/configuration.html) file to the
 root directory of your codebase to customize how your code will get formatted.
+The available options are [here](https://prettier.io/docs/en/options.html). Also
+see the options to [ignore](https://prettier.io/docs/en/ignore.html) files,
+folders, or parts of files.
 
 ### Prettifier configuration
 
@@ -18,16 +21,18 @@ your codebase. The configuration options are:
 <a textrun="config-options">
 
 - **commentTemplate:** [text template](#text-templates) for a comment Prettifier
-  can add to pull requests when making changes to them. Prettifier adds only one
+  can add to pull requests when making changes to them. Prettifier adds one
   comment per pull request. Set to an empty string or omit this option to
   disable pull request comments.
 - **commitMessage:** [text template](#text-templates) for the commit message of
   formatting fixes
-- **excludeFiles:** file and directory paths to ignore, in a similar format as
-  [.gitignore files](https://git-scm.com/docs/gitignore)
+- **excludeFiles:** file and directory paths that you want Prettifier to ignore,
+  in a similar format as [.gitignore files](https://git-scm.com/docs/gitignore).
+  Please try to use the [Prettier configuration](#prettier-configuration) for
+  this before using the setting here.
 - **excludeBranches:** branch names that Prettifier should ignore
 - **pullsOnly:** when `true`, Prettifier only formats branches ready for review,
-  i.e. ones that have open pull requests. This makes Prettifier interfere less
+  i.e. branches with open pull requests. This makes Prettifier interfere less
   with ongoing development.
 
 </a>
@@ -40,8 +45,7 @@ Here is an example configuration file showing the default settings:
 commentTemplate: ""
 commitMessage: "Format {{commitSha}}"
 excludeBranches: []
-excludeFiles:
-  - node_modules
+excludeFiles: []
 pullsOnly: false
 ```
 
@@ -57,6 +61,6 @@ Prettifier replaces these placeholders in them:
 
 ### Verifying configuration
 
-It is recommended to make configuration changes to the Prettier or Prettifier
-configuration via a pull request. Prettifier will review them and comment
-whether they work. We call this GitHubOps.
+Make configuration changes to the Prettier or Prettifier configuration via a
+pull request. Prettifier will comment whether the changes work. We call this
+GitHubOps!
