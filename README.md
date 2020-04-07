@@ -21,7 +21,7 @@ code base to fine-tune how Prettifier formats your changes.
 ---
 
 Please see the [documentation](https://kevgo.github.io/prettifier) for how to
-use Prettifier.
+use Prettifier and the [change log](CHANGELOG.md) for product updates.
 
 This is the source code of Prettifier. It is organized as a monorepository. Each
 top-level directory contains some aspect of the product:
