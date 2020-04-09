@@ -14,7 +14,7 @@
     "probot": "9.11.2"
   },
   "devDependencies": {
-    "@graphql-inspector/cli": "1.27.0",
+    "@graphql-inspector/cli": "1.30.4",
     "@octokit/webhooks": "7.1.2",
     "@types/bunyan": "1.8.6",
     "@types/chai": "4.2.11",
