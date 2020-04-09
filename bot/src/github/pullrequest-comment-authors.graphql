@@ -1,5 +1,9 @@
 # Returns all accounts that have commented on the given pull request.
-query PullRequestCommentAuthors($org: String!, $repo: String!, $pullrequest: Int!) {
+query PullRequestCommentAuthors(
+  $org: String!
+  $repo: String!
+  $pullrequest: Int!
+) {
   repository(owner: $org, name: $repo) {
     pullRequest(number: $pullrequest) {
       comments(first: 100) {
