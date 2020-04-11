@@ -1,3 +1,7 @@
-{{- $paramName := (.Get 0) -}} {{- $siteParams := .Site.Params -}} {{- with
-$paramName -}} {{- with $siteParams -}} {{- index . (lower $paramName) -}} {{-
-end -}} {{- end -}}
+{{- $paramName := (.Get 0) -}}
+{{- $siteParams := .Site.Params -}}
+{{- with $paramName -}}
+    {{- with $siteParams -}}
+        {{- index . (lower $paramName) -}}
+    {{- end -}}
+{{- end -}}
