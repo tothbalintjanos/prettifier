@@ -1,5 +1,6 @@
 # Prettifier changelog
 
+- 2020-04-08: new website
 - 2020-04-07: handle `.prettierignore` files
 - 2020-04-07: Prettier 2.0 (formats slightly differently)
 - 2020-03-07: new website https://prettifier.io

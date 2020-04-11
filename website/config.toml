@@ -1,0 +1,16 @@
+baseURL = "https://prettifier.io/"
+languageCode = "en-us"
+title = "Prettifier"
+theme = "hugo-theme-learn"
+
+[params]
+editURL = "https://github.com/kevgo/prettifier/edit/master/website/docs/"
+author = "Kevin Goslar"
+description = "A GitHub bot that auto-formats with Prettier"
+disableSearch = true
+disableInlineCopyToClipBoard = true
+showVisitedLinks = true
+disableLanguageSwitchingButton = true
+
+[markup.goldmark.renderer]
+unsafe= true

@@ -1,4 +1,4 @@
-# Prettifier <img src="website/website/static/img/logo_transparent_400.gif" width="33" height="23">
+# Prettifier <img src="https://raw.githubusercontent.com/kevgo/prettifier/master/website/static/images/logo_400.jpg" width="33" height="23">
 
 [![CircleCI](https://circleci.com/gh/kevgo/prettifier.svg?style=shield)](https://circleci.com/gh/kevgo/prettifier)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/kevgo/prettifier.svg)](https://lgtm.com/projects/g/kevgo/prettifier/context:javascript)
