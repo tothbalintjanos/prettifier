@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := help
+
 build:  # compiles the static HTML files
 	@hugo
 
