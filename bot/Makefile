@@ -56,6 +56,10 @@ test:  # runs all tests
 	@make --no-print-directory lint
 .PHONY: test
 
+setup:  # prepares the code base for working after being cloned
+	@(cd ../tools && make --no-print-directory setup)
+	@(cd text-run && yarn)
+
 setup:  # prepares this code base for development
 	yarn
 

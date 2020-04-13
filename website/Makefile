@@ -1,5 +1,7 @@
 .DEFAULT_GOAL := help
 
+
+
 build:  # compiles the static HTML files
 	@hugo
 
@@ -11,3 +13,8 @@ help:   # shows all available Make commands
 
 start:  # runs the local development server
 	@hugo serve -p 3000
+
+setup:
+	ifeq (, $(shell which hugo))
+		$(error "Please install hugo, see https://gohugo.io/getting-started/installing")
+	endif
