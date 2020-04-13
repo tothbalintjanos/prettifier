@@ -17,7 +17,7 @@ export class DevError extends Error {
 }
 
 /** logs the given developer error as a GitHub issue */
-export async function logDevError(err: Error, activity: string, context: Context, github: GitHubAPI): Promise<void> {
+export async function logDevError(err: DevError, activity: string, context: Context, github: GitHubAPI): Promise<void> {
   console.log(`${context.org}|${context.repo}|${context.branch}: Error ${activity}`)
   await github.issues.create({
     owner: "kevgo",
@@ -27,7 +27,7 @@ export async function logDevError(err: Error, activity: string, context: Context
   })
 }
 
-export function bodyTemplate(err: Error, context: object): string {
+export function bodyTemplate(err: DevError, context: object): string {
   let result = "Environment:\n"
   for (const [k, v] of Object.entries(context)) {
     if (typeof v === "object") {
@@ -41,7 +41,19 @@ export function bodyTemplate(err: Error, context: object): string {
 ### Error
 
 \`\`\`
-${util.inspect(err, false, Infinity)}
+${util.inspect(err, true, Infinity)}
+\`\`\`
+
+### Cause
+
+\`\`\`
+${util.inspect(err.cause, true, Infinity)}
+\`\`\`
+
+### Context
+
+\`\`\`
+${util.inspect(err.context, true, Infinity)}
 \`\`\`
 
 ### Stack

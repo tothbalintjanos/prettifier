@@ -229,7 +229,7 @@ export async function onPush(context: probot.Context<webhooks.WebhookPayloadPush
     }
     if (e instanceof DevError) {
       logDevError(
-        e.cause,
+        e,
         e.activity,
         { org, repo, branch, commitSha, pullRequestURL, payload: context.payload },
         context.github

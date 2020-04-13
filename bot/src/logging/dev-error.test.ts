@@ -13,6 +13,6 @@ test("constructor()", function () {
 })
 
 test("bodyTemplate()", function () {
-  const actual = bodyTemplate(new Error(), { foo: "bar" })
+  const actual = bodyTemplate(new DevError("activity", new Error(), {}), { foo: "bar" })
   assert.isNotEmpty(actual)
 })
