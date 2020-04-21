@@ -1,2 +1,6 @@
 exclude:
-  - website/themes
+  - website
+# publications:
+#   - localPath: website/content/static/images/
+#     publicPath: /images
+#     publicExtension: ".jpg"
